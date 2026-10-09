@@ -363,6 +363,7 @@ button.chip{cursor:pointer}
 .tsw{flex:none;position:relative;width:52px;height:32px;border-radius:99px;border:0;padding:0;background:rgba(255,255,255,.16);cursor:pointer;transition:background .2s}
 .tsw i{position:absolute;top:3px;left:3px;width:26px;height:26px;border-radius:50%;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.35);transition:transform .2s}
 .tsw.on{background:var(--good)}
+.tsw.on.wait{background:rgba(74,222,128,.4)}
 .tsw.on i{transform:translateX(20px)}
 .infobox{font-size:13px;line-height:1.4;background:rgba(255,255,255,.06);border-radius:10px;padding:8px 10px;margin:4px 0 6px}
 .edtop{padding:10px}
@@ -1869,7 +1870,7 @@ function lobbyShow(){
   const TK=Object.keys(THEMES),cnt=t=>{const c=THEMES[t][1];return c?THEME_MC.filter(x=>c.indexOf(x)>=0).length:MC.length;};
   o+='<div class="eyebrow" style="margin-top:8px">Thema für Runde 1 und Finale</div>'+(host?'<div class="hwbox"><div class="hwsel"></div><div class="hwheel" id="thwheel"><div class="hpad"></div>'+TK.map((t,i)=>'<div class="hitem" data-wi="'+i+'"><span class="emo">'+THEME_ICON[t]+'</span><b>'+h(THEMES[t][0])+'</b><small>'+cnt(t)+' Fragen</small></div>').join('')+'<div class="hpad"></div></div></div>':'<span class="thb on">'+THEME_ICON[th]+' '+h(THEMES[th][0])+'</span>');
   const np=lobbyPlayers().length,tOn=teamsOn();
-  o+='<div class="tgrow" style="margin-top:6px"><span class="tgl"><b>Team-Modus</b> <button class="infob" data-act="teaminfo" aria-label="Team-Modus erklären">i</button><small>'+(np>=4?'Rot gegen Blau, fair gemischt':'ab 4 Leuten')+'</small></span>'+(host?'<button class="tsw'+(tOn?' on':'')+'" data-act="teamtog" role="switch" aria-checked="'+tOn+'" aria-label="Team-Modus"><i></i></button>':'<span class="tsw'+(tOn?' on':'')+'"><i></i></span>')+'</div>'+(L.teamInfo?'<div class="infobox">Ab 4 Leuten. Beim Start werden zwei Teams gebildet, 🔴 Rot und 🔵 Blau, fair gemischt nach Level. Jeder spielt wie immer am eigenen Handy, die Punkte im Team werden zusammengezählt. Ist ein Team kleiner (z. B. 3 gegen 2), wird es hochgerechnet. Das Team mit mehr Punkten gewinnt. Für Level, Abzeichen und Liga zählt weiter deine eigene Platzierung.</div>':'');
+  o+='<div class="tgrow" style="margin-top:6px"><span class="tgl"><b>Team-Modus</b> <button class="infob" data-act="teaminfo" aria-label="Team-Modus erklären">i</button><small>'+(np>=4?'Rot gegen Blau, fair gemischt':tOn?'Ist an, gilt aber erst ab 4 Leuten. Jetzt spielt jeder für sich.':'ab 4 Leuten')+'</small></span>'+(host?'<button class="tsw'+(tOn?' on':'')+(np<4?' wait':'')+'" data-act="teamtog" role="switch" aria-checked="'+tOn+'" aria-label="Team-Modus"><i></i></button>':'<span class="tsw'+(tOn?' on':'')+'"><i></i></span>')+'</div>'+(L.teamInfo?'<div class="infobox">Ab 4 Leuten. Beim Start werden zwei Teams gebildet, 🔴 Rot und 🔵 Blau, fair gemischt nach Level. Jeder spielt wie immer am eigenen Handy, die Punkte im Team werden zusammengezählt. Ist ein Team kleiner (z. B. 3 gegen 2), wird es hochgerechnet. Das Team mit mehr Punkten gewinnt. Für Level, Abzeichen und Liga zählt weiter deine eigene Platzierung.</div>':'');
   return o+'</div>';
 }
 function modeGrid(){
