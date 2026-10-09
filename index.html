@@ -2783,7 +2783,7 @@ function vMain(){
     }else{
       out+=errBox()+waitNote('Du bist dabei. Warten, bis '+hostName()+' startet …');
     }
-    out+=lobbyPlayersCard()+lobbyShow();
+    out+='<button class="btn alt" data-act="invite">📣 Alle einladen</button>'+lobbyPlayersCard()+lobbyShow();
     return out;
   }
   const st=step();if(!st)return '';
@@ -3198,6 +3198,8 @@ function act(a,d){
     case "menuclose":L.menu=false;renderAll();break;
     case "devcopy":{const c=ME||"";const done=()=>alert("Dein Profil-Code wurde kopiert:\n\n"+c+"\n\nAuf dem anderen Gerät oder in der Home-Bildschirm-App: Menü → „Profil von anderem Gerät laden“ und einfügen.");try{navigator.clipboard.writeText(c).then(done,()=>prompt("Dein Profil-Code (kopieren):",c));}catch(e){prompt("Dein Profil-Code (kopieren):",c);}}break;
     case "devload":{const c=(prompt("Profil-Code vom anderen Gerät einfügen:")||"").trim();if(!c)break;if(!/^[A-Za-z0-9_-]{10,40}$/.test(c)){alert("Das ist kein gültiger Code.");break;}if(c===ME){alert("Das ist schon dein Profil.");break;}if(confirm("Dieses Gerät übernimmt das andere Profil (Name, Level, Freischaltungen). Weiter?")){try{localStorage.setItem("dk_id",c);localStorage.removeItem("dk_name");}catch(e){}location.reload();}}break;
+    case "invite":{const url=location.origin+location.pathname,t=(nameOf(ME)||L.name||"Jemand")+" hat ein Dreikampf-Spiel eröffnet 🔥 Wer ist dabei?";
+      if(navigator.share)navigator.share({title:"Dreikampf",text:t,url:url}).catch(()=>{});else window.open("https://wa.me/?text="+encodeURIComponent(t+" "+url),"_blank");}break;
     case "sound":soundOn=!soundOn;try{localStorage.setItem("dk_snd",soundOn?"1":"0");}catch(e){}
       if(!soundOn&&silentEl){try{silentEl.pause();}catch(e){}silentEl=null;}
       unlockAudio();renderAll();if(soundOn)setTimeout(()=>sfx.good(),60);break;
