@@ -607,6 +607,7 @@ body.urgent #app::after{content:"";position:fixed;inset:0;pointer-events:none;bo
 .brow .rank{color:var(--bulb)}
 .waitbar{background:rgba(255,209,102,.14);border:1px solid rgba(255,209,102,.45);color:var(--fg);border-radius:14px;padding:9px 14px;margin:0 0 12px;font-weight:700;font-size:15px;text-align:center}
 .tdot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:1px;box-shadow:0 0 0 1.5px rgba(255,255,255,.85)}
+.revb{display:block;margin:34px auto 0;font-size:14px;opacity:.75}.revb.sure{opacity:1;color:var(--bad);font-weight:800}
 </style>
 
 <div id="app"><div id="top"></div><div id="main"></div><div id="status"></div></div>
@@ -2956,9 +2957,10 @@ function vMain(){
 }
 
 function waitOrReveal(){
-  return waitNote(inGame()?'Gespeichert. Warten auf die anderen …':'Die anderen antworten …')+(amHost()?'<button class="linkbtn" data-act="reveal">Nicht warten, jetzt auflösen</button>':'');
+  return waitNote(inGame()?'Gespeichert. Warten auf die anderen …':'Die anderen antworten …')+(amHost()?revBtn('Nicht warten, jetzt auflösen'):'');
 }
-function hostRevealLink(){return amHost()?'<button class="linkbtn" data-act="reveal">Jetzt auflösen</button>':'';}
+function revBtn(t){return '<button class="linkbtn revb'+(L.confirm==="reveal"?' sure':'')+'" data-act="reveal">'+(L.confirm==="reveal"?'Wirklich für alle auflösen? Nochmal tippen':t)+'</button>';}
+function hostRevealLink(){return amHost()?revBtn('Jetzt auflösen'):'';}
 
 function vIntro(st){
   const m=modeOf(st),r=MODES[m];
@@ -3287,14 +3289,14 @@ function startConfetti(){
 /* ---------- Eingaben ---------- */
 function act(a,d){
   const st=step();
-  if(a!=="takeover"&&a!=="abort"&&a!=="joker"&&a!=="kick"&&a!=="mdo"&&a!=="mauto")L.confirm=null;
+  if(a!=="takeover"&&a!=="abort"&&a!=="joker"&&a!=="kick"&&a!=="mdo"&&a!=="mauto"&&a!=="reveal")L.confirm=null;
   switch(a){
     case "newlobby":newLobby();break;
     case "join":join(G.v);break;
     case "waitjoin":if(G&&G.phase==="play"&&!inGame()){const n=saveName();if(n)meWrite(()=>myRef().set({name:n,g:"",wait:G.v,t:Date.now(),seen:Date.now(),ans:{}}));}break;
     case "start":if(amHost()){if(lobbyPlayers().length<2){L.view="solo";L.soloTheme=lobbyKI()?"ki":themeOf();renderAll(true);}else startGame();}break;
     case "next":hostNext();break;
-    case "reveal":hostReveal();break;
+    case "reveal":if(L.confirm!=="reveal"){L.confirm="reveal";renderAll(true);setTimeout(()=>{if(L.confirm==="reveal"){L.confirm=null;renderAll(true);}},4000);break;}L.confirm=null;hostReveal();break;
     case "rematch":if(amHost())rematch();break;
     case "tolobby":if(SOLO)soloExit();else if(amHost())toLobby();break;
     case "menu":L.menu=true;renderAll();break;
@@ -4419,7 +4421,7 @@ function gSec(){
   add("Lobby","Überraschungsrunden auswählen","Die Spielleitung kann einzelne Spielarten abwählen. Mindestens 2 bleiben an. „Kleinste Zahl“ und „Mehrheit“ kommen erst ab 3 Leuten.","spielarten modi");
   add("Lobby","Team-Modus","Ab 4 Leuten: zwei Teams (🔴 Rot und 🔵 Blau), fair nach Level gemischt. Die Punkte im Team werden zusammengezählt, ein kleineres Team wird hochgerechnet. Für Level, Abzeichen und Liga zählt weiter deine eigene Platzierung. Unter 4 Leuten spielt jeder für sich, auch wenn der Schalter an ist.","teams rot blau");
   add("Lobby","Leute rauswerfen und Abwesende","Die Spielleitung tippt neben einem Namen auf ✕ und dann auf „Raus?“. Wer die Seite schließt, bleibt erst einmal in der Lobby und verschwindet nach 3 Minuten ohne Lebenszeichen.","kick entfernen offline");
-  add("Spielablauf","Zeit pro Frage","Pro Frage gibt es 2 Minuten. Fehlt nur noch einer, bleiben ihm 30 Sekunden. Die Spielleitung kann mit „Jetzt auflösen“ früher auflösen.","timer");
+  add("Spielablauf","Zeit pro Frage","Pro Frage gibt es 2 Minuten. Fehlt nur noch einer, bleiben ihm 30 Sekunden. Die Spielleitung kann mit „Jetzt auflösen“ früher auflösen (zweimal tippen, damit es nicht aus Versehen passiert).","timer");
   POOL_MODES.concat(["mc","fin"]).forEach(m=>{if(MODES[m])add("Spielarten",MODES[m].t,MODES[m].r+(MIN3[m]?" Erst ab 3 Leuten.":"")+(SOLO_NO[m]?" Nicht im Solo-Modus.":""),m);});
   SKILLS.forEach(g=>{if(SKG[g])add("Geschicklichkeit",SKG[g].e+" "+SKG[g].t,SKG[g].r+" Ein Versuch. Platz 1: 150 Punkte, Platz 2: 100, Platz 3: 50 (zu zweit 150 und 50).","geschick "+g);});
   add("Punkte","Joker","Jeder kann einmal pro Spiel eine Frage doppelt zählen lassen, nicht im Finale. Einmal tippen, nochmal tippen zum Bestätigen.","x2 doppelt");
@@ -4560,7 +4562,7 @@ function founderWatch(){
     if(!s.exists&&new URLSearchParams(location.search).get("gruender")===FOUNDER_KEY)DB.doc("config/founder").set({u:ME,at:Date.now()}).catch(()=>{});},()=>{});
 }
 if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js",{scope:"./"}).catch(()=>{});
-const BUILD_ID="1791665903";
+const BUILD_ID="1791666209";
 function verCheck(){fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(r=>r.json()).then(j=>{if(j&&j.v&&j.v!==BUILD_ID&&!document.getElementById("upd")){const b=document.createElement("button");b.id="upd";b.textContent="✨ Neue Version da. Tippen zum Laden";b.onclick=()=>location.reload();document.body.appendChild(b);}}).catch(()=>{});}
 setInterval(verCheck,60000);document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")verCheck();});setTimeout(verCheck,5000);
 (async function boot(){
