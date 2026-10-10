@@ -4313,7 +4313,7 @@ BGX.stammtisch='<rect width="100" height="100" fill="#5a3a22"/><rect width="100"
 /* ========== Ende SOLO ========== */
 /* ========== ANLEITUNG mit Suche (+ KI in der Claude-Version) ========== */
 let SAMPLE=null;
-try{if(window.claude&&window.claude.use)window.claude.use("sample").then(s=>{SAMPLE=s||null;if(L.view==="guide")renderAll(true);}).catch(()=>{});}catch(e){}
+/* KI-Hilfe bewusst ausgeschaltet */
 function gNorm(s){return String(s||"").toLowerCase().replace(/ä/g,"ae").replace(/ö/g,"oe").replace(/ü/g,"ue").replace(/ß/g,"ss").replace(/<[^>]+>/g," ").replace(/[^a-z0-9%]+/g," ").trim();}
 const G_SYN={punkte:"punkt score zaehlt zaehlen",joker:"doppelt x2 verdoppeln",freischalten:"bekommen bekomme kriegen gesperrt schloss unlock erhalten freigeschaltet holen",hut:"muetze kopf",figur:"avatar tier charakter",avatar:"figur aussehen kleidung",level:"xp stufe erfahrung aufsteigen",sieg:"gewinnen gewonnen siegquote",gewinnen:"sieg siegquote",verlieren:"minus abzug",finale:"einsatz setzen",zeit:"timer minuten sekunden uhr",starten:"start eroeffnen beginnen lobby",einladen:"link teilen whatsapp",rauswerfen:"entfernen kick raus",solo:"allein alleine computer bots gegner einzelspieler",lange:"dauer spiellaenge minuten",dauer:"spiellaenge lange minuten",team:"teams rot blau",frage:"fragen quiz",melden:"fehler falsch report",liga:"monat tabelle siegerboard",ton:"sound laut leise stumm",handy:"geraet iphone profil code",update:"aktualisieren neue version laden"};
 function gSec(){
@@ -4445,7 +4445,7 @@ function founderWatch(){
     if(!s.exists&&new URLSearchParams(location.search).get("gruender")===FOUNDER_KEY)DB.doc("config/founder").set({u:ME,at:Date.now()}).catch(()=>{});},()=>{});
 }
 if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js",{scope:"./"}).catch(()=>{});
-const BUILD_ID="1791630252";
+const BUILD_ID="1791630387";
 function verCheck(){fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(r=>r.json()).then(j=>{if(j&&j.v&&j.v!==BUILD_ID&&!document.getElementById("upd")){const b=document.createElement("button");b.id="upd";b.textContent="✨ Neue Version da. Tippen zum Laden";b.onclick=()=>location.reload();document.body.appendChild(b);}}).catch(()=>{});}
 setInterval(verCheck,60000);document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")verCheck();});setTimeout(verCheck,5000);
 (async function boot(){
