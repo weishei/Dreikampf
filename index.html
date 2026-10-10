@@ -357,6 +357,7 @@ button.chip{cursor:pointer}
 .gnums{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:6px}
 .gnum{width:52px;height:52px;border-radius:14px;border:2px solid var(--line);background:var(--bg2);color:var(--fg);font:inherit;font-family:var(--display);font-size:22px;font-weight:800;cursor:pointer}
 .gnum:active{border-color:var(--p2)}
+.kickb{flex:none;margin-left:auto;min-width:40px;height:34px;border-radius:10px;border:1.5px solid var(--line);background:transparent;color:var(--muted);font:inherit;font-weight:800;font-size:14px;cursor:pointer;padding:0 10px}
 .tgrow{display:flex;align-items:center;gap:12px;justify-content:space-between}
 .tgl{display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px;font-size:16px}
 .tgl small{flex-basis:100%;color:var(--muted);font-size:13px}
@@ -2550,8 +2551,18 @@ function mFmt(m){
 function roster(){return (G&&Array.isArray(G.roster))?G.roster:[];}
 function lobbyPlayers(){
   if(!G)return [];
-  return Object.keys(P).filter(u=>P[u]&&P[u].g===G.v).sort((a,b)=>(P[a].t||0)-(P[b].t||0)).slice(0,MAXP);
+  return Object.keys(P).filter(u=>P[u]&&P[u].g===G.v&&isActive(u)).sort((a,b)=>(P[a].t||0)-(P[b].t||0)).slice(0,MAXP);
 }
+/* Anwesenheit: wer die Seite schließt, verschwindet nach ~90 s aus der Lobby */
+const AWAY_MS=90000;
+function isActive(u){if(u===ME||(G&&u===G.host))return true;const s=P[u]&&P[u].seen;return typeof s!=="number"||Date.now()-s<AWAY_MS;}
+function inLobbyMe(){return !!(ME&&G&&G.phase==="lobby"&&P[ME]&&P[ME].g===G.v);}
+function beat(){if(!inLobbyMe()||document.visibilityState!=="visible")return;meWrite(()=>myRef().update({seen:Date.now()}));}
+setInterval(beat,30000);
+setInterval(()=>{if(G&&G.phase==="lobby")renderAll();},15000);
+function goAway(){if(inLobbyMe()&&G.host!==ME){try{myRef().update({seen:1});}catch(e){}}}
+document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")beat();else goAway();});
+window.addEventListener("pagehide",goAway);
 function colOf(u){
   let i=roster().indexOf(u);
   if(i<0)i=lobbyPlayers().indexOf(u);
@@ -2641,7 +2652,7 @@ function saveName(){
 }
 function join(v){
   const n=saveName();if(!n)return;
-  meWrite(()=>myRef().set({name:n,g:v,t:Date.now(),ans:{}}));
+  meWrite(()=>myRef().set({name:n,g:v,t:Date.now(),seen:Date.now(),ans:{}}));
 }
 function answer(val){
   const i=G.idx,v=G.v;
@@ -2656,7 +2667,7 @@ function newLobby(){
   const n=saveName();if(!n)return;
   const v=rid(),used=(G&&G.used)||{mc:[],size:[],est:[],fin:[]};
   gWrite(()=>gRef().set({v:v,phase:"lobby",host:ME,roster:[],steps:[],idx:0,reveal:false,used:used}));
-  meWrite(()=>myRef().set({name:n,g:v,t:Date.now(),ans:{}}));
+  meWrite(()=>myRef().set({name:n,g:v,t:Date.now(),seen:Date.now(),ans:{}}));
 }
 function pick(used,pool,key,n){
   const u=Array.isArray(used[key])?used[key].slice():[];
@@ -2679,7 +2690,7 @@ function toLobby(){
   const v=rid();
   gWrite(()=>gRef().set({v:v,phase:"lobby",host:ME,roster:[],steps:[],idx:0,reveal:false,used:G.used||{}}));
   const n=L.name||nameOf(ME);
-  meWrite(()=>myRef().set({name:n,g:v,t:Date.now(),ans:{}}));
+  meWrite(()=>myRef().set({name:n,g:v,t:Date.now(),seen:Date.now(),ans:{}}));
 }
 function hostNext(){
   if(!amHost()||!G.steps||G.idx>=G.steps.length-1)return;
@@ -2777,7 +2788,7 @@ function vMain(){
     const joined=P[ME]&&P[ME].g===G.v;
     let out='<div class="marquee fade"><div class="mq-in"><div class="logo one">DREIKAMPF</div><p class="tag small">Lobby · '+hostName()+' leitet das Spiel</p></div></div>';
     if(!joined){
-      out+=vMyCard(true)+errBox()+'<button class="btn" data-act="join">Mitspielen</button>';
+      out+=(P[ME]&&P[ME].kicked===G.v?'<div class="msg">'+h(hostName())+' hat dich aus der Lobby genommen. Du kannst wieder beitreten.</div>':'')+vMyCard(true)+errBox()+'<button class="btn" data-act="join">Mitspielen</button>';
     }else if(amHost()){
       out+=errBox()+'<div class="strow"><button class="btn" id="startbtn" data-act="start">Spiel starten</button><button class="btn alt invb" data-act="invite" aria-label="Alle einladen">📣<small>Einladen</small></button></div><p class="center muted">Starten geht ab 2 Leuten, maximal '+MAXP+'.</p>';
     }else{
@@ -3041,7 +3052,7 @@ function lobbyPlayersCard(){
   let out='';
   const lp=lobbyPlayers();
     out+='<div class="card"><div class="eyebrow">Dabei ('+lp.length+' von max. '+MAXP+')</div>';
-    out+=lp.length?'<div class="rows">'+lp.map(u=>{const pr=progOf(u);return '<div class="row" '+cv(u)+'>'+avHtml(u,48)+'<span class="who">'+nm(u)+(u===ME?' <small class="muted">(du)</small>':'')+'<br><span class="muted" style="font-weight:600;font-size:13px">Lvl '+pr.lvl+' · '+h(titleOf(u))+(hcPreview(u)>=1?' · 🎯 Gejagt':'')+'</span></span>'+(u===G.host?'<span class="pts zero">Leitung</span>':'')+'</div>';}).join('')+'</div>':'<p class="muted">Noch niemand.</p>';
+    out+=lp.length?'<div class="rows">'+lp.map(u=>{const pr=progOf(u);return '<div class="row" '+cv(u)+'>'+avHtml(u,48)+'<span class="who">'+nm(u)+(u===ME?' <small class="muted">(du)</small>':'')+'<br><span class="muted" style="font-weight:600;font-size:13px">Lvl '+pr.lvl+' · '+h(titleOf(u))+(hcPreview(u)>=1?' · 🎯 Gejagt':'')+'</span></span>'+(u===G.host?'<span class="pts zero">Leitung</span>':(amHost()&&u!==ME?'<button class="kickb" data-act="kick" data-u="'+h(u)+'" aria-label="Entfernen">'+(L.confirm==="kick"+u?'Raus?':'✕')+'</button>':''))+'</div>';}).join('')+'</div>':'<p class="muted">Noch niemand.</p>';
     out+='</div>';
   return out;
 }
@@ -3068,7 +3079,7 @@ function mainKey(){
   if(!G)return "nogame"+viewKey();
   const st=step(),i=G.idx;
   const ansSig=G.reveal?roster().map(u=>JSON.stringify(getAns(u,i))).join(","):"";
-  return [viewKey(),ansSig,G.phase==="play"?(expired(ME)+"|"+jokerOf(ME,i)+"|"+jokerUsed(ME)):"",G.v,G.phase,i,G.reveal,G.host===ME,P[ME]&&P[ME].g===G.v,inGame(),getAns(ME,i)!==null,L.finLocked,L.err,(G.phase==="lobby")?(lobbyPlayers().length>=2)+JSON.stringify(offModes())+lenOf()+L.showModes+(amHost()?"":themeOf())+teamsOn()+lobbyPlayers().map(u=>u+nameOf(u)).join()+profVer+L.teamInfo:0,st&&st.t].join("|");
+  return [viewKey(),ansSig,G.phase==="play"?(expired(ME)+"|"+jokerOf(ME,i)+"|"+jokerUsed(ME)):"",G.v,G.phase,i,G.reveal,G.host===ME,P[ME]&&P[ME].g===G.v,inGame(),getAns(ME,i)!==null,L.finLocked,L.err,(G.phase==="lobby")?(lobbyPlayers().length>=2)+JSON.stringify(offModes())+lenOf()+L.showModes+(amHost()?"":themeOf())+teamsOn()+lobbyPlayers().map(u=>u+nameOf(u)).join()+profVer+L.teamInfo+L.confirm+(P[ME]&&P[ME].kicked):0,st&&st.t].join("|");
 }
 function renderAll(force){
   document.body.classList.toggle("nofx",!fxOn);
@@ -3148,7 +3159,7 @@ function startConfetti(){
 /* ---------- Eingaben ---------- */
 function act(a,d){
   const st=step();
-  if(a!=="takeover"&&a!=="abort"&&a!=="joker")L.confirm=null;
+  if(a!=="takeover"&&a!=="abort"&&a!=="joker"&&a!=="kick")L.confirm=null;
   switch(a){
     case "newlobby":newLobby();break;
     case "join":join(G.v);break;
@@ -3206,6 +3217,7 @@ function act(a,d){
     case "fxtoggle":fxOn=!fxOn;try{localStorage.setItem("dk_fx",fxOn?"1":"0");}catch(e){}renderAll();break;
     case "takeover":if(L.confirm==="takeover"){L.confirm=null;L.menu=false;takeOver();}else{L.confirm="takeover";renderAll();}break;
     case "abort":if(L.confirm==="abort"){L.confirm=null;L.menu=false;toLobby();}else{L.confirm="abort";renderAll();}break;
+    case "kick":if(amHost()&&G&&G.phase==="lobby"&&d.u&&d.u!==ME){if(L.confirm!=="kick"+d.u){L.confirm="kick"+d.u;renderAll(true);setTimeout(()=>{if(L.confirm==="kick"+d.u){L.confirm=null;renderAll(true);}},4000);break;}L.confirm=null;const u=d.u,v=G.v;if(P[u])P[u].g="";gWrite(()=>DB.doc("players/"+u).update({g:"",kicked:v}));renderAll(true);}break;
     case "authg":if(st&&st.t==="mc"&&isAuthor(st,ME)){sfx.pop();answer({g:Number(d.i)});}break;
     case "mc":if(st&&CHOICE[st.t]){sfx.pop();answer(Number(d.i));}break;
     case "maj":if(st&&st.t==="maj"){sfx.pop();answer(Number(d.i));}break;
