@@ -367,6 +367,8 @@ button.chip{cursor:pointer}
 .gnums{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:6px}
 .gnum{width:52px;height:52px;border-radius:14px;border:2px solid var(--line);background:var(--bg2);color:var(--fg);font:inherit;font-family:var(--display);font-size:22px;font-weight:800;cursor:pointer}
 .gnum:active{border-color:var(--p2)}
+.champ{font-weight:800;white-space:nowrap}.champ.c1{color:#ffd9a0}.champ.c2{color:#ffc93c}.champ.c3{color:#ffc93c;text-shadow:0 0 8px rgba(255,201,60,.8)}
+.row.ch3{box-shadow:0 0 0 2px #ffc93c,0 0 18px rgba(255,201,60,.45)}
 .kickb{flex:none;margin-left:auto;min-width:40px;height:34px;border-radius:10px;border:1.5px solid var(--line);background:transparent;color:var(--muted);font:inherit;font-weight:800;font-size:14px;cursor:pointer;padding:0 10px}
 .sbot{display:flex;align-items:center;gap:12px;padding:8px 0;border-top:1px solid var(--line)}
 .sbot .av{border-radius:50%}
@@ -3134,7 +3136,7 @@ function lobbyPlayersCard(){
   let out='';
   const lp=lobbyPlayers();
     out+='<div class="card"><div class="eyebrow">Dabei ('+lp.length+' von max. '+MAXP+')</div>';
-    out+=lp.length?'<div class="rows">'+lp.map(u=>{const pr=progOf(u);return '<div class="row" '+cv(u)+'>'+avHtml(u,48)+'<span class="who">'+nm(u)+(u===ME?' <small class="muted">(du)</small>':'')+'<br><span class="muted" style="font-weight:600;font-size:13px">Lvl '+pr.lvl+' · '+h(titleOf(u))+(hcPreview(u)>=1?' · 🎯 Gejagt':'')+'</span></span>'+(u===G.host?'<span class="pts zero">Leitung</span>':(amHost()&&u!==ME?'<button class="kickb" data-act="kick" data-u="'+h(u)+'" aria-label="Entfernen">'+(L.confirm==="kick"+u?'Raus?':'✕')+'</button>':''))+'</div>';}).join('')+'</div>':'<p class="muted">Noch niemand.</p>';
+    out+=lp.length?'<div class="rows">'+lp.map(u=>{const pr=progOf(u);return '<div class="row'+(champTier(u)===3?' ch3':'')+'" '+cv(u)+'>'+avHtml(u,48)+'<span class="who">'+nm(u)+(u===ME?' <small class="muted">(du)</small>':'')+'<br><span class="muted" style="font-weight:600;font-size:13px">Lvl '+pr.lvl+' · '+h(titleOf(u))+champTag(u)+(hcPreview(u)>=1?' · 🎯 Gejagt':'')+'</span></span>'+(u===G.host?'<span class="pts zero">Leitung</span>':(amHost()&&u!==ME?'<button class="kickb" data-act="kick" data-u="'+h(u)+'" aria-label="Entfernen">'+(L.confirm==="kick"+u?'Raus?':'✕')+'</button>':''))+'</div>';}).join('')+'</div>':'<p class="muted">Noch niemand.</p>';
     out+='</div>';
   return out;
 }
@@ -3863,6 +3865,10 @@ FIG_IDS.push("schildkroete","hase","baby","papagei","loewe","tiger");
 Object.assign(FIGFX,{schildkroete:{e:"🐢🍃",land:"Langsam, aber da!",bad:"🍃"},hase:{e:"🥕🐰",land:"Hopp!",bad:"🥕"},baby:{e:"🍼🧸",land:"Gaga!",bad:"💧"},papagei:{e:"🦜🍉",land:"Krah! Hallo!",bad:"🪶"},loewe:{e:"🦁👑",land:"Brüll!",bad:"💢"},tiger:{e:"🐯🔥",land:"Fauch!",bad:"💢"}});
 function figFx(u){return FIGFX[profOf(u).fig]||FIGFX.brezn;}
 let badUntil={},lobbySeen={};
+/* Champion-Auftritt nach Siegquote (ab 10 Gruppenspielen) */
+const CHAMP=[null,{n:"Favorit",e:"🎺",fx:"confetti",q:40},{n:"Champion",e:"👑",fx:"emo:👑✨",q:50},{n:"Legende",e:"🏆",fx:"emo:🎆🏆✨",q:60}];
+function champTier(u){const a=progOf(u);if(!a||(a.games||0)<10)return 0;const q=a.wins/a.games;return q>=0.6?3:q>=0.5?2:q>=0.4?1:0;}
+function champTag(u){const t=champTier(u);if(!t)return '';const a=progOf(u);return ' · <span class="champ c'+t+'">'+CHAMP[t].e+' '+CHAMP[t].n+' '+Math.round(a.wins/a.games*100)+' %</span>';}
 function figLobbyFx(){
   if(!G||G.phase!=="lobby")return;
   const seen=lobbySeen[G.v]||(lobbySeen[G.v]={});
@@ -3872,6 +3878,8 @@ function figLobbyFx(){
     const f=figFx(u),phx=u===FOUNDER&&isPhx();
     setTimeout(()=>{
       if(!fxAllowed())return;
+      const ct=champTier(u),C=CHAMP[ct];
+      if(ct&&!phx){showToast('<span class="toast-e">'+C.e+'</span>'+avHtml(u,34)+'<span>'+C.n+' <strong>'+nm(u)+'</strong> betritt den Raum'+(ct===3?'. Alle aufstehen!':'!')+'</span>',()=>{if(!fxAllowed())return;fxParticles(C.fx);sfx.fanfare();if(ct===3)setTimeout(()=>{if(fxAllowed())fxParticles("confetti");},900);});return;}
       showToast('<span class="toast-e">'+(phx?'🐦‍🔥':Array.from(f.e)[0])+'</span>'+avHtml(u,34)+'<span><strong>'+nm(u)+'</strong> ist da: '+h(f.land)+'</span>',()=>{
         if(!fxAllowed())return;if(phx){fxParticles("embers");sfx.fanfare();return;}fxParticles("rise:"+f.e);sfx.fanfare();});
     },300);
@@ -4328,7 +4336,7 @@ function founderWatch(){
     if(!s.exists&&new URLSearchParams(location.search).get("gruender")===FOUNDER_KEY)DB.doc("config/founder").set({u:ME,at:Date.now()}).catch(()=>{});},()=>{});
 }
 if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js",{scope:"./"}).catch(()=>{});
-const BUILD_ID="1791629663";
+const BUILD_ID="1791629764";
 function verCheck(){fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(r=>r.json()).then(j=>{if(j&&j.v&&j.v!==BUILD_ID&&!document.getElementById("upd")){const b=document.createElement("button");b.id="upd";b.textContent="✨ Neue Version da. Tippen zum Laden";b.onclick=()=>location.reload();document.body.appendChild(b);}}).catch(()=>{});}
 setInterval(verCheck,60000);document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")verCheck();});setTimeout(verCheck,5000);
 (async function boot(){
