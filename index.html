@@ -2553,16 +2553,14 @@ function lobbyPlayers(){
   if(!G)return [];
   return Object.keys(P).filter(u=>P[u]&&P[u].g===G.v&&isActive(u)).sort((a,b)=>(P[a].t||0)-(P[b].t||0)).slice(0,MAXP);
 }
-/* Anwesenheit: wer die Seite schließt, verschwindet nach ~90 s aus der Lobby */
-const AWAY_MS=90000;
+/* Anwesenheit: wer die Seite schließt, verschwindet nach 3 Minuten aus der Lobby */
+const AWAY_MS=180000;
 function isActive(u){if(u===ME||(G&&u===G.host))return true;const s=P[u]&&P[u].seen;return typeof s!=="number"||Date.now()-s<AWAY_MS;}
 function inLobbyMe(){return !!(ME&&G&&G.phase==="lobby"&&P[ME]&&P[ME].g===G.v);}
 function beat(){if(!inLobbyMe()||document.visibilityState!=="visible")return;meWrite(()=>myRef().update({seen:Date.now()}));}
 setInterval(beat,30000);
 setInterval(()=>{if(G&&G.phase==="lobby")renderAll();},15000);
-function goAway(){if(inLobbyMe()&&G.host!==ME){try{myRef().update({seen:1});}catch(e){}}}
-document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")beat();else goAway();});
-window.addEventListener("pagehide",goAway);
+document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")beat();});
 function colOf(u){
   let i=roster().indexOf(u);
   if(i<0)i=lobbyPlayers().indexOf(u);
