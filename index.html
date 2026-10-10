@@ -2894,6 +2894,7 @@ function vMain(){
     if(L.view==="custom")return vCustom();
     if(L.view==="guide")return vGuide();
     if(L.view==="reports"&&ME===FOUNDER)return vReports();
+    if(L.view==="merge"&&ME===FOUNDER)return vMerge();
     if(L.view==="solo"&&!SOLO)return vSolo();
     if(L.view==="avatar")return vEditor();
     if(L.view==="profile"&&L.pu)return vProfile(L.pu);
@@ -3190,7 +3191,7 @@ function vStatus(){
 function vMenu(){
   let b='<button class="btn" data-act="menuclose">Weiter</button><button class="btn alt" data-act="board">Siegerboard</button><button class="btn alt" data-act="avatar">Avatar</button><button class="btn alt" data-act="custom">✍️ Eigene Frage</button>';
   b+='<button class="btn alt" data-act="guide">📖 Anleitung</button>';
-  if(ME===FOUNDER){const n=REPS.length;b+='<button class="btn alt" data-act="reports">🚩 Gemeldete Fragen'+(n?' ('+n+')':'')+'</button>';}
+  if(ME===FOUNDER){const n=REPS.length;b+='<button class="btn alt" data-act="reports">🚩 Gemeldete Fragen'+(n?' ('+n+')':'')+'</button><button class="btn alt" data-act="merge">🔗 Profile zusammenführen</button>';}
   b+='<div class="mduo"><button class="btn alt" data-act="devcopy">📲 Code kopieren</button><button class="btn alt" data-act="devload">📥 Profil laden</button></div>';
   b+='<div class="mtog"><button class="mtg" data-act="sound"><span>🔊 Sound</span><span class="tsw'+(soundOn?' on':'')+'"><i></i></span></button><button class="mtg" data-act="fxtoggle"><span>✨ Effekte</span><span class="tsw'+(fxOn?' on':'')+'"><i></i></span></button></div>';
   if(!amHost()&&G&&(G.phase==="lobby"||G.phase==="play"))b+='<button class="btn alt" data-act="takeover">'+(L.confirm==="takeover"?'Sicher? Nochmal tippen':'Spielleitung übernehmen')+'</button>';
@@ -3199,7 +3200,7 @@ function vMenu(){
 }
 
 /* ---------- Rendern ---------- */
-function viewKey(){if(L.view==="guide")return "guide"+(SAMPLE?1:0);if(L.view==="reports")return "rep"+repSig+(L.confirm||"");return (L.showDaily?"D":"")+(L.view==="solo"?JSON.stringify([L.soloN,L.soloD,L.soloLen,L.soloTheme,FOUNDER]):"")+(SOLO?"S":"")+(L.view?L.view+"|"+L.pu+"|"+(L.view==="avatar"?L.edTab:"")+"|"+profVer:"")+"|"+progVer;}
+function viewKey(){if(L.view==="guide")return "guide"+(SAMPLE?1:0);if(L.view==="reports")return "rep"+repSig+(L.confirm||"");if(L.view==="merge")return "mg"+L.mA+L.mB+JSON.stringify(ALIAS)+RAW.res.length+(L.confirm||"");return (L.showDaily?"D":"")+(L.view==="solo"?JSON.stringify([L.soloN,L.soloD,L.soloLen,L.soloTheme,FOUNDER]):"")+(SOLO?"S":"")+(L.view?L.view+"|"+L.pu+"|"+(L.view==="avatar"?L.edTab:"")+"|"+profVer:"")+"|"+progVer;}
 function mainKey(){
   if(dbState!=="ok")return dbState;
   if(!G)return "nogame"+viewKey();
@@ -3285,7 +3286,7 @@ function startConfetti(){
 /* ---------- Eingaben ---------- */
 function act(a,d){
   const st=step();
-  if(a!=="takeover"&&a!=="abort"&&a!=="joker"&&a!=="kick")L.confirm=null;
+  if(a!=="takeover"&&a!=="abort"&&a!=="joker"&&a!=="kick"&&a!=="mdo")L.confirm=null;
   switch(a){
     case "newlobby":newLobby();break;
     case "join":join(G.v);break;
@@ -3350,6 +3351,10 @@ function act(a,d){
     case "solod":{const a=(L.soloD||[1,1,1]).slice();a[Number(d.k)]=Number(d.v);L.soloD=a;renderAll(true);}break;
     case "sololen":L.soloLen=d.l;renderAll(true);break;
     case "solostart":soloStart();break;
+    case "merge":if(ME===FOUNDER){L.view="merge";L.mA=null;L.mB=null;L.menu=false;renderAll(true);window.scrollTo(0,0);}break;
+    case "mpick":if(ME===FOUNDER&&d.u){if(L.mA===d.u)L.mA=null;else if(L.mB===d.u)L.mB=null;else if(!L.mA)L.mA=d.u;else L.mB=d.u;renderAll(true);}break;
+    case "mdo":if(ME===FOUNDER&&L.mA&&L.mB&&L.mA!==L.mB){if(L.confirm!=="mdo"){L.confirm="mdo";renderAll(true);break;}L.confirm=null;const a=L.mA,b=L.mB;ALIAS[a]=b;L.mA=null;L.mB=null;meWrite(()=>DB.doc("alias/"+a).set({to:b,at:Date.now()}));applyAlias();}break;
+    case "mundo":if(ME===FOUNDER&&d.u){delete ALIAS[d.u];meWrite(()=>DB.doc("alias/"+d.u).delete());applyAlias();}break;
     case "reports":if(ME===FOUNDER){L.view="reports";L.menu=false;renderAll(true);window.scrollTo(0,0);}break;
     case "repdel":if(ME===FOUNDER&&d.id){REPS=REPS.filter(r=>r.id!==d.id);repSig+="x";meWrite(()=>DB.doc("reports/"+d.id).delete());renderAll(true);}break;
     case "guide":L.view="guide";L.menu=false;renderAll(true);window.scrollTo(0,0);break;
@@ -4024,6 +4029,28 @@ function onChange(){
 }
 /* ========== EXTRAS 2 (Okt 2026): Rückblick, Tagesfrage, Liga, Gruppenfragen, Thema, Teams ========== */
 let DAILY=[],CUST=[],dataVer=0;
+/* Profile zusammenführen: alias/{alteID} = {to: neueID} */
+let ALIAS={};const RAW={res:[],solo:[],daily:[]};
+function aliFix(o){const ks=Object.keys(ALIAS);if(!ks.length)return o;let t=JSON.stringify(o),hit=false;ks.forEach(k=>{if(t.indexOf(k)>=0){hit=true;let to=ALIAS[k],n=0;while(ALIAS[to]&&n++<5)to=ALIAS[to];t=t.split(k).join(to);}});return hit?JSON.parse(t):o;}
+function applyAlias(){RES=RAW.res.map(aliFix);SOLORES=RAW.solo.map(aliFix);DAILY=RAW.daily.map(aliFix);PROG=buildProg(allRes());progVer++;renderAll();}
+function mergeList(){const m={};const add=(u,n,at,solo)=>{if(!u||/^bot_/.test(u))return;const x=m[u]||(m[u]={u:u,n:"",g:0,s:0,last:0});if(n)x.n=n;if(solo)x.s++;else x.g++;x.last=Math.max(x.last,num0(at));};
+  RAW.res.forEach(r=>{if(r&&Array.isArray(r.players))r.players.forEach(p=>p&&add(p.u,p.name,r.at,false));});
+  RAW.solo.forEach(r=>{if(r&&Array.isArray(r.players))r.players.forEach(p=>p&&add(p.u,p.name,r.at,true));});
+  Object.keys(P).forEach(u=>{if(!m[u]&&P[u]&&P[u].name)add(u,P[u].name,0,false),m[u].g--;});
+  return Object.values(m).sort((a,b)=>(a.n||"").localeCompare(b.n||"")||b.last-a.last);}
+function vMerge(){
+  const d=t=>t?new Date(t).toLocaleDateString("de-DE",{day:"2-digit",month:"2-digit",year:"2-digit"}):"–";
+  const L1=mergeList(),A=L.mA,B=L.mB;
+  let o='<div class="marquee fade"><div class="mq-in"><div class="eyebrow">Nur für dich</div><h2 class="rtitle">Profile zusammenführen</h2></div></div>';
+  o+='<div class="card"><p class="muted">Wenn jemand doppelt existiert: Erst das <b>alte</b> Profil antippen, dann das <b>neue</b> (das gerade benutzt wird). Danach zählen alle alten Spiele zum neuen Profil.</p><div class="rows">';
+  L1.forEach(x=>{if(ALIAS[x.u])return;const sel=x.u===A?' style="outline:3px solid var(--bad)"':x.u===B?' style="outline:3px solid var(--good,#58d68d)"':'';
+    o+='<button class="row" data-act="mpick" data-u="'+h(x.u)+'"'+sel+'><span class="who">'+h(x.n||"?")+(x.u===A?' <small>· ALT</small>':x.u===B?' <small>· NEU</small>':'')+(x.u===ME?' <small class="muted">(du)</small>':'')+'<br><span class="muted" style="font-weight:600;font-size:13px">'+x.g+' Spiele'+(x.s?' · '+x.s+' solo':'')+' · zuletzt '+d(x.last)+' · Code …'+h(x.u.slice(-4))+'</span></span></button>';});
+  o+='</div></div>';
+  if(A&&B)o+='<button class="btn" data-act="mdo">'+(L.confirm==="mdo"?'Sicher? Nochmal tippen':'Zusammenführen')+'</button>';
+  const al=Object.keys(ALIAS);
+  if(al.length){o+='<div class="card"><div class="eyebrow">Schon zusammengeführt</div><div class="rows">'+al.map(k=>{const f=L1.find(x=>x.u===k),t=L1.find(x=>x.u===ALIAS[k]);return '<div class="row"><span class="who">'+h(f&&f.n||"?")+' (…'+h(k.slice(-4))+') → '+h(t&&t.n||"?")+' (…'+h(ALIAS[k].slice(-4))+')</span><button class="btn alt" style="width:auto;margin:0;padding:8px 12px" data-act="mundo" data-u="'+h(k)+'">Zurück</button></div>';}).join('')+'</div></div>';}
+  return o+'<button class="btn alt" data-act="boardclose">Zurück</button>';
+}
 const THEME_MC=["natur","geo","wissen","natur","geo","essen","natur","bayern","geo","essen","geo","wissen","geschichte","geo","wissen","kultur","geo","geo","bayern","wissen","kultur","geschichte","natur","geo","geo","geschichte","natur","alltag","geo","wissen","geo","kultur","geo","wissen","geschichte","geo","natur","geo","wissen","geo","natur","geo","alltag","natur","geschichte","kultur","geo","geo","geo","geo","geo","geo","geo","geo","geo","geo","geo","geo","geo","geo","geo","geo","geo","geo","geo","geo","geo","geo","geo","geo","bayern","geo","bayern","geo","geo","geo","geo","geo","geo","geo","geo","geo","geo","geo","geo","geo","geo","geo","geo","geo","geo","geo","geo","geo","geo","geo","geo","geo","geo","geo","geo","geo","geo","geschichte","geschichte","geschichte","geschichte","geschichte","bayern","geschichte","geschichte","geschichte","geschichte","geschichte","geschichte","geschichte","wissen","geschichte","geschichte","geschichte","geschichte","geschichte","geschichte","geschichte","geschichte","geschichte","geschichte","geschichte","geschichte","geschichte","geschichte","geschichte","geschichte","geschichte","geschichte","geschichte","geschichte","geschichte","geschichte","bayern","sport","wissen","wissen","kultur","geschichte","geschichte","wissen","natur","wissen","wissen","wissen","wissen","wissen","wissen","wissen","wissen","wissen","wissen","wissen","wissen","wissen","wissen","natur","natur","natur","natur","natur","natur","natur","natur","natur","natur","natur","wissen","wissen","wissen","wissen","wissen","wissen","wissen","wissen","wissen","wissen","natur","natur","natur","natur","natur","essen","essen","natur","natur","natur","natur","kultur","kultur","kultur","kultur","kultur","kultur","kultur","kultur","kultur","kultur","kultur","kultur","kultur","kultur","kultur","kultur","kultur","kultur","kultur","kultur","kultur","kultur","kultur","kultur","kultur","kultur","kultur","kultur","kultur","kultur","geo","kultur","kultur","kultur","kultur","kultur","kultur","kultur","kultur","kultur","alltag","alltag","bayern","bayern","kultur","sport","sport","sport","sport","sport","sport","sport","sport","sport","sport","sport","sport","sport","sport","sport","sport","sport","sport","sport","sport","sport","sport","kultur","bayern","sport","essen","essen","essen","essen","bayern","bayern","essen","bayern","alltag","alltag","alltag","alltag","alltag","alltag","alltag","kultur","kultur","kultur","kultur","kultur","wissen","wissen","wissen","alltag","alltag","alltag","bayern","bayern","bayern","bayern","alltag","wissen","wissen","wissen","wissen","wissen","wissen","wissen","wissen","wissen","wissen","wissen","wissen","geo","bayern","bayern","bayern","bayern","geo","geo","geo","geo","geo","geo","geo","geo","geo","geo","geo","geo","natur","wissen","wissen","wissen","wissen","wissen","alltag","kultur","kultur","kultur","kultur","wissen","wissen","geschichte","geschichte","geschichte","kultur","geschichte","geschichte","wissen","geschichte","geschichte","geschichte","kultur","geschichte","wissen","wissen","geschichte","geschichte","kultur","kultur","wissen","geschichte","wissen","sport","sport","sport","sport","sport","sport","sport","sport","sport","sport","sport","sport","sport","sport","sport","sport","sport","sport","sport","sport","sport","sport","sport","sport","sport","sport","bayern","geschichte","geschichte","sport","sport","sport","wissen","geo","geo","geo","geo","geo","geo","geo","geo","geo","geo","geo","geo","geo","geo","geo","geo","geo","geo","geo","geo","geo","geo","geo","geo","geo","geo","geo","geo","geo","geo","geo","geo","geo","geo","geo","geschichte","geschichte","geschichte","geschichte","geschichte","geschichte","geschichte","geschichte","geschichte","geschichte","geschichte","geschichte","geschichte","geschichte","geschichte","geschichte","geschichte","geschichte","geschichte","geschichte","geschichte","geschichte","geschichte","geschichte","geschichte","wissen","geschichte","geschichte","geschichte","geschichte","geschichte","geschichte","geschichte","geschichte","geschichte","natur","natur","natur","natur","natur","natur","natur","natur","natur","natur","natur","natur","natur","natur","natur","natur","natur","natur","natur","natur","natur","natur","natur","natur","natur","natur","natur","natur","natur","natur","natur","natur","natur","natur","natur","wissen","wissen","wissen","wissen","wissen","wissen","wissen","wissen","wissen","wissen","wissen","wissen","wissen","wissen","wissen","wissen","wissen","natur","natur","natur","natur","natur","natur","natur","essen","essen","natur","natur","natur","natur","natur","natur","natur","natur","natur","natur","natur","natur","natur","natur","natur","natur","natur","natur","natur","natur","bayern","bayern","bayern","bayern","bayern","bayern","bayern","bayern","bayern","bayern","bayern","bayern","bayern","bayern","geo","geo","geo","geo","kultur","geo","bayern","bayern","geo","sport","sport","sport","sport","sport","sport","sport","sport","sport","sport","sport","sport","sport","sport","sport","sport","sport","sport","sport","sport","sport","sport","sport","sport","sport","kultur","kultur","kultur","kultur","kultur","kultur","kultur","kultur","kultur","kultur","kultur","kultur","kultur","kultur","kultur","kultur","kultur","kultur","kultur","kultur","kultur","kultur","kultur","kultur","kultur","kultur","kultur","kultur","kultur","kultur","kultur","kultur","kultur","kultur","kultur","kultur","kultur","kultur","kultur","kultur","kultur","kultur","kultur","kultur","kultur","essen","essen","essen","essen","essen","essen","essen","essen","essen","essen","essen","essen","essen","essen","essen","essen","essen","essen","essen","bayern","essen","alltag","alltag","alltag","alltag","alltag","alltag","alltag","alltag","alltag","alltag","alltag","alltag","alltag","alltag","alltag","alltag","alltag","alltag","alltag","alltag","alltag","alltag","alltag","wissen","wissen","wissen","wissen","wissen","wissen","wissen","wissen","wissen","alltag","wissen","wissen","wissen","wissen","wissen","kultur","kultur","wissen","wissen","wissen","wissen","wissen","alltag","kultur","kultur","kultur","kultur","kultur","kultur","kultur","kultur","kultur","kultur","kultur","kultur","kultur","kultur","kultur","kultur","kultur","kultur","kultur","kultur","kultur","kultur","kultur","kultur","alltag","alltag","alltag","alltag","geo","alltag","geo","alltag","alltag","kultur","kultur","kultur","alltag","natur","alltag","geo","alltag","alltag","alltag","kultur","alltag","alltag","alltag","wissen","kultur","kultur","kultur","wissen","wissen","wissen","wissen","wissen","wissen","wissen","geschichte","geschichte","geschichte","geschichte","geschichte","kultur","kultur","alltag","kultur","kultur","kultur","geschichte","geschichte"],THEME_FIN=["natur","geo","alltag","geo","wissen","natur","essen","kultur","wissen","wissen","kultur","geo","sport","natur","geschichte","wissen","essen","wissen","kultur","wissen","natur","kultur","kultur","natur","geschichte","geo","alltag","wissen","wissen","natur","wissen","natur","bayern","sport","kultur","wissen","wissen","geo","wissen","sport","wissen","natur","natur","natur","natur","natur","natur","alltag","geo","geo","geo","geo","geo","geo","geo","geo","geo","geo","geo","alltag","alltag","alltag","alltag","alltag","geo","geo","geo","geo","wissen","wissen","wissen","wissen","wissen","wissen","wissen","wissen","wissen","wissen","wissen","wissen","wissen","wissen","wissen","bayern","bayern","bayern","bayern","bayern","bayern","bayern","bayern","bayern","bayern","kultur","kultur","kultur","kultur","kultur","wissen","wissen","wissen","wissen","alltag","essen","essen","essen","natur","essen","essen","geschichte","geschichte","geschichte","kultur","kultur","kultur","kultur","kultur","kultur","kultur","kultur","kultur","kultur","kultur","kultur","kultur","kultur","kultur","wissen","wissen","wissen","wissen","wissen","wissen","wissen","natur","natur","natur","wissen","natur","natur","sport","sport","sport","sport","sport","sport","sport","sport","sport","sport","sport","sport","sport","sport","sport","wissen","alltag","alltag","alltag","alltag","alltag","alltag","natur","natur","wissen","kultur","kultur"];
 const MONTHS=["Januar","Februar","März","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"];
 function hstr(s){let x=2166136261;for(const c of String(s)){x^=c.charCodeAt(0);x=Math.imul(x,16777619)>>>0;}return x;}
@@ -4502,7 +4529,7 @@ function founderWatch(){
     if(!s.exists&&new URLSearchParams(location.search).get("gruender")===FOUNDER_KEY)DB.doc("config/founder").set({u:ME,at:Date.now()}).catch(()=>{});},()=>{});
 }
 if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js",{scope:"./"}).catch(()=>{});
-const BUILD_ID="1791658071";
+const BUILD_ID="1791658264";
 function verCheck(){fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(r=>r.json()).then(j=>{if(j&&j.v&&j.v!==BUILD_ID&&!document.getElementById("upd")){const b=document.createElement("button");b.id="upd";b.textContent="✨ Neue Version da. Tippen zum Laden";b.onclick=()=>location.reload();document.body.appendChild(b);}}).catch(()=>{});}
 setInterval(verCheck,60000);document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")verCheck();});setTimeout(verCheck,5000);
 (async function boot(){
@@ -4514,10 +4541,11 @@ setInterval(verCheck,60000);document.addEventListener("visibilitychange",()=>{if
   founderWatch();
   gRef().onSnapshot(s=>{RG=s.exists?s.data():null;if(SOLO)return;G=RG;gotGame=true;onChange();},()=>{dbState="nodb";renderAll(true);});
   let resSig="",profSig="";
-  DB.collection("results").onSnapshot(s=>{const r=s.docs.filter(d=>d.exists).map(d=>d.data()),sig=JSON.stringify(r);if(sig===resSig)return;resSig=sig;RES=r;PROG=buildProg(allRes());progVer++;renderAll();},()=>{});
+  DB.collection("results").onSnapshot(s=>{const r=s.docs.filter(d=>d.exists).map(d=>d.data()),sig=JSON.stringify(r);if(sig===resSig)return;resSig=sig;RAW.res=r;applyAlias();},()=>{});
+  DB.collection("alias").onSnapshot(s=>{const m={};s.docs.forEach(d=>{if(d.exists&&d.data()&&typeof d.data().to==="string")m[d.id]=d.data().to;});if(JSON.stringify(m)===JSON.stringify(ALIAS))return;ALIAS=m;applyAlias();},()=>{});
   DB.collection("profiles").onSnapshot(s=>{const m={};s.docs.forEach(d=>{if(d.exists)m[d.id]=d.data();});const sig=JSON.stringify(m);if(sig===profSig)return;profSig=sig;PROFS=m;profVer++;renderAll();},()=>{});
-  DB.collection("solo").onSnapshot(s=>{SOLORES=s.docs.filter(d=>d.exists).map(d=>d.data());PROG=buildProg(allRes());progVer++;renderAll();},()=>{});
-  DB.collection("daily").onSnapshot(s=>{DAILY=s.docs.filter(d=>d.exists).map(d=>d.data());PROG=buildProg(allRes());progVer++;renderAll();},()=>{});
+  DB.collection("solo").onSnapshot(s=>{RAW.solo=s.docs.filter(d=>d.exists).map(d=>d.data());applyAlias();},()=>{});
+  DB.collection("daily").onSnapshot(s=>{RAW.daily=s.docs.filter(d=>d.exists).map(d=>d.data());applyAlias();},()=>{});
   DB.collection("reports").onSnapshot(s=>{const r=s.docs.filter(d=>d.exists).map(d=>Object.assign({id:d.id},d.data())).sort((a,b)=>(b.at||0)-(a.at||0)),sig=JSON.stringify(r.map(x=>x.id));if(sig===repSig)return;repSig=sig;REPS=r;renderAll();},()=>{});
   DB.collection("custom").onSnapshot(s=>{CUST=s.docs.filter(d=>d.exists).map(d=>Object.assign({id:d.id},d.data()));progVer++;renderAll();},()=>{});
   DB.collection("players").onSnapshot(s=>{const m={};s.docs.forEach(d=>{if(d.exists)m[d.id]=d.data();});RP=m;if(SOLO)return;P=m;gotPlayers=true;checkEmos();onChange();},()=>{dbState="nodb";renderAll(true);});
