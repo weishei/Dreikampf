@@ -253,7 +253,7 @@ button.chip{cursor:pointer}
 .tl-i.ok,.mt-i.ok{border-color:var(--good);background:rgba(74,222,128,.14)}
 .tl-i.no,.mt-i.no{border-color:var(--bad);background:rgba(255,90,120,.1)}
 .mt-i b{flex:none;max-width:50%;text-align:right;color:var(--bulb)}
-.mt-s{flex:none;max-width:52%;background:var(--panel);color:var(--fg);border:2px solid var(--line);border-radius:10px;padding:6px 6px;font:600 14px var(--body)}
+.mt-s{flex:none;max-width:52%;background:var(--panel);color:var(--fg);border:2px solid var(--line);border-radius:10px;padding:5px 6px;font:600 16px var(--body)}
 .pctbar{height:14px;border-radius:999px;background:var(--bg2);overflow:hidden;border:1px solid var(--line)}
 .pctbar div{height:100%;background:linear-gradient(90deg,var(--p1),var(--p2))}
 .blank{color:var(--bulb);letter-spacing:1px}
@@ -4538,7 +4538,7 @@ function founderWatch(){
     if(!s.exists&&new URLSearchParams(location.search).get("gruender")===FOUNDER_KEY)DB.doc("config/founder").set({u:ME,at:Date.now()}).catch(()=>{});},()=>{});
 }
 if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js",{scope:"./"}).catch(()=>{});
-const BUILD_ID="1791660072";
+const BUILD_ID="1791660758";
 function verCheck(){fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(r=>r.json()).then(j=>{if(j&&j.v&&j.v!==BUILD_ID&&!document.getElementById("upd")){const b=document.createElement("button");b.id="upd";b.textContent="✨ Neue Version da. Tippen zum Laden";b.onclick=()=>location.reload();document.body.appendChild(b);}}).catch(()=>{});}
 setInterval(verCheck,60000);document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")verCheck();});setTimeout(verCheck,5000);
 (async function boot(){
