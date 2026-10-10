@@ -605,6 +605,7 @@ body.urgent #app::after{content:"";position:fixed;inset:0;pointer-events:none;bo
 .toast-e{font-size:30px;line-height:1}
 @keyframes toastin{from{transform:translateY(-20px) scale(.9);opacity:0}}
 .brow .rank{color:var(--bulb)}
+.waitbar{background:rgba(255,209,102,.14);border:1px solid rgba(255,209,102,.45);color:var(--fg);border-radius:14px;padding:9px 14px;margin:0 0 12px;font-weight:700;font-size:15px;text-align:center}
 </style>
 
 <div id="app"><div id="top"></div><div id="main"></div><div id="status"></div></div>
@@ -2672,7 +2673,10 @@ function lobbyPlayers(){
 const AWAY_MS=180000;
 function isActive(u){if(u===ME||(G&&u===G.host))return true;const s=P[u]&&P[u].seen;return typeof s!=="number"||Date.now()-s<AWAY_MS;}
 function inLobbyMe(){return !!(ME&&G&&G.phase==="lobby"&&P[ME]&&P[ME].g===G.v);}
-function beat(){if(!inLobbyMe()||document.visibilityState!=="visible")return;meWrite(()=>myRef().update({seen:Date.now()}));}
+function amWaiting(){return !!(ME&&G&&G.phase==="play"&&P[ME]&&P[ME].wait===G.v&&!inGame());}
+function waiters(){if(!G||G.phase!=="play"||SOLO)return [];const R=roster();return Object.keys(P).filter(u=>P[u]&&P[u].wait===G.v&&R.indexOf(u)<0&&isActive(u));}
+let autoJ=null;
+function beat(){if(!(inLobbyMe()||amWaiting())||document.visibilityState!=="visible")return;meWrite(()=>myRef().update({seen:Date.now()}));}
 setInterval(beat,30000);
 setInterval(()=>{if(G&&G.phase==="lobby")renderAll();},15000);
 document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")beat();});
@@ -2796,7 +2800,7 @@ function startGame(){
   gWrite(()=>gRef().update({phase:"play",roster:R,steps:steps,idx:0,reveal:false,used:used,hc:hc,teams:tm}));
 }
 function rematch(){
-  const R=roster().slice(),used=JSON.parse(JSON.stringify(G.used||{})),steps=buildSteps(used,R),v=rid(),hc=computeHC(R),tm=(used.teams&&R.length>=4)?makeTeams(R):null;
+  const R=roster().concat(waiters()).slice(0,MAXP),used=JSON.parse(JSON.stringify(G.used||{})),steps=buildSteps(used,R),v=rid(),hc=computeHC(R),tm=(used.teams&&R.length>=4)?makeTeams(R):null;
   gWrite(()=>gRef().set({v:v,phase:"play",host:ME,roster:R,steps:steps,idx:0,reveal:false,used:used,hc:hc,teams:tm}));
 }
 function toLobby(){
@@ -2914,7 +2918,9 @@ function vMain(){
     return out;
   }
   const st=step();if(!st)return '';
-  const spect=!inGame()?'<p class="center muted">Du schaust zu. Mitspielen kannst du ab der nächsten Lobby.</p>':'';
+  const spect=!inGame()?(amWaiting()?'<div class="waitbar">✓ Du bist vorgemerkt. Bei der Revanche oder in der nächsten Lobby bist du automatisch dabei.</div>':'<p class="center muted">Du schaust zu. Das Spiel läuft schon.</p>'+(L.name?'':vMyCard(true))+'<button class="btn" data-act="waitjoin">🙋 Beim nächsten Spiel mitmachen</button>'):'';
+  const wl=inGame()?waiters():[];
+  const wbar=wl.length?'<div class="waitbar">🙋 '+wl.map(u=>h(nameOf(u))).join(', ')+(wl.length>1?' warten':' wartet')+' aufs nächste Spiel</div>':'';
   let body='';
   switch(st.t){
     case "intro":body=vIntro(st);break;
@@ -2943,7 +2949,7 @@ function vMain(){
     if(bd){const ix=body.indexOf('</small></div>');if(body.indexOf('class="verdict')>=0&&ix>=0)body=body.slice(0,ix)+'</small>'+bd+'</div>'+body.slice(ix+'</small></div>'.length);else body='<div class="card tight fade">'+bd+'</div>'+body;}
     if(st.t!=="maj"&&st.t!=="know"&&st.t!=="lun"&&st.t!=="skill"&&st.t!=="bluffw"){const rk=G.v+"|"+G.idx;body+=L.reported&&L.reported[rk]?'<button class="rpt done" disabled>✓ Gemeldet, danke!</button>':'<button class="rpt" data-act="report">⚑ Stimmt was nicht? Frage melden</button>';}
   }
-  return spect+errBox()+jokerBar()+body;
+  return spect+wbar+errBox()+jokerBar()+body;
 }
 
 function waitOrReveal(){
@@ -3160,7 +3166,8 @@ function vEnd(){
   let rows='<div class="rows">';
   o.forEach(i=>{const r=rank(i);rows+='<div class="row" '+cv(R[i])+'><span class="rank">'+r+'</span>'+avHtml(R[i],44,{mood:r===1?"happy":(r===n?"sweat":""),nobadge:true})+'<span class="who">'+nm(R[i])+'<br><span class="muted" style="font-weight:600">'+h(title(i,r))+'</span></span><span class="val" style="font-family:var(--display)">'+fmt(sc[i])+'</span></div>';});
   rows+='</div>';
-  const btns=(amHost()?'<button class="btn stick" data-act="rematch">Revanche mit neuen Fragen</button><button class="btn alt" data-act="tolobby">'+(SOLO?'Solo beenden':'Neue Lobby öffnen')+'</button>':waitNote('Warten auf '+hostName()+' für die Revanche …'))+'<button class="btn alt" data-act="board">Siegerboard</button>';
+  const wl=waiters(),wn=wl.map(u=>h(nameOf(u))).join(', ');
+  const btns=(wl.length?'<div class="waitbar">🙋 '+wn+(wl.length>1?' warten':' wartet')+(amHost()?' und '+(wl.length>1?'spielen':'spielt')+' bei der Revanche mit':' aufs nächste Spiel')+'</div>':'')+(amHost()?'<button class="btn stick" data-act="rematch">Revanche mit neuen Fragen</button><button class="btn alt" data-act="tolobby">'+(SOLO?'Solo beenden':'Neue Lobby öffnen')+'</button>':waitNote('Warten auf '+hostName()+' für die Revanche …'))+'<button class="btn alt" data-act="board">Siegerboard</button>';
   return '<div class="marquee fade"><div class="mq-in"><div class="eyebrow">Endstand</div><h2 class="rtitle">'+head+'</h2><p class="tag">'+(tops.length>1?'Das Stechen findet am Küchentisch statt.':'Applaus, Applaus. Bitte verbeugen.')+'</p></div></div>'+rows+(tw?vTeamBar():'')+'<p class="muted center">Der Sieger trägt bis zum nächsten Spiel die Krone, der Letzte die Eselsohren.</p>'+vRecap()+vXpCard()+btns+vShot();
 }
 
@@ -3197,7 +3204,7 @@ function mainKey(){
   if(!G)return "nogame"+viewKey();
   const st=step(),i=G.idx;
   const ansSig=G.reveal?roster().map(u=>JSON.stringify(getAns(u,i))).join(","):"";
-  return [viewKey(),ansSig,G.phase==="play"?(expired(ME)+"|"+jokerOf(ME,i)+"|"+jokerUsed(ME)):"",G.v,G.phase,i,G.reveal,G.host===ME,P[ME]&&P[ME].g===G.v,inGame(),getAns(ME,i)!==null,L.finLocked,L.err,(G.phase==="lobby")?(lobbyPlayers().length>=2)+JSON.stringify(offModes())+lenOf()+L.showModes+(amHost()?"":themeOf())+teamsOn()+lobbyPlayers().map(u=>u+nameOf(u)).join()+profVer+L.teamInfo+lobbyKI()+L.confirm+(P[ME]&&P[ME].kicked):0,st&&st.t].join("|");
+  return [viewKey(),ansSig,G.phase==="play"?waiters().join()+"|"+amWaiting():"",G.phase==="play"?(expired(ME)+"|"+jokerOf(ME,i)+"|"+jokerUsed(ME)):"",G.v,G.phase,i,G.reveal,G.host===ME,P[ME]&&P[ME].g===G.v,inGame(),getAns(ME,i)!==null,L.finLocked,L.err,(G.phase==="lobby")?(lobbyPlayers().length>=2)+JSON.stringify(offModes())+lenOf()+L.showModes+(amHost()?"":themeOf())+teamsOn()+lobbyPlayers().map(u=>u+nameOf(u)).join()+profVer+L.teamInfo+lobbyKI()+L.confirm+(P[ME]&&P[ME].kicked):0,st&&st.t].join("|");
 }
 function renderAll(force){
   document.body.classList.toggle("nofx",!fxOn);
@@ -3281,6 +3288,7 @@ function act(a,d){
   switch(a){
     case "newlobby":newLobby();break;
     case "join":join(G.v);break;
+    case "waitjoin":if(G&&G.phase==="play"&&!inGame()){const n=saveName();if(n)meWrite(()=>myRef().set({name:n,g:"",wait:G.v,t:Date.now(),seen:Date.now(),ans:{}}));}break;
     case "start":if(amHost()){if(lobbyPlayers().length<2){L.view="solo";L.soloTheme=lobbyKI()?"ki":themeOf();renderAll(true);}else startGame();}break;
     case "next":hostNext();break;
     case "reveal":hostReveal();break;
@@ -3992,6 +4000,7 @@ let prevReveal=null;
 function onChange(){
   if(!gotGame||!gotPlayers)return;
   dbState="ok";
+  if(!SOLO&&G&&G.phase==="lobby"&&P[ME]&&P[ME].wait&&P[ME].g!==G.v&&autoJ!==G.v){autoJ=G.v;const n=P[ME].name||L.name||"Mitspieler";meWrite(()=>myRef().set({name:n,g:G.v,t:Date.now(),seen:Date.now(),ans:{}}));}
   // Ton beim Auflösen
   const rk=G?G.v+"|"+G.idx+"|"+G.reveal:null;
   if(G&&G.reveal&&prevReveal!==rk&&!firstChange&&inGame())revealFx();
@@ -4492,7 +4501,7 @@ function founderWatch(){
     if(!s.exists&&new URLSearchParams(location.search).get("gruender")===FOUNDER_KEY)DB.doc("config/founder").set({u:ME,at:Date.now()}).catch(()=>{});},()=>{});
 }
 if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js",{scope:"./"}).catch(()=>{});
-const BUILD_ID="1791657044";
+const BUILD_ID="1791657667";
 function verCheck(){fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(r=>r.json()).then(j=>{if(j&&j.v&&j.v!==BUILD_ID&&!document.getElementById("upd")){const b=document.createElement("button");b.id="upd";b.textContent="✨ Neue Version da. Tippen zum Laden";b.onclick=()=>location.reload();document.body.appendChild(b);}}).catch(()=>{});}
 setInterval(verCheck,60000);document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")verCheck();});setTimeout(verCheck,5000);
 (async function boot(){
