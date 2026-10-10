@@ -3200,7 +3200,7 @@ function vMenu(){
 }
 
 /* ---------- Rendern ---------- */
-function viewKey(){if(L.view==="guide")return "guide"+(SAMPLE?1:0);if(L.view==="reports")return "rep"+repSig+(L.confirm||"");if(L.view==="merge")return "mg"+L.mA+L.mB+JSON.stringify(ALIAS)+RAW.res.length+(L.confirm||"");return (L.showDaily?"D":"")+(L.view==="solo"?JSON.stringify([L.soloN,L.soloD,L.soloLen,L.soloTheme,FOUNDER]):"")+(SOLO?"S":"")+(L.view?L.view+"|"+L.pu+"|"+(L.view==="avatar"?L.edTab:"")+"|"+profVer:"")+"|"+progVer;}
+function viewKey(){if(L.view==="guide")return "guide"+(SAMPLE?1:0);if(L.view==="reports")return "rep"+repSig+(L.confirm||"");if(L.view==="merge")return "mg"+L.mA+L.mB+(L.migMsg||"")+JSON.stringify(ALIAS)+RAW.res.length+(L.confirm||"");return (L.showDaily?"D":"")+(L.view==="solo"?JSON.stringify([L.soloN,L.soloD,L.soloLen,L.soloTheme,FOUNDER]):"")+(SOLO?"S":"")+(L.view?L.view+"|"+L.pu+"|"+(L.view==="avatar"?L.edTab:"")+"|"+profVer:"")+"|"+progVer;}
 function mainKey(){
   if(dbState!=="ok")return dbState;
   if(!G)return "nogame"+viewKey();
@@ -3354,6 +3354,7 @@ function act(a,d){
     case "merge":if(ME===FOUNDER){L.view="merge";L.mA=null;L.mB=null;L.menu=false;renderAll(true);window.scrollTo(0,0);}break;
     case "mpick":if(ME===FOUNDER&&d.u){if(L.mA===d.u)L.mA=null;else if(L.mB===d.u)L.mB=null;else if(!L.mA)L.mA=d.u;else L.mB=d.u;renderAll(true);}break;
     case "mdo":if(ME===FOUNDER&&L.mA&&L.mB&&L.mA!==L.mB){if(L.confirm!=="mdo"){L.confirm="mdo";renderAll(true);break;}L.confirm=null;const a=L.mA,b=L.mB;ALIAS[a]=b;L.mA=null;L.mB=null;meWrite(()=>DB.doc("alias/"+a).set({to:b,at:Date.now()}));applyAlias();}break;
+    case "migr":if(ME===FOUNDER){L.migMsg="Lade …";renderAll(true);fetch("migr.json?t="+Date.now(),{cache:"no-store"}).then(r=>r.json()).then(j=>{let n=0;["results","daily"].forEach(c=>{const m=j&&j[c]||{};Object.keys(m).forEach(id=>{meWrite(()=>DB.doc(c+"/"+id).set(m[id]));n++;});});L.migMsg="✓ "+n+" alte Einträge übernommen. Jetzt oben jeweils alt → neu zusammenführen.";renderAll(true);}).catch(()=>{L.migMsg="Geht nur in der Web-Version.";renderAll(true);});}break;
     case "mundo":if(ME===FOUNDER&&d.u){delete ALIAS[d.u];meWrite(()=>DB.doc("alias/"+d.u).delete());applyAlias();}break;
     case "reports":if(ME===FOUNDER){L.view="reports";L.menu=false;renderAll(true);window.scrollTo(0,0);}break;
     case "repdel":if(ME===FOUNDER&&d.id){REPS=REPS.filter(r=>r.id!==d.id);repSig+="x";meWrite(()=>DB.doc("reports/"+d.id).delete());renderAll(true);}break;
@@ -4046,6 +4047,7 @@ function vMerge(){
   L1.forEach(x=>{if(ALIAS[x.u])return;const sel=x.u===A?' style="outline:3px solid var(--bad)"':x.u===B?' style="outline:3px solid var(--good,#58d68d)"':'';
     o+='<button class="row" data-act="mpick" data-u="'+h(x.u)+'"'+sel+'><span class="who">'+h(x.n||"?")+(x.u===A?' <small>· ALT</small>':x.u===B?' <small>· NEU</small>':'')+(x.u===ME?' <small class="muted">(du)</small>':'')+'<br><span class="muted" style="font-weight:600;font-size:13px">'+x.g+' Spiele'+(x.s?' · '+x.s+' solo':'')+' · zuletzt '+d(x.last)+' · Code …'+h(x.u.slice(-4))+'</span></span></button>';});
   o+='</div></div>';
+  o+='<div class="card"><p class="muted" style="margin-top:0">Spiele aus der alten Claude-Version (claude.ai-Link) einmalig hierher holen. Danach erscheinen die alten Profile in der Liste oben und lassen sich mit den neuen zusammenführen.</p><button class="btn alt" data-act="migr">📦 Alte Claude-Spiele übernehmen</button>'+(L.migMsg?'<p class="center"><b>'+h(L.migMsg)+'</b></p>':'')+'</div>';
   if(A&&B)o+='<button class="btn" data-act="mdo">'+(L.confirm==="mdo"?'Sicher? Nochmal tippen':'Zusammenführen')+'</button>';
   const al=Object.keys(ALIAS);
   if(al.length){o+='<div class="card"><div class="eyebrow">Schon zusammengeführt</div><div class="rows">'+al.map(k=>{const f=L1.find(x=>x.u===k),t=L1.find(x=>x.u===ALIAS[k]);return '<div class="row"><span class="who">'+h(f&&f.n||"?")+' (…'+h(k.slice(-4))+') → '+h(t&&t.n||"?")+' (…'+h(ALIAS[k].slice(-4))+')</span><button class="btn alt" style="width:auto;margin:0;padding:8px 12px" data-act="mundo" data-u="'+h(k)+'">Zurück</button></div>';}).join('')+'</div></div>';}
@@ -4529,7 +4531,7 @@ function founderWatch(){
     if(!s.exists&&new URLSearchParams(location.search).get("gruender")===FOUNDER_KEY)DB.doc("config/founder").set({u:ME,at:Date.now()}).catch(()=>{});},()=>{});
 }
 if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js",{scope:"./"}).catch(()=>{});
-const BUILD_ID="1791658264";
+const BUILD_ID="1791659131";
 function verCheck(){fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(r=>r.json()).then(j=>{if(j&&j.v&&j.v!==BUILD_ID&&!document.getElementById("upd")){const b=document.createElement("button");b.id="upd";b.textContent="✨ Neue Version da. Tippen zum Laden";b.onclick=()=>location.reload();document.body.appendChild(b);}}).catch(()=>{});}
 setInterval(verCheck,60000);document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")verCheck();});setTimeout(verCheck,5000);
 (async function boot(){
