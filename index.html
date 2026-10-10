@@ -2864,7 +2864,7 @@ function vMain(){
     if(!joined){
       out+=(P[ME]&&P[ME].kicked===G.v?'<div class="msg">'+h(hostName())+' hat dich aus der Lobby genommen. Du kannst wieder beitreten.</div>':'')+vMyCard(true)+errBox()+'<button class="btn" data-act="join">Mitspielen</button>';
     }else if(amHost()){
-      out+=errBox()+'<div class="strow"><button class="btn" id="startbtn" data-act="start">Spiel starten</button><button class="btn alt invb" data-act="invite" aria-label="Alle einladen">📣<small>Einladen</small></button></div><p class="center muted small">Allein? Dann gegen den Computer. Mit anderen ab 2 Leuten, maximal '+MAXP+'.</p>';
+      out+=errBox()+'<div class="strow"><button class="btn" id="startbtn" data-act="start">Spiel starten</button><button class="btn alt invb" data-act="invite" aria-label="Alle einladen">📣<small>Einladen</small></button></div><p class="center muted small">Allein gegen Computer, sonst 2 bis '+MAXP+' Leute</p>';
     }else{
       out+=errBox()+waitNote('Du bist dabei. Warten, bis '+hostName()+' startet …');
     }
@@ -4308,7 +4308,7 @@ function founderWatch(){
     if(!s.exists&&new URLSearchParams(location.search).get("gruender")===FOUNDER_KEY)DB.doc("config/founder").set({u:ME,at:Date.now()}).catch(()=>{});},()=>{});
 }
 if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js",{scope:"./"}).catch(()=>{});
-const BUILD_ID="1791627346";
+const BUILD_ID="1791628978";
 function verCheck(){fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(r=>r.json()).then(j=>{if(j&&j.v&&j.v!==BUILD_ID&&!document.getElementById("upd")){const b=document.createElement("button");b.id="upd";b.textContent="✨ Neue Version da. Tippen zum Laden";b.onclick=()=>location.reload();document.body.appendChild(b);}}).catch(()=>{});}
 setInterval(verCheck,60000);document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")verCheck();});setTimeout(verCheck,5000);
 (async function boot(){
