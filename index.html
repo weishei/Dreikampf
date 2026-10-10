@@ -2251,7 +2251,7 @@ const SKG={
  balloon:{t:"Ballon-Poker",e:"🎈",r:"Pumpe den Ballon auf, jeder Pumpstoß zählt. Irgendwann platzt er! Kassiere rechtzeitig. Geplatzt gibt nichts."},
  blind:{t:"Gefühlte Zeit",e:"🙈",r:"Stoppe genau nach der angezeigten Zeit. Eine Uhr gibt es nicht, nur dein Gefühl."},
  aim:{t:"Treffsicher",e:"🏹",r:"Tippe 10 Zielscheiben so schnell du kannst. Daneben tippen kostet 0,25 Sekunden."},
- stroop:{t:"Farb-Chaos",e:"🌈",r:"Ein Farbwort steht in einer anderen Farbe da. Tippe die Farbe, in der es GESCHRIEBEN ist. 10 Runden, jeder Fehler kostet 1,5 Sekunden."},
+ stroop:{t:"Farb-Chaos",e:"🌈",r:"Tippe die SCHRIFTFARBE, nicht das Wort. Beispiel: Steht „ROT“ in grüner Schrift da, tippst du Grün. 10 Runden, jeder Fehler kostet 1,5 Sekunden."},
  order:{t:"Zahlen-Jagd",e:"🔢",r:"Tippe die Zahlen von 1 bis 12 der Reihe nach, so schnell du kannst. Falsch tippen kostet 1 Sekunde."}
 };
 const SK_LOW={stop:1,react:1,bar:1,blind:1,aim:1,stroop:1,order:1};
@@ -4455,7 +4455,7 @@ function founderWatch(){
     if(!s.exists&&new URLSearchParams(location.search).get("gruender")===FOUNDER_KEY)DB.doc("config/founder").set({u:ME,at:Date.now()}).catch(()=>{});},()=>{});
 }
 if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js",{scope:"./"}).catch(()=>{});
-const BUILD_ID="1791631202";
+const BUILD_ID="1791639082";
 function verCheck(){fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(r=>r.json()).then(j=>{if(j&&j.v&&j.v!==BUILD_ID&&!document.getElementById("upd")){const b=document.createElement("button");b.id="upd";b.textContent="✨ Neue Version da. Tippen zum Laden";b.onclick=()=>location.reload();document.body.appendChild(b);}}).catch(()=>{});}
 setInterval(verCheck,60000);document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")verCheck();});setTimeout(verCheck,5000);
 (async function boot(){
