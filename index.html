@@ -1897,7 +1897,7 @@ const MODES={
  who:{t:"Wer bin ich?",r:"Du siehst erst einen Hinweis und kannst selbst weitere aufdecken. Jeder weitere Hinweis kostet 40 Punkte: Mit 1 Hinweis gibt es 200 Punkte, mit allen 5 nur noch 40. Falsch gibt 0.",n:"3 Rätsel"},
  hl:{t:"Mehr oder weniger",r:"Zwei Dinge, eine Frage: Was ist höher, länger oder älter? Einfach antippen. Richtig gibt 100 Punkte.",n:"5 Duelle"},
  bluff:{t:"Bluff-Runde",r:"Zu einer kuriosen Frage denkt sich jeder eine falsche, aber glaubwürdige Antwort aus. Dann sehen alle die echte Antwort zwischen euren Bluffs. Die echte finden: 200 Punkte. Für jeden, der auf deinen Bluff reinfällt: 100 Punkte.",n:"2 Fragen"},
- iq:{t:"Köpfchen-Runde",r:"Hier hilft kein Wissen, nur Nachdenken: Zahlenreihen, Analogien und Denkrätsel. Richtig gibt 100 Punkte.",n:"5 Rätsel"},
+ iq:{t:"Köpfchen-Runde",r:"Hier hilft kein Wissen, nur Nachdenken: Zahlenreihen, Analogien und Denkrätsel. Jeder hat immer die vollen 2 Minuten. Richtig gibt 100 Punkte.",n:"5 Rätsel"},
  fin:{t:"Finale: Alles oder nichts",r:"Jeder setzt geheim Punkte auf die Kategorie, dann kommt die Frage. Richtig: Einsatz dazu. Falsch: Einsatz weg. Unter 100 Punkten darf man trotzdem bis 100 setzen.",n:"1 Frage"}
 };
 const POOL_MODES=["size","est","time","pct","match","odd","who","hl","bluff","iq"];
@@ -3967,7 +3967,7 @@ function hostTick(){
   if(revealPending===k&&now-(hostTick.rt||0)>5000){revealPending=null;dlSet=null;}
   const R=roster(),missing=R.filter(u=>getAns(u,G.idx)===null&&!expired(u)).length;
   if(missing===0&&revealPending!==k){revealPending=k;hostReveal();return;}
-  if(!SOLO&&R.length>1&&missing===1&&st.t!=="skill"&&G.dl-now>Q_LAST&&dlShort!==k){dlShort=k;gWrite(()=>gRef().update({dl:now+Q_LAST}));}
+  if(!SOLO&&!st.iq&&R.length>1&&missing===1&&st.t!=="skill"&&G.dl-now>Q_LAST&&dlShort!==k){dlShort=k;gWrite(()=>gRef().update({dl:now+Q_LAST}));}
   if(now>=G.dl&&revealPending!==k){revealPending=k;hostReveal();}
 }
 function timerTick(){
@@ -4492,7 +4492,7 @@ function founderWatch(){
     if(!s.exists&&new URLSearchParams(location.search).get("gruender")===FOUNDER_KEY)DB.doc("config/founder").set({u:ME,at:Date.now()}).catch(()=>{});},()=>{});
 }
 if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js",{scope:"./"}).catch(()=>{});
-const BUILD_ID="1791655645";
+const BUILD_ID="1791655691";
 function verCheck(){fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(r=>r.json()).then(j=>{if(j&&j.v&&j.v!==BUILD_ID&&!document.getElementById("upd")){const b=document.createElement("button");b.id="upd";b.textContent="✨ Neue Version da. Tippen zum Laden";b.onclick=()=>location.reload();document.body.appendChild(b);}}).catch(()=>{});}
 setInterval(verCheck,60000);document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")verCheck();});setTimeout(verCheck,5000);
 (async function boot(){
