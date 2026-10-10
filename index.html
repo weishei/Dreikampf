@@ -3231,7 +3231,7 @@ function fitStage(){
   if(stageFitKey===key)return false;
   stageFitKey=key;
   const over=document.documentElement.scrollHeight-window.innerHeight;
-  const want=Math.max(150,Math.min(350,STAGE_H-over-6));
+  const want=Math.max(270,Math.min(350,STAGE_H-over-6));
   if(Math.abs(want-STAGE_H)<4)return false;
   STAGE_H=want;return true;
 }
@@ -4531,7 +4531,7 @@ function founderWatch(){
     if(!s.exists&&new URLSearchParams(location.search).get("gruender")===FOUNDER_KEY)DB.doc("config/founder").set({u:ME,at:Date.now()}).catch(()=>{});},()=>{});
 }
 if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js",{scope:"./"}).catch(()=>{});
-const BUILD_ID="1791659131";
+const BUILD_ID="1791659141";
 function verCheck(){fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(r=>r.json()).then(j=>{if(j&&j.v&&j.v!==BUILD_ID&&!document.getElementById("upd")){const b=document.createElement("button");b.id="upd";b.textContent="✨ Neue Version da. Tippen zum Laden";b.onclick=()=>location.reload();document.body.appendChild(b);}}).catch(()=>{});}
 setInterval(verCheck,60000);document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")verCheck();});setTimeout(verCheck,5000);
 (async function boot(){
