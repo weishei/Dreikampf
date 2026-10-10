@@ -290,6 +290,16 @@ button.chip{cursor:pointer}
 .skcv{width:100%;height:240px;border-radius:16px;border:2px dashed var(--line);background:var(--bg2);touch-action:none;display:block}
 .skres{font-family:var(--display);font-size:34px}
 .skhide{display:none!important}
+.skbal{font-size:64px;text-align:center;height:190px;display:grid;place-items:center;transition:transform .12s;transform-origin:50% 70%}
+.skduo{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.skaim{position:relative;height:300px;border-radius:18px;border:2px solid var(--line);background:var(--bg2);overflow:hidden;touch-action:manipulation}
+.sktgt{position:absolute;width:58px;height:58px;margin:-29px 0 0 -29px;border-radius:50%;border:0;background:radial-gradient(circle,#fff 0 18%,#ff5a78 19% 38%,#fff 39% 58%,#ff5a78 59%);font-size:0;padding:0;touch-action:manipulation}
+.skword{font-family:var(--display);font-size:46px;text-align:center;padding:24px 0;min-height:60px}
+.skcols{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.skcol{height:72px;border-radius:14px;border:2px solid rgba(255,255,255,.25);touch-action:manipulation}
+.skord{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.skn{font-family:var(--display);font-size:26px;color:var(--fg)}
+.skn.done{opacity:.15}
 .rhl{display:flex;gap:10px;align-items:flex-start;padding:6px 0;border-bottom:1px dashed var(--line);font-size:15px;line-height:1.35}
 .hle{font-size:22px;line-height:1}
 .themes{display:flex;flex-wrap:wrap;gap:6px}
@@ -2184,7 +2194,7 @@ function vEvcard(){
 }
 /* ========== Ende AUSGLEICH ========== */
 /* ========== GESCHICK (Okt 2026): genau ein Geschicklichkeitsspiel pro Spiel ========== */
-const SKILLS=["stop","react","bar","hunt","circle","simon","tap"];
+const SKILLS=["stop","react","bar","hunt","circle","simon","tap","balloon","blind","aim","stroop","order"];
 const SKG={
  stop:{t:"Stoppuhr",e:"⏱️",r:"Stoppe die Uhr bei genau 5,00 Sekunden. Nach 2 Sekunden verschwindet die Anzeige."},
  react:{t:"Reaktionstest",e:"🚦",r:"Tippe, sobald das Feld grün wird. Wer zu früh tippt, geht leer aus."},
@@ -2192,8 +2202,20 @@ const SKG={
  hunt:{t:"Brezn-Jagd",e:"🥨",r:"10 Sekunden: Jede Brezn antippen gibt +1. Finger weg von den Bomben, die kosten 1."},
  circle:{t:"Kreis malen",e:"⭕",r:"Male mit dem Finger in einem Zug einen möglichst runden Kreis."},
  simon:{t:"Merk-Folge",e:"🧠",r:"Die Felder leuchten in einer Reihenfolge auf. Tippe sie genauso nach. Jede Runde kommt ein Feld dazu."},
- tap:{t:"Tipp-Sprint",e:"👆",r:"Tippe 5 Sekunden lang so oft du kannst auf das Feld."}
+ tap:{t:"Tipp-Sprint",e:"👆",r:"Tippe 5 Sekunden lang so oft du kannst auf das Feld."},
+ balloon:{t:"Ballon-Poker",e:"🎈",r:"Pumpe den Ballon auf, jeder Pumpstoß zählt. Irgendwann platzt er! Kassiere rechtzeitig. Geplatzt gibt nichts."},
+ blind:{t:"Gefühlte Zeit",e:"🙈",r:"Stoppe genau nach der angezeigten Zeit. Eine Uhr gibt es nicht, nur dein Gefühl."},
+ aim:{t:"Treffsicher",e:"🏹",r:"Tippe 10 Zielscheiben so schnell du kannst. Daneben tippen kostet 0,25 Sekunden."},
+ stroop:{t:"Farb-Chaos",e:"🌈",r:"Ein Farbwort steht in einer anderen Farbe da. Tippe die Farbe, in der es GESCHRIEBEN ist. 10 Runden, jeder Fehler kostet 1,5 Sekunden."},
+ order:{t:"Zahlen-Jagd",e:"🔢",r:"Tippe die Zahlen von 1 bis 12 der Reihe nach, so schnell du kannst. Falsch tippen kostet 1 Sekunde."}
 };
+const SK_LOW={stop:1,react:1,bar:1,blind:1,aim:1,stroop:1,order:1};
+const STROOP=[["ROT","#ff5a5a"],["BLAU","#4da3ff"],["GRÜN","#4ade80"],["GELB","#ffd23c"]];
+function skBlindT(seed){return 5+Math.floor(skRand(seed)()*6);}
+function skBalloonMax(seed){const r=skRand(seed+7);return 8+Math.floor(r()*25);}
+function skAimPos(seed){const r=skRand(seed+3),o=[];for(let i=0;i<10;i++)o.push([8+r()*84,8+r()*84]);return o;}
+function skStroopSeq(seed){const r=skRand(seed+5),o=[];for(let i=0;i<10;i++){const w=Math.floor(r()*4);let k;do{k=Math.floor(r()*4);}while(k===w);o.push([w,k]);}return o;}
+function skOrderGrid(seed){const r=skRand(seed+9),a=[1,2,3,4,5,6,7,8,9,10,11,12];for(let i=a.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
 const SK_YES=["Ruhige Hand!","Finger wie ein Chirurg.","Das war Maßarbeit.","Reflexe wie eine Katze.","Sauber hingelegt.","Da zittert nichts."];
 const SK_NO=["Heute eher Grobmotorik.","Die Finger waren noch nicht wach.","Knapp vorbei ist auch daneben.","Das üben wir nochmal.","Zwei linke Daumen?"];
 function skTab(n){return n===2?[150,50]:[150,100,50];}
@@ -2202,6 +2224,7 @@ function skMetric(g,a){
   if(g==="stop")return Math.abs(a-5000);
   if(g==="react")return a>=99999?null:a;
   if(g==="bar")return a;
+  if(g==="blind"||g==="aim"||g==="stroop"||g==="order")return a;
   return a>0?-a:null;
 }
 function skillPoints(st,i,R,pts){
@@ -2217,6 +2240,9 @@ function skFmt(g,a){
   if(g==="hunt")return a+(a===1?" Punkt":" Punkte");
   if(g==="circle")return a>0?dn(a,1)+" % rund":"kein Kreis";
   if(g==="simon")return a>0?"Folge von "+a:"Folge verpatzt";
+  if(g==="balloon")return a>0?a+" Pumpstöße":"geplatzt 💥";
+  if(g==="blind")return dn(a/1000,2)+" s daneben";
+  if(g==="aim"||g==="stroop"||g==="order")return dn(a/1000,2)+" s";
   return a+" Tipps";
 }
 let SK={key:""},skRaf=0;
@@ -2231,6 +2257,11 @@ function skStage(st){
   if(g==="hunt")return '<div class="skbox"><div class="skhud"><span id="sks">0 Punkte</span><span id="skt">10,0 s</span></div>'+go+'<div class="skgrid">'+[0,1,2,3,4,5,6,7,8].map(i=>'<button class="skcell" id="skc'+i+'" data-sk="c" data-i="'+i+'"></button>').join('')+'</div></div>';
   if(g==="circle")return '<div class="skbox"><canvas id="skcv" class="skcv"></canvas><p class="center muted small" id="skh">Setz den Finger auf und male los.</p></div>';
   if(g==="simon")return '<div class="skbox"><div class="skhud"><span id="sks">Folge: 3</span><span id="skt">Bereit?</span></div>'+go+'<div class="skq">'+[0,1,2,3].map(i=>'<button class="sksim" id="skc'+i+'" data-sk="c" data-i="'+i+'" style="--c:'+COLS[i]+'"></button>').join('')+'</div></div>';
+  if(g==="balloon")return '<div class="skbox"><div class="skhud"><span id="sks">0 Pumpstöße</span><span id="skt"></span></div>'+go+'<div class="skbal" id="skbl">🎈</div><div class="skduo"><button class="btn skhide" id="skpump" data-sk="c">Pumpen</button><button class="btn alt skhide" id="skcash" data-sk="cash">Kassieren</button></div></div>';
+  if(g==="blind")return '<div class="skbox"><div class="skdisp">'+skBlindT(st.seed)+' Sekunden</div><p class="muted small center">Starten, im Kopf zählen, Stopp tippen.</p>'+go+'</div>';
+  if(g==="aim")return '<div class="skbox"><div class="skhud"><span id="sks">0 von 10</span><span id="skt">0,0 s</span></div>'+go+'<div class="skaim" id="ska" data-sk="miss"><button class="sktgt skhide" id="skg" data-sk="c">🎯</button></div></div>';
+  if(g==="stroop")return '<div class="skbox"><div class="skhud"><span id="sks">Runde 1 von 10</span><span id="skt">0,0 s</span></div>'+go+'<div class="skword" id="skw">&nbsp;</div><div class="skcols">'+STROOP.map((c,i)=>'<button class="skcol" data-sk="c" data-i="'+i+'" style="background:'+c[1]+'" aria-label="'+c[0]+'"></button>').join('')+'</div></div>';
+  if(g==="order")return '<div class="skbox"><div class="skhud"><span id="sks">Nächste: 1</span><span id="skt">0,0 s</span></div>'+go+'<div class="skord">'+skOrderGrid(st.seed).map(v=>'<button class="skcell skn" id="sko'+v+'" data-sk="c" data-v="'+v+'">'+v+'</button>').join('')+'</div></div>';
   return '<div class="skbox"><div class="skhud"><span id="sks">0 Tipps</span><span id="skt">5,0 s</span></div><button class="skpad" id="skp" data-sk="go">Tippe los!</button></div>';
 }
 function vSkill(st){
@@ -2280,6 +2311,10 @@ function skTick(st,now){
     for(let i=0;i<4;i++){const c=skEl("skc"+i);if(c)c.classList.toggle("on",i===lit);}
     const a=skEl("sks"),b=skEl("skt");if(a)a.textContent="Folge: "+s.n;if(b)b.textContent=s.ph==="show"?"Merken …":"Du bist dran";
   }
+  else if(g==="balloon"){const a=skEl("sks"),b=skEl("skbl");if(a)a.textContent=s.n+" Pumpstöße";if(b)b.style.transform="scale("+(1+s.n*0.07)+")";const p=skEl("skpump"),c=skEl("skcash"),go=skEl("skb");if(p)p.classList.remove("skhide");if(c)c.classList.remove("skhide");if(go)go.classList.add("skhide");}
+  else if(g==="aim"){const e=now-s.t0+s.pen,a=skEl("sks"),b=skEl("skt"),t=skEl("skg"),go=skEl("skb");if(go)go.classList.add("skhide");if(a)a.textContent=s.hit+" von 10";if(b)b.textContent=sec(e);if(t){t.classList.remove("skhide");const q=s.pos[s.hit]||[50,50];t.style.left=q[0]+"%";t.style.top=q[1]+"%";}}
+  else if(g==="stroop"){const e=now-s.t0+s.pen,a=skEl("sks"),b=skEl("skt"),w=skEl("skw"),go=skEl("skb");if(go)go.classList.add("skhide");if(a)a.textContent="Runde "+Math.min(10,s.r+1)+" von 10";if(b)b.textContent=sec(e);const q=s.seq[s.r];if(w&&q){w.textContent=STROOP[q[0]][0];w.style.color=STROOP[q[1]][1];}}
+  else if(g==="order"){const e=now-s.t0+s.pen,a=skEl("sks"),b=skEl("skt"),go=skEl("skb");if(go)go.classList.add("skhide");if(a)a.textContent="Nächste: "+s.next;if(b)b.textContent=sec(e);for(let v=1;v<=12;v++){const c=skEl("sko"+v);if(c)c.classList.toggle("done",v<s.next);}}
   else if(g==="tap"){const e=now-s.t0;if(e>=5000){skFinish(s.n);return;}const a=skEl("sks"),b=skEl("skt");if(a)a.textContent=s.n+" Tipps";if(b)b.textContent=sec(5000-e);}
 }
 function skLoop(){
@@ -2303,6 +2338,11 @@ function skTap(k,el){
     else if(g==="react"){s.ph="wait";s.tg=now+2000+Math.random()*3000;el.className="skpad wait";el.textContent="Warte auf Grün …";}
     else if(g==="bar"){s.ph="run";s.off=Math.random()*2;el.textContent="Stopp!";}
     else if(g==="hunt"){s.ph="run";s.score=0;s.ev=skHuntEv(st.seed);el.classList.add("skhide");}
+    else if(g==="balloon"){s.ph="run";s.n=0;s.max=skBalloonMax(st.seed);el.classList.add("skhide");}
+    else if(g==="blind"){s.ph="run";s.T=skBlindT(st.seed)*1000;el.textContent="Stopp!";}
+    else if(g==="aim"){s.ph="run";s.hit=0;s.pen=0;s.pos=skAimPos(st.seed);el.classList.add("skhide");}
+    else if(g==="stroop"){s.ph="run";s.r=0;s.pen=0;s.seq=skStroopSeq(st.seed);el.classList.add("skhide");}
+    else if(g==="order"){s.ph="run";s.next=1;s.pen=0;el.classList.add("skhide");}
     else if(g==="simon"){s.ph="show";s.n=3;s.best=0;s.fl=0;s.fc=-1;s.ts=now+700;const r=skRand(st.seed);s.seq=[];for(let i=0;i<12;i++)s.seq.push(Math.floor(r()*4));el.classList.add("skhide");}
     else{s.ph="run";s.n=1;el.textContent="Tippen, tippen, tippen!";el.classList.add("go");}
     skRun();return;
@@ -2314,6 +2354,25 @@ function skTap(k,el){
     if(k!=="c")return;
     const i=Number(el.dataset.i),e=now-s.t0,v=s.ev.find(x=>x.c===i&&!x.hit&&e>=x.t&&e<x.t+x.life);
     if(v){v.hit=true;s.score+=v.good?1:-1;el.textContent="";(v.good?sfx.pop:sfx.bad)();}
+  }
+  else if(g==="balloon"){
+    if(k==="c"){s.n++;sfx.pop();if(s.n>=s.max){const b=skEl("skbl");if(b)b.textContent="💥";skFinish(0);}}
+    else if(k==="cash"&&s.n>0)skFinish(s.n);
+  }
+  else if(g==="blind"){if(k==="go"&&now-s.t0>500)skFinish(Math.round(Math.abs(now-s.t0-s.T)));}
+  else if(g==="aim"){
+    if(k==="c"){s.hit++;sfx.pop();if(s.hit>=10)skFinish(Math.round(now-s.t0+s.pen));}
+    else if(k==="miss"){s.pen+=250;sfx.bad();}
+  }
+  else if(g==="stroop"){
+    if(k!=="c")return;const q=s.seq[s.r];if(!q)return;
+    if(Number(el.dataset.i)===q[1])sfx.pop();else{s.pen+=1500;sfx.bad();}
+    s.r++;if(s.r>=10)skFinish(Math.round(now-s.t0+s.pen));
+  }
+  else if(g==="order"){
+    if(k!=="c")return;const v=Number(el.dataset.v);
+    if(v===s.next){s.next++;sfx.pop();if(s.next>12)skFinish(Math.round(now-s.t0+s.pen));}
+    else if(v>s.next){s.pen+=1000;sfx.bad();}
   }
   else if(g==="simon"){
     if(k!=="c"||s.ph!=="in")return;
@@ -2369,7 +2428,7 @@ function skAfter(){
   if(st.g==="circle")skBindCircle();
   if(SK.key!==qKey()||SK.ph==="idle"||SK.ph==="done"||SK.ph==="draw")return;
   const b=skEl("skb"),p=skEl("skp"),g=SK.g;
-  if(b){if(g==="stop"||g==="bar")b.textContent="Stopp!";else b.classList.add("skhide");}
+  if(b){if(g==="stop"||g==="bar"||g==="blind")b.textContent="Stopp!";else b.classList.add("skhide");}
   if(p){if(g==="react"){p.className="skpad "+(SK.ph==="go"?"go":"wait");p.textContent=SK.ph==="go"?"JETZT!":"Warte auf Grün …";}else{p.classList.add("go");p.textContent="Tippen, tippen, tippen!";}}
   skRun();
 }
