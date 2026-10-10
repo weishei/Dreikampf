@@ -2151,11 +2151,11 @@ function computeHC(R){
 function hcOf(u){return (G&&G.hc&&typeof G.hc[u]==="number")?G.hc[u]:0;}
 function hcPreview(u){return G&&G.phase==="play"?hcOf(u):(computeHC([u])[u]||0);}
 function qKey(){return G?G.v+"|"+G.idx:"";}
-function expired(u){return hcOf(u)>=1&&G&&G.dlk===qKey()&&typeof G.ds==="number"&&Date.now()>G.ds+HC_TIME;}
+function expired(u){const _s=step();if(_s&&_s.t==="skill")return false;return hcOf(u)>=1&&G&&G.dlk===qKey()&&typeof G.ds==="number"&&Date.now()>G.ds+HC_TIME;}
 function myWindow(){
   const has=G&&G.dlk===qKey()&&typeof G.dl==="number";
   let end=has?G.dl:Date.now()+Q_TIME,total=Q_TIME;
-  if(hcOf(ME)>=1&&has&&typeof G.ds==="number"){end=Math.min(end,G.ds+HC_TIME);total=HC_TIME;}
+  const _st=step();if(hcOf(ME)>=1&&has&&typeof G.ds==="number"&&!(_st&&_st.t==="skill")){end=Math.min(end,G.ds+HC_TIME);total=HC_TIME;}
   return {left:Math.max(0,end-Date.now()),total:total,has:has};
 }
 
@@ -2371,7 +2371,8 @@ function skTick(st,now){
 function skDeadline(){
   const st=step();if(!G||G.phase!=="play"||!st||st.t!=="skill"||G.reveal||SK.key!==qKey()||SK.ph==="idle"||SK.ph==="done"||typeof G.dl!=="number")return;
   if(myWindow().left>1500)return;
-  const g=SK.g,v=g==="simon"?SK.best:g==="hunt"?SK.score:g==="tap"?SK.n:null;
+  const g=SK.g,el=performance.now()-(SK.t0||performance.now())+(SK.pen||0);
+  const v=g==="simon"?SK.best:g==="hunt"?SK.score:g==="tap"?SK.n:g==="stroop"?Math.round(el+(10-(SK.r||0))*3000):g==="aim"?Math.round(el+(10-(SK.hit||0))*1000):g==="order"?Math.round(el+(13-(SK.next||1))*1000):null;
   if(typeof v==="number")skFinish(v);
 }
 function skLoop(){
@@ -4559,7 +4560,7 @@ function founderWatch(){
     if(!s.exists&&new URLSearchParams(location.search).get("gruender")===FOUNDER_KEY)DB.doc("config/founder").set({u:ME,at:Date.now()}).catch(()=>{});},()=>{});
 }
 if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js",{scope:"./"}).catch(()=>{});
-const BUILD_ID="1791665467";
+const BUILD_ID="1791665903";
 function verCheck(){fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(r=>r.json()).then(j=>{if(j&&j.v&&j.v!==BUILD_ID&&!document.getElementById("upd")){const b=document.createElement("button");b.id="upd";b.textContent="✨ Neue Version da. Tippen zum Laden";b.onclick=()=>location.reload();document.body.appendChild(b);}}).catch(()=>{});}
 setInterval(verCheck,60000);document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")verCheck();});setTimeout(verCheck,5000);
 (async function boot(){
