@@ -2362,6 +2362,12 @@ function skTick(st,now){
   else if(g==="order"){const e=now-s.t0+s.pen,a=skEl("sks"),b=skEl("skt"),go=skEl("skb");if(go)go.classList.add("skhide");if(a)a.textContent="Nächste: "+s.next;if(b)b.textContent=sec(e);for(let v=1;v<=12;v++){const c=skEl("sko"+v);if(c)c.classList.toggle("done",v<s.next);}}
   else if(g==="tap"){const e=now-s.t0;if(e>=5000){skFinish(s.n);return;}const a=skEl("sks"),b=skEl("skt");if(a)a.textContent=s.n+" Tipps";if(b)b.textContent=sec(5000-e);}
 }
+function skDeadline(){
+  const st=step();if(!G||G.phase!=="play"||!st||st.t!=="skill"||G.reveal||SK.key!==qKey()||SK.ph==="idle"||SK.ph==="done"||typeof G.dl!=="number")return;
+  if(myWindow().left>1500)return;
+  const g=SK.g,v=g==="simon"?SK.best:g==="hunt"?SK.score:g==="tap"?SK.n:null;
+  if(typeof v==="number")skFinish(v);
+}
 function skLoop(){
   skRaf=0;
   const st=step();
@@ -3953,7 +3959,7 @@ function hostTick(){
   if(revealPending===k&&now-(hostTick.rt||0)>5000){revealPending=null;dlSet=null;}
   const R=roster(),missing=R.filter(u=>getAns(u,G.idx)===null&&!expired(u)).length;
   if(missing===0&&revealPending!==k){revealPending=k;hostReveal();return;}
-  if(R.length>1&&missing===1&&G.dl-now>Q_LAST&&dlShort!==k){dlShort=k;gWrite(()=>gRef().update({dl:now+Q_LAST}));}
+  if(R.length>1&&missing===1&&st.t!=="skill"&&G.dl-now>Q_LAST&&dlShort!==k){dlShort=k;gWrite(()=>gRef().update({dl:now+Q_LAST}));}
   if(now>=G.dl&&revealPending!==k){revealPending=k;hostReveal();}
 }
 function timerTick(){
@@ -3965,6 +3971,7 @@ function timerTick(){
     f.classList.toggle("hurry",left<=Q_LAST);
     if(n)n.textContent=Math.floor(sec/60)+":"+String(sec%60).padStart(2,"0");
   }
+  skDeadline();
   hostTick();
   urgentTick();
   if(G&&G.phase==="play"){const ex=expired(ME);if(ex!==lastExpired){lastExpired=ex;renderAll(true);}}
@@ -4455,7 +4462,7 @@ function founderWatch(){
     if(!s.exists&&new URLSearchParams(location.search).get("gruender")===FOUNDER_KEY)DB.doc("config/founder").set({u:ME,at:Date.now()}).catch(()=>{});},()=>{});
 }
 if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js",{scope:"./"}).catch(()=>{});
-const BUILD_ID="1791640813";
+const BUILD_ID="1791643715";
 function verCheck(){fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(r=>r.json()).then(j=>{if(j&&j.v&&j.v!==BUILD_ID&&!document.getElementById("upd")){const b=document.createElement("button");b.id="upd";b.textContent="✨ Neue Version da. Tippen zum Laden";b.onclick=()=>location.reload();document.body.appendChild(b);}}).catch(()=>{});}
 setInterval(verCheck,60000);document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")verCheck();});setTimeout(verCheck,5000);
 (async function boot(){
