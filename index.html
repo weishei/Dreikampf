@@ -2239,7 +2239,7 @@ function vEvcard(){
 }
 /* ========== Ende AUSGLEICH ========== */
 /* ========== GESCHICK (Okt 2026): genau ein Geschicklichkeitsspiel pro Spiel ========== */
-const SKILLS=["stop","react","bar","hunt","circle","simon","tap","balloon","blind","aim","stroop","order"];
+const SKILLS=["stop","react","bar","hunt","circle","simon","tap","blind","aim","stroop","order"];
 const SKG={
  stop:{t:"Stoppuhr",e:"⏱️",r:"Stoppe die Uhr bei genau 5,00 Sekunden. Nach 2 Sekunden verschwindet die Anzeige."},
  react:{t:"Reaktionstest",e:"🚦",r:"Tippe, sobald das Feld grün wird. Wer zu früh tippt, geht leer aus."},
@@ -4455,7 +4455,7 @@ function founderWatch(){
     if(!s.exists&&new URLSearchParams(location.search).get("gruender")===FOUNDER_KEY)DB.doc("config/founder").set({u:ME,at:Date.now()}).catch(()=>{});},()=>{});
 }
 if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js",{scope:"./"}).catch(()=>{});
-const BUILD_ID="1791640476";
+const BUILD_ID="1791640813";
 function verCheck(){fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(r=>r.json()).then(j=>{if(j&&j.v&&j.v!==BUILD_ID&&!document.getElementById("upd")){const b=document.createElement("button");b.id="upd";b.textContent="✨ Neue Version da. Tippen zum Laden";b.onclick=()=>location.reload();document.body.appendChild(b);}}).catch(()=>{});}
 setInterval(verCheck,60000);document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")verCheck();});setTimeout(verCheck,5000);
 (async function boot(){
