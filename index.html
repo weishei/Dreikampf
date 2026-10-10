@@ -1922,8 +1922,8 @@ function lobbyShow(){
   let o='<div class="card"><div class="eyebrow">Spiellänge</div><div class="hwbox"><div class="hwsel"></div><div class="hwheel" id="lnwheel"><div class="hpad"></div>'+LK.map((l,i)=>'<div class="hitem" data-wi="'+i+'"><span class="emo">'+({kurz:"⚡",normal:"⏱️",lang:"🍿"})[l]+'</span><b>'+LENS[l].t+'</b><small>'+LENS[l].d+'</small></div>').join('')+'<div class="hpad"></div></div></div>'+flowHtml(LN);
   o+='<button class="mrow2" data-act="showmodes"><span>🎲 <b>Überraschungsrunden</b></span><span class="muted" style="white-space:nowrap">'+on+'/'+POOL_MODES.length+'</span><span class="chev'+(L.showModes?' up':'')+'">›</span></button>'+(L.showModes?modeGrid():'');
   const th=themeOf();
-  const TK=Object.keys(THEMES),cnt=t=>{const c=THEMES[t][1];return c?THEME_MC.filter(x=>c.indexOf(x)>=0).length:MC.length;};
-  o+='<div class="eyebrow" style="margin-top:8px">Thema für Runde 1 und Finale</div>'+(host?'<div class="hwbox"><div class="hwsel"></div><div class="hwheel" id="thwheel"><div class="hpad"></div>'+TK.map((t,i)=>'<div class="hitem" data-wi="'+i+'"><span class="emo">'+THEME_ICON[t]+'</span><b>'+h(THEMES[t][0])+'</b><small>'+cnt(t)+' Fragen</small></div>').join('')+'<div class="hpad"></div></div></div>':'<span class="thb on">'+THEME_ICON[th]+' '+h(THEMES[th][0])+'</span>');
+  const TK=lobbyThemes(),cnt=t=>{if(t==="ki")return KI_MC.length;const c=THEMES[t][1];return c?THEME_MC.filter(x=>c.indexOf(x)>=0).length:MC.length;};
+  o+='<div class="eyebrow" style="margin-top:8px">Thema für Runde 1 und Finale</div>'+(host?'<div class="hwbox"><div class="hwsel"></div><div class="hwheel" id="thwheel"><div class="hpad"></div>'+TK.map((t,i)=>'<div class="hitem" data-wi="'+i+'"><span class="emo">'+(t==="ki"?"🧠":THEME_ICON[t])+'</span><b>'+(t==="ki"?"Google KI-Prüfung":h(THEMES[t][0]))+'</b><small>'+(t==="ki"?"nur solo, nur du":cnt(t)+' Fragen')+'</small></div>').join('')+'<div class="hpad"></div></div></div>'+(lobbyKI()?'<p class="muted small" style="margin:0">Nur Prüfungsfragen wie im Test „Generative AI Leader“. Starte mit „🤖 Solo spielen“.</p>':''):'<span class="thb on">'+THEME_ICON[th]+' '+h(THEMES[th][0])+'</span>');
   const np=lobbyPlayers().length,tOn=teamsOn();
   o+='<div class="tgrow" style="margin-top:6px"><span class="tgl"><b>Team-Modus</b> <button class="infob" data-act="teaminfo" aria-label="Team-Modus erklären">i</button><small>'+(np>=4?'Rot gegen Blau, fair gemischt':tOn?'Ist an, gilt aber erst ab 4 Leuten. Jetzt spielt jeder für sich.':'ab 4 Leuten')+'</small></span>'+(host?'<button class="tsw'+(tOn?' on':'')+(np<4?' wait':'')+'" data-act="teamtog" role="switch" aria-checked="'+tOn+'" aria-label="Team-Modus"><i></i></button>':'<span class="tsw'+(tOn?' on':'')+'"><i></i></span>')+'</div>'+(L.teamInfo?'<div class="infobox">Ab 4 Leuten. Beim Start werden zwei Teams gebildet, 🔴 Rot und 🔵 Blau, fair gemischt nach Level. Jeder spielt wie immer am eigenen Handy, die Punkte im Team werden zusammengezählt. Ist ein Team kleiner (z. B. 3 gegen 2), wird es hochgerechnet. Das Team mit mehr Punkten gewinnt. Für Level, Abzeichen und Liga zählt weiter deine eigene Platzierung.</div>':'');
   return o+'</div>';
@@ -3185,7 +3185,7 @@ function mainKey(){
   if(!G)return "nogame"+viewKey();
   const st=step(),i=G.idx;
   const ansSig=G.reveal?roster().map(u=>JSON.stringify(getAns(u,i))).join(","):"";
-  return [viewKey(),ansSig,G.phase==="play"?(expired(ME)+"|"+jokerOf(ME,i)+"|"+jokerUsed(ME)):"",G.v,G.phase,i,G.reveal,G.host===ME,P[ME]&&P[ME].g===G.v,inGame(),getAns(ME,i)!==null,L.finLocked,L.err,(G.phase==="lobby")?(lobbyPlayers().length>=2)+JSON.stringify(offModes())+lenOf()+L.showModes+(amHost()?"":themeOf())+teamsOn()+lobbyPlayers().map(u=>u+nameOf(u)).join()+profVer+L.teamInfo+L.confirm+(P[ME]&&P[ME].kicked):0,st&&st.t].join("|");
+  return [viewKey(),ansSig,G.phase==="play"?(expired(ME)+"|"+jokerOf(ME,i)+"|"+jokerUsed(ME)):"",G.v,G.phase,i,G.reveal,G.host===ME,P[ME]&&P[ME].g===G.v,inGame(),getAns(ME,i)!==null,L.finLocked,L.err,(G.phase==="lobby")?(lobbyPlayers().length>=2)+JSON.stringify(offModes())+lenOf()+L.showModes+(amHost()?"":themeOf())+teamsOn()+lobbyPlayers().map(u=>u+nameOf(u)).join()+profVer+L.teamInfo+lobbyKI()+L.confirm+(P[ME]&&P[ME].kicked):0,st&&st.t].join("|");
 }
 function renderAll(force){
   document.body.classList.toggle("nofx",!fxOn);
@@ -3269,7 +3269,7 @@ function act(a,d){
   switch(a){
     case "newlobby":newLobby();break;
     case "join":join(G.v);break;
-    case "start":if(amHost()){if(lobbyPlayers().length<2){L.view="solo";L.soloTheme=themeOf();renderAll(true);}else startGame();}break;
+    case "start":if(amHost()){if(lobbyPlayers().length<2){L.view="solo";L.soloTheme=lobbyKI()?"ki":themeOf();renderAll(true);}else startGame();}break;
     case "next":hostNext();break;
     case "reveal":hostReveal();break;
     case "rematch":if(amHost())rematch();break;
@@ -4151,7 +4151,7 @@ function lobbyWheel(id,TK,cur,pick,any){
   w.addEventListener("click",e=>{const it=e.target.closest(".hitem");if(it)w.scrollTo({left:Number(it.dataset.wi)*H_IW,behavior:"smooth"});});
 }
 function themeWheelInit(){
-  lobbyWheel("thwheel",Object.keys(THEMES),themeOf,t=>{themeLocal={v:G.v,x:t,t:Date.now()};const used=Object.assign({},G.used||{},{theme:t});gWrite(()=>gRef().update({used:used}));});
+  lobbyWheel("thwheel",lobbyThemes(),()=>lobbyKI()?"ki":themeOf(),t=>{if(t==="ki"){L.lobbyKI=true;renderAll(true);return;}if(L.lobbyKI){L.lobbyKI=false;renderAll(true);}themeLocal={v:G.v,x:t,t:Date.now()};const used=Object.assign({},G.used||{},{theme:t});gWrite(()=>gRef().update({used:used}));});
   lobbyWheel("lnwheel",Object.keys(LENS),lenOf,l=>{lenLocal={v:G.v,len:l,t:Date.now()};renderAll(true);const used=Object.assign({},G.used||{},{len:l});gWrite(()=>gRef().update({used:used}));});
 }
 const THEMES={mix:["Gemischt",null],bayern:["Bayern & München",["bayern"]],sport:["Sport",["sport","sportlerinnen"]],sportlerinnen:["Sportlerinnen",["sportlerinnen"]],welt:["Geschichte & Welt",["geschichte","geo"]],natur:["Natur & Wissen",["natur","wissen"]],kultur:["Kultur & Unterhaltung",["kultur"]],alltag:["Essen & Alltag",["essen","alltag"]]};
@@ -4203,6 +4203,9 @@ function makeLDB(){
       onSnapshot:fn=>{const f=()=>fn(snap(p));subs.push(f);setTimeout(f,0);return ()=>{};}}),
     collection:c=>({onSnapshot:fn=>{const f=()=>fn({docs:Object.keys(store).filter(k=>k.indexOf(c+"/")===0&&k.split("/").length===2).map(snap)});subs.push(f);setTimeout(f,0);return ()=>{};}})};
 }
+function kiLobbyOk(){return !!(ME===FOUNDER&&KI_MC.length&&G&&G.phase==="lobby"&&amHost()&&lobbyPlayers().length<2);}
+function lobbyThemes(){return Object.keys(THEMES).concat(kiLobbyOk()?["ki"]:[]);}
+function lobbyKI(){return !!(L.lobbyKI&&kiLobbyOk());}
 function soloThemes(){return Object.keys(THEMES).concat(ME===FOUNDER&&KI_MC.length?["ki"]:[]);}
 function soloThemeInit(){lobbyWheel("sothwheel",soloThemes(),()=>soloThemes().indexOf(L.soloTheme)>=0?L.soloTheme:"mix",t=>{L.soloTheme=t;renderAll(true);},true);}
 function soloDiff(){let m=0;roster().forEach(u=>{if(BOT_BY[u])m=Math.max(m,BOT_BY[u].d);});return SOLO_DK[m];}
@@ -4452,7 +4455,7 @@ function founderWatch(){
     if(!s.exists&&new URLSearchParams(location.search).get("gruender")===FOUNDER_KEY)DB.doc("config/founder").set({u:ME,at:Date.now()}).catch(()=>{});},()=>{});
 }
 if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js",{scope:"./"}).catch(()=>{});
-const BUILD_ID="1791631076";
+const BUILD_ID="1791631202";
 function verCheck(){fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(r=>r.json()).then(j=>{if(j&&j.v&&j.v!==BUILD_ID&&!document.getElementById("upd")){const b=document.createElement("button");b.id="upd";b.textContent="✨ Neue Version da. Tippen zum Laden";b.onclick=()=>location.reload();document.body.appendChild(b);}}).catch(()=>{});}
 setInterval(verCheck,60000);document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")verCheck();});setTimeout(verCheck,5000);
 (async function boot(){
