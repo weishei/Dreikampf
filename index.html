@@ -3355,13 +3355,7 @@ function act(a,d){
     case "mpick":if(ME===FOUNDER&&d.u){if(L.mA===d.u)L.mA=null;else if(L.mB===d.u)L.mB=null;else if(!L.mA)L.mA=d.u;else L.mB=d.u;renderAll(true);}break;
     case "mdo":if(ME===FOUNDER&&L.mA&&L.mB&&L.mA!==L.mB){if(L.confirm!=="mdo"){L.confirm="mdo";renderAll(true);break;}L.confirm=null;const dd=mergeDir(L.mA,L.mB),a=dd[0],b=dd[1];ALIAS[a]=b;L.mA=null;L.mB=null;meWrite(()=>DB.doc("alias/"+a).set({to:b,at:Date.now()}));applyAlias();}break;
     case "migr":if(ME===FOUNDER){L.migMsg="Lade …";renderAll(true);fetch("migr.json?t="+Date.now(),{cache:"no-store"}).then(r=>r.json()).then(j=>{let n=0;["results","daily"].forEach(c=>{const m=j&&j[c]||{};Object.keys(m).forEach(id=>{meWrite(()=>DB.doc(c+"/"+id).set(m[id]));n++;});});L.migMsg="✓ "+n+" alte Einträge übernommen. Jetzt oben jeweils alt → neu zusammenführen.";renderAll(true);}).catch(()=>{L.migMsg="Geht nur in der Web-Version.";renderAll(true);});}break;
-    case "mauto":if(ME===FOUNDER){if(L.confirm!=="mauto"){L.confirm="mauto";renderAll(true);break;}L.confirm=null;
-      Object.keys(ALIAS).forEach(k=>meWrite(()=>DB.doc("alias/"+k).delete()));ALIAS={};
-      const all=mergeList(),norm=x=>(x||"").trim().toLowerCase(),msg=[];
-      all.filter(x=>OLD_IDS[x.u]&&x.u!==ME).forEach(o=>{const c=all.filter(x=>!OLD_IDS[x.u]&&norm(x.n)===norm(o.n)).sort((a,b)=>lastAct(b.u)-lastAct(a.u));
-        if(c.length){ALIAS[o.u]=c[0].u;meWrite(()=>DB.doc("alias/"+o.u).set({to:c[0].u,at:Date.now(),auto:1}));msg.push("✓ "+h(o.n)+" ("+o.g+" alte Spiele) → "+h(c[0].n)+(c.length>1?" (das zuletzt aktive von "+c.length+")":""));}
-        else msg.push("– "+h(o.n)+": kein aktuelles Profil mit diesem Namen. Bei Bedarf oben von Hand zuordnen.");});
-      L.autoMsg=msg.join("<br>");applyAlias();}break;
+    case "mauto":if(ME===FOUNDER){if(L.confirm!=="mauto"){L.confirm="mauto";renderAll(true);break;}L.confirm=null;doAuto();renderAll(true);}break;
     case "mundo":if(ME===FOUNDER&&d.u){delete ALIAS[d.u];meWrite(()=>DB.doc("alias/"+d.u).delete());applyAlias();}break;
     case "reports":if(ME===FOUNDER){L.view="reports";L.menu=false;renderAll(true);window.scrollTo(0,0);}break;
     case "repdel":if(ME===FOUNDER&&d.id){REPS=REPS.filter(r=>r.id!==d.id);repSig+="x";meWrite(()=>DB.doc("reports/"+d.id).delete());renderAll(true);}break;
@@ -4053,6 +4047,25 @@ function mergeList(){const m={};const add=(u,n,at,solo)=>{if(!u||/^bot_/.test(u)
   RAW.solo.forEach(r=>{if(r&&Array.isArray(r.players))r.players.forEach(p=>p&&add(p.u,p.name,r.at,true));});
   Object.keys(P).forEach(u=>{if(!m[u]&&P[u]&&P[u].name)add(u,P[u].name,0,false),m[u].g--;});
   return Object.values(m).sort((a,b)=>(a.n||"").localeCompare(b.n||"")||b.last-a.last);}
+const NAME_SYN={seppl:["juli","julian"]};
+function doAuto(){
+  Object.keys(ALIAS).forEach(k=>meWrite(()=>DB.doc("alias/"+k).delete()));ALIAS={};
+  const all=mergeList(),norm=x=>(x||"").trim().toLowerCase(),msg=[],bad={"":1,"?":1,"mitspieler":1};
+  const set=(a,b)=>{ALIAS[a]=b;meWrite(()=>DB.doc("alias/"+a).set({to:b,at:Date.now(),auto:1}));};
+  const cur=all.filter(x=>!(OLD_IDS[x.u]&&x.u!==ME)),groups={};
+  cur.forEach(x=>{const n=norm(x.n);if(bad[n])return;(groups[n]=groups[n]||[]).push(x);});
+  const tgt={};Object.keys(groups).forEach(n=>{const g=groups[n].sort((a,b)=>(b.u===ME)-(a.u===ME)||lastAct(b.u)-lastAct(a.u));tgt[n]=g[0];
+    g.slice(1).forEach(x=>{set(x.u,g[0].u);msg.push("✓ "+h(x.n)+" (zweites Profil, "+x.g+" Spiele) → "+h(g[0].n));});});
+  all.filter(x=>OLD_IDS[x.u]&&x.u!==ME).forEach(o=>{const n=norm(o.n),c=[n].concat(NAME_SYN[n]||[]).map(k=>tgt[k]).find(Boolean);
+    if(c){set(o.u,c.u);msg.push("✓ "+h(o.n)+" ("+o.g+" alte Spiele) → "+h(c.n));}
+    else msg.push("– "+h(o.n)+": kein aktuelles Profil mit diesem Namen.");});
+  L.autoMsg=msg.join("<br>");applyAlias();
+}
+/* Einmalig beim Gründer: alte Daten holen und alles nach Namen ordnen */
+let autoRan=false;
+function autoOnce(){if(autoRan||ME!==FOUNDER||!gotPlayers||!RAW.res.length)return;let f=null;try{f=localStorage.getItem("dk_auto3");}catch(e){}if(f)return;autoRan=true;
+  fetch("migr.json?t="+Date.now(),{cache:"no-store"}).then(r=>r.json()).then(j=>{["results","daily"].forEach(c=>{const m=j&&j[c]||{};Object.keys(m).forEach(id=>{if(c==="results"&&RAW.res.some(r=>r&&r.v===id))return;meWrite(()=>DB.doc(c+"/"+id).set(m[id]));if(c==="results")RAW.res.push(m[id]);});});}).catch(()=>{}).then(()=>{setTimeout(()=>{doAuto();try{localStorage.setItem("dk_auto3","1");}catch(e){}renderAll(true);},1500);});}
+setInterval(autoOnce,3000);
 function vMerge(){
   const d=t=>t?new Date(t).toLocaleDateString("de-DE",{day:"2-digit",month:"2-digit",year:"2-digit"}):"–";
   const L1=mergeList(),A=L.mA,B=L.mB;
@@ -4546,7 +4559,7 @@ function founderWatch(){
     if(!s.exists&&new URLSearchParams(location.search).get("gruender")===FOUNDER_KEY)DB.doc("config/founder").set({u:ME,at:Date.now()}).catch(()=>{});},()=>{});
 }
 if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js",{scope:"./"}).catch(()=>{});
-const BUILD_ID="1791661069";
+const BUILD_ID="1791665467";
 function verCheck(){fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(r=>r.json()).then(j=>{if(j&&j.v&&j.v!==BUILD_ID&&!document.getElementById("upd")){const b=document.createElement("button");b.id="upd";b.textContent="✨ Neue Version da. Tippen zum Laden";b.onclick=()=>location.reload();document.body.appendChild(b);}}).catch(()=>{});}
 setInterval(verCheck,60000);document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")verCheck();});setTimeout(verCheck,5000);
 (async function boot(){
