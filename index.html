@@ -2864,7 +2864,7 @@ function vMain(){
     if(!joined){
       out+=(P[ME]&&P[ME].kicked===G.v?'<div class="msg">'+h(hostName())+' hat dich aus der Lobby genommen. Du kannst wieder beitreten.</div>':'')+vMyCard(true)+errBox()+'<button class="btn" data-act="join">Mitspielen</button>';
     }else if(amHost()){
-      out+=errBox()+'<div class="strow"><button class="btn" id="startbtn" data-act="start">Spiel starten</button><button class="btn alt invb" data-act="invite" aria-label="Alle einladen">📣<small>Einladen</small></button></div><p class="center muted">Starten geht ab 2 Leuten, maximal '+MAXP+'.</p>';
+      out+=errBox()+'<div class="strow"><button class="btn" id="startbtn" data-act="start">Spiel starten</button><button class="btn alt invb" data-act="invite" aria-label="Alle einladen">📣<small>Einladen</small></button></div><p class="center muted small">Allein? Dann gegen den Computer. Mit anderen ab 2 Leuten, maximal '+MAXP+'.</p>';
     }else{
       out+=errBox()+waitNote('Du bist dabei. Warten, bis '+hostName()+' startet …');
     }
@@ -3169,7 +3169,7 @@ function renderAll(force){
     afterMain();
   }
   const sb=document.getElementById("startbtn");
-  if(sb){const n=lobbyPlayers().length;sb.disabled=n<2;sb.textContent=n<2?"Warten auf Mitspieler":"Spiel starten ("+n+" Leute)";}
+  if(sb){const n=lobbyPlayers().length;sb.disabled=false;sb.textContent=n<2?"🤖 Solo spielen":"Spiel starten ("+n+" Leute)";}
   statusEl.innerHTML=vStatus();
 }
 function fitStage(){
@@ -3237,7 +3237,7 @@ function act(a,d){
   switch(a){
     case "newlobby":newLobby();break;
     case "join":join(G.v);break;
-    case "start":if(amHost())startGame();break;
+    case "start":if(amHost()){if(lobbyPlayers().length<2){L.view="solo";renderAll(true);}else startGame();}break;
     case "next":hostNext();break;
     case "reveal":hostReveal();break;
     case "rematch":if(amHost())rematch();break;
