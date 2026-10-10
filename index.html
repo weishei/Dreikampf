@@ -3308,7 +3308,7 @@ function act(a,d){
     case "boardclose":L.view=null;L.ed=null;renderAll(true);window.scrollTo(0,0);break;
     case "profile":if(typeof d.u==="string"){L.view="profile";L.pu=d.u;L.menu=false;renderAll(true);window.scrollTo(0,0);}break;
     case "avatar":L.view="avatar";L.ed=null;L.edTab="fig";L.menu=false;renderAll(true);window.scrollTo(0,0);break;
-    case "report":if(G&&G.reveal&&st){const rk=G.v+"|"+G.idx;L.reported=L.reported||{};if(!L.reported[rk]){L.reported[rk]=1;const doc={at:Date.now(),u:ME,name:nameOf(ME),t:st.t,q:JSON.stringify(st.q||st.items||{q:st.q,L:st.L,R:st.R}).slice(0,4000),v:G.v,i:G.idx};meWrite(()=>DB.doc("reports/"+rid()).set(doc));sfx.pop();repPush(doc);renderAll(true);}}break;
+    case "report":if(G&&G.reveal&&st){const rk=G.v+"|"+G.idx;L.reported=L.reported||{};if(!L.reported[rk]){L.reported[rk]=1;const doc={at:Date.now(),u:ME,name:nameOf(ME),t:st.t,q:JSON.stringify(st.q||st.items||{q:st.q,L:st.L,R:st.R}).slice(0,4000),v:G.v,i:G.idx};meWrite(()=>DB.doc("reports/"+rid()).set(doc));sfx.pop();renderAll(true);}}break;
     case "edtab":if(L.ed){L.edTab=d.t;delete L.ed.tryC;delete L.ed.tryV;renderAll(true);}break;
     case "edfig":if(L.ed&&FIGS[d.f]&&(d.f!=="phoenix"||ME===FOUNDER)&&figOk(d.f,progOf(ME))){L.ed.fig=d.f;renderAll(true);}break;
     case "edcol":if(L.ed&&AV_COLS.indexOf(d.c)>=0){L.ed.col=d.c;renderAll(true);}break;
@@ -4409,11 +4409,6 @@ function repBody(r){let o=null;try{o=JSON.parse(r.q);}catch(e){}
   if(o.f)b+='<p class="muted">'+h(o.f)+'</p>';
   return b||'<p class="muted">'+h(String(r.q).slice(0,300))+'</p>';
 }
-const NTFY="dk-064b09bac9fc";
-function repPush(r){try{let o={};try{o=JSON.parse(r.q)||{};}catch(e){}
-  let m=(typeof o.q==="string"?o.q:"")+(Array.isArray(o.a)?"\nRichtig: "+o.a[0]:o.a!=null?"\nLösung: "+o.a+" "+(o.u||""):"");
-  if(!m.trim())m=String(r.q||"").slice(0,300);
-  fetch("https://ntfy.sh/",{method:"POST",body:JSON.stringify({topic:NTFY,title:"🚩 "+(r.name||"Jemand")+" meldet: "+(REP_T[r.t]||r.t||"Frage"),message:m.slice(0,800),tags:["triangular_flag_on_post"],click:location.href.split("?")[0]})}).catch(()=>{});}catch(e){}}
 function vReports(){
   const d=r=>{const t=new Date(r.at||0);return t.toLocaleDateString("de-DE",{day:"2-digit",month:"2-digit"})+' '+t.toLocaleTimeString("de-DE",{hour:"2-digit",minute:"2-digit"});};
   let out='<div class="marquee fade"><div class="mq-in"><div class="eyebrow">Nur für dich</div><h2 class="rtitle">Gemeldete Fragen</h2></div></div>';
@@ -4492,7 +4487,7 @@ function founderWatch(){
     if(!s.exists&&new URLSearchParams(location.search).get("gruender")===FOUNDER_KEY)DB.doc("config/founder").set({u:ME,at:Date.now()}).catch(()=>{});},()=>{});
 }
 if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js",{scope:"./"}).catch(()=>{});
-const BUILD_ID="1791644699";
+const BUILD_ID="1791646647";
 function verCheck(){fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(r=>r.json()).then(j=>{if(j&&j.v&&j.v!==BUILD_ID&&!document.getElementById("upd")){const b=document.createElement("button");b.id="upd";b.textContent="✨ Neue Version da. Tippen zum Laden";b.onclick=()=>location.reload();document.body.appendChild(b);}}).catch(()=>{});}
 setInterval(verCheck,60000);document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")verCheck();});setTimeout(verCheck,5000);
 (async function boot(){
