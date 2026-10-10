@@ -1887,7 +1887,7 @@ BLUFF.push(
 
 /* ---------- Mini-Spiele: Runden ---------- */
 const MODES={
- mc:{t:"Alle gegen alle",r:"Jeder beantwortet dieselbe Frage auf dem eigenen Handy. Keiner sieht, was die anderen tippen. Pro Frage habt ihr 2 Minuten, fehlt nur noch einer, bleiben ihm 30 Sekunden. Richtig gibt 100 Punkte.",n:"6 Fragen"},
+ mc:{t:"Alle gegen alle",r:"Jeder beantwortet dieselbe Frage auf dem eigenen Handy. Keiner sieht, was die anderen tippen. Pro Frage habt ihr 2 Minuten, fehlt nur noch einer, bleiben ihm 30 Sekunden (im Solo nicht, da hast du immer die vollen 2 Minuten). Richtig gibt 100 Punkte.",n:"6 Fragen"},
  size:{t:"Größenwahn",r:"Links steht etwas mit bekannter Höhe. Bring das rechte Ding auf die richtige Größe: mit zwei Fingern zoomen wie bei der Kamera, mit einem Finger hoch- oder runterziehen oder mit dem Regler. Bis 10 % daneben: 150 Punkte. Bis 25 %: 100. Bis 50 %: 50.",n:"4 Größen"},
  est:{t:"Schätzen!",r:"Jeder tippt eine Zahl ein. Wer am nächsten dran ist, bekommt 150 Punkte. Ein Volltreffer bringt 300.",n:"4 Schätzfragen"},
  time:{t:"Zeitstrahl",r:"Bring 4 Ereignisse in die richtige Reihenfolge, das älteste nach oben. Mit den Pfeilen verschiebst du die Karten. Jede Karte am richtigen Platz gibt 50 Punkte.",n:"3 Zeitstrahlen"},
@@ -3967,7 +3967,7 @@ function hostTick(){
   if(revealPending===k&&now-(hostTick.rt||0)>5000){revealPending=null;dlSet=null;}
   const R=roster(),missing=R.filter(u=>getAns(u,G.idx)===null&&!expired(u)).length;
   if(missing===0&&revealPending!==k){revealPending=k;hostReveal();return;}
-  if(R.length>1&&missing===1&&st.t!=="skill"&&G.dl-now>Q_LAST&&dlShort!==k){dlShort=k;gWrite(()=>gRef().update({dl:now+Q_LAST}));}
+  if(!SOLO&&R.length>1&&missing===1&&st.t!=="skill"&&G.dl-now>Q_LAST&&dlShort!==k){dlShort=k;gWrite(()=>gRef().update({dl:now+Q_LAST}));}
   if(now>=G.dl&&revealPending!==k){revealPending=k;hostReveal();}
 }
 function timerTick(){
@@ -4492,7 +4492,7 @@ function founderWatch(){
     if(!s.exists&&new URLSearchParams(location.search).get("gruender")===FOUNDER_KEY)DB.doc("config/founder").set({u:ME,at:Date.now()}).catch(()=>{});},()=>{});
 }
 if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js",{scope:"./"}).catch(()=>{});
-const BUILD_ID="1791647786";
+const BUILD_ID="1791655645";
 function verCheck(){fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(r=>r.json()).then(j=>{if(j&&j.v&&j.v!==BUILD_ID&&!document.getElementById("upd")){const b=document.createElement("button");b.id="upd";b.textContent="✨ Neue Version da. Tippen zum Laden";b.onclick=()=>location.reload();document.body.appendChild(b);}}).catch(()=>{});}
 setInterval(verCheck,60000);document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")verCheck();});setTimeout(verCheck,5000);
 (async function boot(){
