@@ -3353,7 +3353,7 @@ function act(a,d){
     case "solostart":soloStart();break;
     case "merge":if(ME===FOUNDER){L.view="merge";L.mA=null;L.mB=null;L.menu=false;renderAll(true);window.scrollTo(0,0);}break;
     case "mpick":if(ME===FOUNDER&&d.u){if(L.mA===d.u)L.mA=null;else if(L.mB===d.u)L.mB=null;else if(!L.mA)L.mA=d.u;else L.mB=d.u;renderAll(true);}break;
-    case "mdo":if(ME===FOUNDER&&L.mA&&L.mB&&L.mA!==L.mB){if(L.confirm!=="mdo"){L.confirm="mdo";renderAll(true);break;}L.confirm=null;const a=L.mA,b=L.mB;ALIAS[a]=b;L.mA=null;L.mB=null;meWrite(()=>DB.doc("alias/"+a).set({to:b,at:Date.now()}));applyAlias();}break;
+    case "mdo":if(ME===FOUNDER&&L.mA&&L.mB&&L.mA!==L.mB){if(L.confirm!=="mdo"){L.confirm="mdo";renderAll(true);break;}L.confirm=null;const dd=mergeDir(L.mA,L.mB),a=dd[0],b=dd[1];ALIAS[a]=b;L.mA=null;L.mB=null;meWrite(()=>DB.doc("alias/"+a).set({to:b,at:Date.now()}));applyAlias();}break;
     case "migr":if(ME===FOUNDER){L.migMsg="Lade …";renderAll(true);fetch("migr.json?t="+Date.now(),{cache:"no-store"}).then(r=>r.json()).then(j=>{let n=0;["results","daily"].forEach(c=>{const m=j&&j[c]||{};Object.keys(m).forEach(id=>{meWrite(()=>DB.doc(c+"/"+id).set(m[id]));n++;});});L.migMsg="✓ "+n+" alte Einträge übernommen. Jetzt oben jeweils alt → neu zusammenführen.";renderAll(true);}).catch(()=>{L.migMsg="Geht nur in der Web-Version.";renderAll(true);});}break;
     case "mundo":if(ME===FOUNDER&&d.u){delete ALIAS[d.u];meWrite(()=>DB.doc("alias/"+d.u).delete());applyAlias();}break;
     case "reports":if(ME===FOUNDER){L.view="reports";L.menu=false;renderAll(true);window.scrollTo(0,0);}break;
@@ -4032,6 +4032,13 @@ function onChange(){
 let DAILY=[],CUST=[],dataVer=0;
 /* Profile zusammenführen: alias/{alteID} = {to: neueID} */
 let ALIAS={};const RAW={res:[],solo:[],daily:[]};
+/* IDs aus der alten Claude-Version: dürfen nie Ziel einer Zusammenführung sein */
+const OLD_IDS={"u_EMgLvSz1hRqJQM0ytCb53g":1,"u_euBiqTJ8dLELwOj2JCSRbg":1,"u_KFXWq2b8mgel27rQ_eHd3Q":1,"u_RFXGOGVdhxx8bTCwl74eLQ":1,"u_WnOQTgXOQ16GfQJUzBNOfQ":1};
+function isOld(u){return !!OLD_IDS[u]&&u!==ME&&!(P[u]&&P[u].seen&&Date.now()-P[u].seen<864e5*3);}
+function lastAct(u){let t=P[u]&&num0(P[u].seen)||0;RAW.res.concat(RAW.solo).forEach(r=>{if(r&&Array.isArray(r.players)&&r.players.some(p=>p&&p.u===u))t=Math.max(t,num0(r.at));});return t;}
+/* Richtung festlegen: Ziel ist immer das aktuell benutzte Profil */
+function mergeDir(a,b){if(isOld(b)&&!isOld(a))return [b,a];if(isOld(a)&&!isOld(b))return [a,b];return lastAct(a)>lastAct(b)?[b,a]:[a,b];}
+function normAlias(m){const out={},fix=[];Object.keys(m).forEach(k=>{const d=mergeDir(k,m[k]);if(d[0]!==k)fix.push([k,d[0],d[1]]);if(d[0]!==d[1]&&!out[d[1]])out[d[0]]=d[1];});return {m:out,fix:fix};}
 function aliFix(o){const ks=Object.keys(ALIAS);if(!ks.length)return o;let t=JSON.stringify(o),hit=false;ks.forEach(k=>{if(t.indexOf(k)>=0){hit=true;let to=ALIAS[k],n=0;while(ALIAS[to]&&n++<5)to=ALIAS[to];t=t.split(k).join(to);}});return hit?JSON.parse(t):o;}
 function applyAlias(){RES=RAW.res.map(aliFix);SOLORES=RAW.solo.map(aliFix);DAILY=RAW.daily.map(aliFix);PROG=buildProg(allRes());progVer++;renderAll();}
 function mergeList(){const m={};const add=(u,n,at,solo)=>{if(!u||/^bot_/.test(u))return;const x=m[u]||(m[u]={u:u,n:"",g:0,s:0,last:0});if(n)x.n=n;if(solo)x.s++;else x.g++;x.last=Math.max(x.last,num0(at));};
@@ -4043,9 +4050,9 @@ function vMerge(){
   const d=t=>t?new Date(t).toLocaleDateString("de-DE",{day:"2-digit",month:"2-digit",year:"2-digit"}):"–";
   const L1=mergeList(),A=L.mA,B=L.mB;
   let o='<div class="marquee fade"><div class="mq-in"><div class="eyebrow">Nur für dich</div><h2 class="rtitle">Profile zusammenführen</h2></div></div>';
-  o+='<div class="card"><p class="muted">Wenn jemand doppelt existiert: Erst das <b>alte</b> Profil antippen, dann das <b>neue</b> (das gerade benutzt wird). Danach zählen alle alten Spiele zum neuen Profil.</p><div class="rows">';
-  L1.forEach(x=>{if(ALIAS[x.u])return;const sel=x.u===A?' style="outline:3px solid var(--bad)"':x.u===B?' style="outline:3px solid var(--good,#58d68d)"':'';
-    o+='<button class="row" data-act="mpick" data-u="'+h(x.u)+'"'+sel+'><span class="who">'+h(x.n||"?")+(x.u===A?' <small>· ALT</small>':x.u===B?' <small>· NEU</small>':'')+(x.u===ME?' <small class="muted">(du)</small>':'')+'<br><span class="muted" style="font-weight:600;font-size:13px">'+x.g+' Spiele'+(x.s?' · '+x.s+' solo':'')+' · zuletzt '+d(x.last)+' · Code …'+h(x.u.slice(-4))+'</span></span></button>';});
+  o+='<div class="card"><p class="muted">Wenn jemand doppelt existiert: beide Profile antippen, dann „Zusammenführen“. Die Reihenfolge ist egal: Die Spiele landen immer beim Profil, das gerade benutzt wird.</p><div class="rows">';
+  L1.forEach(x=>{if(ALIAS[x.u])return;const sel=x.u===A||x.u===B?' style="outline:3px solid var(--good,#58d68d)"':'';
+    o+='<button class="row" data-act="mpick" data-u="'+h(x.u)+'"'+sel+'><span class="who">'+h(x.n||"?")+(OLD_IDS[x.u]&&x.u!==ME?' <small class="muted">· alte Claude-Version</small>':'')+(x.u===A||x.u===B?' <small>· gewählt</small>':'')+(x.u===ME?' <small class="muted">(du)</small>':'')+'<br><span class="muted" style="font-weight:600;font-size:13px">'+x.g+' Spiele'+(x.s?' · '+x.s+' solo':'')+' · zuletzt '+d(x.last)+' · Code …'+h(x.u.slice(-4))+'</span></span></button>';});
   o+='</div></div>';
   o+='<div class="card"><p class="muted" style="margin-top:0">Spiele aus der alten Claude-Version (claude.ai-Link) einmalig hierher holen. Danach erscheinen die alten Profile in der Liste oben und lassen sich mit den neuen zusammenführen.</p><button class="btn alt" data-act="migr">📦 Alte Claude-Spiele übernehmen</button>'+(L.migMsg?'<p class="center"><b>'+h(L.migMsg)+'</b></p>':'')+'</div>';
   if(A&&B)o+='<button class="btn" data-act="mdo">'+(L.confirm==="mdo"?'Sicher? Nochmal tippen':'Zusammenführen')+'</button>';
@@ -4531,7 +4538,7 @@ function founderWatch(){
     if(!s.exists&&new URLSearchParams(location.search).get("gruender")===FOUNDER_KEY)DB.doc("config/founder").set({u:ME,at:Date.now()}).catch(()=>{});},()=>{});
 }
 if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js",{scope:"./"}).catch(()=>{});
-const BUILD_ID="1791659141";
+const BUILD_ID="1791660072";
 function verCheck(){fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(r=>r.json()).then(j=>{if(j&&j.v&&j.v!==BUILD_ID&&!document.getElementById("upd")){const b=document.createElement("button");b.id="upd";b.textContent="✨ Neue Version da. Tippen zum Laden";b.onclick=()=>location.reload();document.body.appendChild(b);}}).catch(()=>{});}
 setInterval(verCheck,60000);document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")verCheck();});setTimeout(verCheck,5000);
 (async function boot(){
@@ -4544,7 +4551,7 @@ setInterval(verCheck,60000);document.addEventListener("visibilitychange",()=>{if
   gRef().onSnapshot(s=>{RG=s.exists?s.data():null;if(SOLO)return;G=RG;gotGame=true;onChange();},()=>{dbState="nodb";renderAll(true);});
   let resSig="",profSig="";
   DB.collection("results").onSnapshot(s=>{const r=s.docs.filter(d=>d.exists).map(d=>d.data()),sig=JSON.stringify(r);if(sig===resSig)return;resSig=sig;RAW.res=r;applyAlias();},()=>{});
-  DB.collection("alias").onSnapshot(s=>{const m={};s.docs.forEach(d=>{if(d.exists&&d.data()&&typeof d.data().to==="string")m[d.id]=d.data().to;});if(JSON.stringify(m)===JSON.stringify(ALIAS))return;ALIAS=m;applyAlias();},()=>{});
+  DB.collection("alias").onSnapshot(s=>{const m={};s.docs.forEach(d=>{if(d.exists&&d.data()&&typeof d.data().to==="string")m[d.id]=d.data().to;});const nm2=normAlias(m);if(ME===FOUNDER)nm2.fix.forEach(f=>{meWrite(()=>DB.doc("alias/"+f[0]).delete());meWrite(()=>DB.doc("alias/"+f[1]).set({to:f[2],at:Date.now(),fixed:1}));});if(JSON.stringify(nm2.m)===JSON.stringify(ALIAS))return;ALIAS=nm2.m;applyAlias();},()=>{});
   DB.collection("profiles").onSnapshot(s=>{const m={};s.docs.forEach(d=>{if(d.exists)m[d.id]=d.data();});const sig=JSON.stringify(m);if(sig===profSig)return;profSig=sig;PROFS=m;profVer++;renderAll();},()=>{});
   DB.collection("solo").onSnapshot(s=>{RAW.solo=s.docs.filter(d=>d.exists).map(d=>d.data());applyAlias();},()=>{});
   DB.collection("daily").onSnapshot(s=>{RAW.daily=s.docs.filter(d=>d.exists).map(d=>d.data());applyAlias();},()=>{});
