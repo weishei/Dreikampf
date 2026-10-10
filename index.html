@@ -3372,7 +3372,7 @@ function setBet(v){
   L.bet=v;const r=document.getElementById("bet"),o=document.getElementById("betv");
   if(r)r.value=v;if(o)o.textContent=fmt(v);
 }
-const FAST_ACTS={modetog:1,lenset:1,themeset:1,teamtog:1,tlup:1,tldn:1,zm:1,key:1,kdel:1,kclr:1,pctm:1,pctp:1,whomore:1,betq:1};
+const FAST_ACTS={joker:1,modetog:1,lenset:1,themeset:1,teamtog:1,tlup:1,tldn:1,zm:1,key:1,kdel:1,kclr:1,pctm:1,pctp:1,whomore:1,betq:1};
 document.addEventListener("click",e=>{
   const el=e.target.closest&&e.target.closest("[data-act]");
   if(!el||el.disabled||!document.getElementById("app").contains(el))return;
@@ -4455,7 +4455,7 @@ function founderWatch(){
     if(!s.exists&&new URLSearchParams(location.search).get("gruender")===FOUNDER_KEY)DB.doc("config/founder").set({u:ME,at:Date.now()}).catch(()=>{});},()=>{});
 }
 if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js",{scope:"./"}).catch(()=>{});
-const BUILD_ID="1791639082";
+const BUILD_ID="1791639936";
 function verCheck(){fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(r=>r.json()).then(j=>{if(j&&j.v&&j.v!==BUILD_ID&&!document.getElementById("upd")){const b=document.createElement("button");b.id="upd";b.textContent="✨ Neue Version da. Tippen zum Laden";b.onclick=()=>location.reload();document.body.appendChild(b);}}).catch(()=>{});}
 setInterval(verCheck,60000);document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")verCheck();});setTimeout(verCheck,5000);
 (async function boot(){
