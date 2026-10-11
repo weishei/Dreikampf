@@ -608,6 +608,125 @@ body.urgent #app::after{content:"";position:fixed;inset:0;pointer-events:none;bo
 .waitbar{background:rgba(255,209,102,.14);border:1px solid rgba(255,209,102,.45);color:var(--fg);border-radius:14px;padding:9px 14px;margin:0 0 12px;font-weight:700;font-size:15px;text-align:center}
 .tdot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:1px;box-shadow:0 0 0 1.5px rgba(255,255,255,.85)}
 .revb{display:block;margin:34px auto 0;font-size:14px;opacity:.75}.revb.sure{opacity:1;color:var(--bad);font-weight:800}
+
+/* ===== Okt 2026: kompakte Punkteleiste (bis 10 Leute) + Einpassen ohne Scrollen ===== */
+.chip.done .sc::after{content:" ✓";font-size:.75em;color:var(--good)}
+.chip.on.done .sc::after{color:var(--ink)}
+.scores.many{gap:9px 5px}
+.scores.tall.many .chip{padding:5px 2px;gap:2px;border-radius:11px}
+.scores.tall.many .nm{font-size:11px}
+.scores.tall.many .sc{font-size:13px}
+.scores.many .lv{display:none}
+.scores.mini .chip{display:grid;grid-template-columns:auto minmax(0,1fr);grid-template-areas:"nm nm" "av sc";align-items:center;gap:1px 4px;padding:3px 5px;border-width:1.5px;border-radius:10px}
+.scores.mini .chip-t{display:contents}
+.scores.mini .nm{grid-area:nm;font-size:10.5px;line-height:1.25}
+.scores.mini .av{grid-area:av}
+.scores.mini .scl{grid-area:sc;min-width:0}
+.scores.mini .sc{font-size:12.5px}
+.scores.mini .cb{font-size:13px;top:-9px;left:-4px}
+.scores.many .streak{font-size:9.5px;line-height:13px;bottom:-8px;padding:0 4px}
+.scores.many .delta{font-size:11px;padding:0 5px;top:-10px;right:2px}
+.rows.many{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:5px}
+.rows.many .row{padding:5px 7px;gap:5px;font-size:13.5px;line-height:1.2;min-width:0;border-left-width:4px;border-radius:10px}
+.rows.many .row .who .muted{font-size:11.5px}
+.rows.many .row .pts{font-size:12px;padding:1px 6px}
+.rows.many .row .val{font-size:12.5px}
+#app.play{padding-block:10px 14px}
+.skpad{height:calc(210px*var(--k,1))}.skcell{height:calc(64px*var(--k,1))}.sksim{height:calc(88px*var(--k,1))}.skcv{height:calc(240px*var(--k,1))}
+.skbal{height:calc(190px*var(--k,1))}.skaim{height:calc(300px*var(--k,1))}.skcol{height:calc(72px*var(--k,1))}
+.skword{padding:calc(24px*var(--k,1)) 0}.skdisp{padding-top:calc(18px*var(--k,1))}.sktrack{margin:calc(18px*var(--k,1)) 0}
+.key{padding:calc(10px*var(--k,1)) 0}
+#app.d1,#app.d1 #main,#app.d1 #top{gap:10px}
+.d1 .card{padding:14px 16px;gap:8px}.d1 .card.tight{padding:9px 14px}
+.d1 .qtext{font-size:19px;line-height:1.25}.d1 .qsmall{font-size:16px}
+.d1 .opts{gap:7px}.d1 .opt{padding:9px 12px;font-size:16px}
+.d1 .btn{padding:12px 16px;font-size:15px}
+.d1 .verdict{padding:9px 14px;font-size:16px}.d1 .verdict small{font-size:14px}
+.d1 .rows{gap:6px}.d1 .row{padding:7px 10px}
+.d1 .fact{font-size:14px;padding-top:8px}
+.d1 .mq-in{padding:14px 16px 12px}
+.d1 .linkbtn{padding:4px}.d1 .wait{padding:2px 0}
+.d1 .skbox{gap:8px}
+#app.d2,#app.d2 #main,#app.d2 #top{gap:7px}
+.d2 .card{padding:10px 13px;gap:6px}.d2 .card.tight{padding:7px 12px}
+.d2 .qtext{font-size:17px}.d2 .qsmall{font-size:15px}
+.d2 .opts{gap:5px}.d2 .opt{padding:6px 10px;font-size:15px;border-radius:12px}.d2 .opt .lt{width:26px;height:26px;font-size:12px}
+.d2 .btn{padding:10px 14px}
+.d2 .eyebrow{font-size:11px}
+.d2 .verdict{padding:7px 12px;font-size:15px}.d2 .verdict small{font-size:13px}
+.d2 .rows{gap:5px}.d2 .row{padding:5px 9px;font-size:14px}
+.d2 .fact{font-size:13px;padding-top:6px}
+.d2 .jk{padding:3px 10px;font-size:13px}
+.d2 .scores{padding-top:6px;padding-bottom:3px}
+.d2 .tl,.d2 .mt,.d2 .hints{gap:4px}.d2 .tl-i,.d2 .mt-i{padding:3px 8px;font-size:14px}
+.d2 .hint-i{font-size:14px}
+.d2 .rtitle{font-size:22px}
+.d2 .skrule{font-size:14px;margin:2px 0}
+.d2 .disp{padding:5px 10px}.d2 .disp #disp{font-size:24px}
+#app.d3{padding-block:6px 8px}
+#app.d3,#app.d3 #main,#app.d3 #top{gap:5px}
+.d3 .card{padding:8px 11px;gap:4px}.d3 .card.tight{padding:6px 10px}
+.d3 .qtext{font-size:16px;line-height:1.2}.d3 .qsmall{font-size:14px}
+.d3 .opts{gap:4px}.d3 .opt{padding:4px 9px;font-size:14px}
+.d3 .btn{padding:8px 12px;font-size:14px;border-radius:12px}
+.d3 .verdict{padding:5px 10px;font-size:14px}
+.d3 .row{padding:4px 8px;font-size:13px}
+.d3 .fact{font-size:12.5px;padding-top:4px}
+.d3 .hint-i{font-size:13px}.d3 .tl-i,.d3 .mt-i{font-size:13px}
+.d3 .skrule{font-size:13px}
+.d3 .rpt{font-size:12px;margin-top:0}
+.d3 .top{min-height:26px}
+
+html{overflow-x:hidden}body{overflow-x:clip}
+.bars.many{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:7px 14px}
+.bars.many .bar-l{font-size:13.5px}.bars.many .bar-t{height:9px;margin-top:2px}
+.bar-l span:first-child{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.opts.many{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:5px}
+.opts.many .opt{padding:6px 8px;font-size:14px;line-height:1.2;align-items:flex-start;gap:6px;min-width:0;border-radius:11px}
+.opts.many .opt .ot{gap:3px;overflow-wrap:anywhere}
+.opts.many .opt .ot small{font-size:11px}
+.opts.many .wd{font-size:10.5px;padding:0 6px}
+
+.rows.many .row .who{overflow-wrap:normal;word-break:normal;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rows.many .row .who .muted{white-space:normal}
+.d5 .rows.many .row .who br,.d5 .rows.many .row .who .muted{display:none}
+.d5 .rows.many .row{padding:3px 7px}
+.opts.many .wd{font-size:11.5px}
+
+/* ===== Weihnachtsspecial ===== */
+body.xmas{--bg:#0e2a20;--bg2:#143a2b;--panel:#1c4a37;--line:#3a7a5c;--muted:#bfe0cf;--ink:#10261c;background-image:radial-gradient(ellipse 90% 45% at 50% -8%,#7a1f2b 0%,rgba(122,31,43,0) 70%)}
+body.xmas .marquee{background-image:linear-gradient(135deg,#ffd45c,#d62839 30%,#2fa36b 60%,#ffd45c);box-shadow:0 18px 40px -18px rgba(214,40,57,.5)}
+body.xmas .mq-in{background:radial-gradient(120% 90% at 0% 0%,rgba(214,40,57,.35),transparent 55%),radial-gradient(120% 90% at 100% 100%,rgba(47,163,107,.3),transparent 55%),#123326}
+body.xmas .mq-in::before{content:"";position:absolute;left:12px;right:12px;top:6px;height:8px;pointer-events:none;background-image:radial-gradient(circle at 4px 4px,#ff5a78 3px,transparent 3.6px),radial-gradient(circle at 4px 4px,#ffd45c 3px,transparent 3.6px),radial-gradient(circle at 4px 4px,#4ade80 3px,transparent 3.6px);background-size:42px 8px;background-position:0 0,14px 0,28px 0;background-repeat:repeat-x;animation:xlights 1.8s steps(2,end) infinite}
+@keyframes xlights{50%{opacity:.45}}
+.nofx.xmas .mq-in::before{animation:none}
+body.xmas .logo{background:linear-gradient(100deg,#ffe08a 0%,#ffd45c 45%,#ff8fa3 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+#snow{position:fixed;inset:0;pointer-events:none;z-index:3;overflow:hidden}
+#snow i{position:absolute;top:-10px;border-radius:50%;background:#fff;animation:xsnow linear infinite}
+@keyframes xsnow{to{transform:translate(18px,105vh)}}
+.opts.wi .opt{gap:8px}
+
+.tuerbox{display:flex;justify-content:center;perspective:700px}
+.tuer{position:relative;width:calc(150px*var(--k,1));height:calc(190px*var(--k,1));border-radius:16px 16px 6px 6px;background:linear-gradient(160deg,#c62a38,#8a1620);border:4px solid #ffd45c;display:grid;place-items:center;box-shadow:0 18px 34px -16px rgba(0,0,0,.7),inset 0 0 0 6px rgba(0,0,0,.14)}
+.tuer-n{font-family:var(--display);font-weight:900;font-size:calc(64px*var(--k,1));color:#ffe7a3;line-height:1}
+.tuer-k{position:absolute;right:12px;top:50%;width:12px;height:12px;border-radius:50%;background:#ffd45c;box-shadow:0 2px 0 rgba(0,0,0,.35)}
+.tuer.open{background:radial-gradient(circle at 50% 40%,#2f6b4f,#0b1f17);animation:tueropen .7s cubic-bezier(.2,.8,.2,1)}
+.tuer-e{font-size:calc(76px*var(--k,1));line-height:1;animation:tuerpop .8s .25s cubic-bezier(.2,1.4,.4,1) both}
+@keyframes tueropen{from{transform:rotateY(-80deg);transform-origin:left center;filter:brightness(.6)}}
+@keyframes tuerpop{from{transform:scale(.2);opacity:0}}
+.nofx .tuer.open,.nofx .tuer-e{animation:none}
+
+html,body{margin:0}[hidden]:not([hidden=until-found i]){display:none!important}
+
+#xintro{position:fixed;inset:0;z-index:200;background:#0b2018;display:flex;align-items:center;justify-content:center}
+#xintro video{width:100%;height:100%;object-fit:contain;background:#0b2018}
+#xintro .xi-b{position:absolute;left:16px;right:16px;bottom:calc(env(safe-area-inset-bottom,0px) + 18px);display:flex;justify-content:space-between;gap:10px}
+#xintro button{font:800 15px var(--body);color:#fff;background:rgba(10,30,22,.72);border:1.5px solid rgba(255,255,255,.55);border-radius:999px;padding:10px 18px;cursor:pointer;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+#xintro .xi-skip{background:#ffd45c;color:#10261c;border-color:#ffd45c}
+
+.teamcard{margin-top:-6px;border-style:dashed}
+.teamcard.on{border-style:solid;border-color:var(--good);background:rgba(74,222,128,.08)}
+.teamcard .infobox{margin-top:8px}
 </style>
 
 <div id="app"><div id="top"></div><div id="main"></div><div id="status"></div></div>
@@ -1306,7 +1425,7 @@ FIGS.phoenix={n:"Phönix",st:["Glutküken","Funkenvogel","Feuervogel","Flammenph
   }};
 
 const ITEMS={
- party:{s:"hat",n:"Partyhut"},seppl:{s:"hat",n:"Sepplhut"},doktor:{s:"hat",n:"Doktorhut"},wikinger:{s:"hat",n:"Wikingerhelm"},zauber:{s:"hat",n:"Zauberhut"},alu:{s:"hat",n:"Aluhut"},halo:{s:"hat",n:"Heiligenschein"},lorbeer:{s:"hat",n:"Lorbeerkranz"},schlafmuetze:{s:"hat",n:"Schlafmütze"},
+ party:{s:"hat",n:"Partyhut"},seppl:{s:"hat",n:"Sepplhut"},doktor:{s:"hat",n:"Doktorhut"},wikinger:{s:"hat",n:"Wikingerhelm"},zauber:{s:"hat",n:"Zauberhut"},alu:{s:"hat",n:"Aluhut"},halo:{s:"hat",n:"Heiligenschein"},lorbeer:{s:"hat",n:"Lorbeerkranz"},schlafmuetze:{s:"hat",n:"Schlafmütze"},nikolaus:{s:"hat",n:"Nikolausmütze"},rentier:{s:"hat",n:"Rentiergeweih"},
  nerd:{s:"gl",n:"Nerdbrille"},sonne:{s:"gl",n:"Sonnenbrille"},monokel:{s:"gl",n:"Monokel"},brille3d:{s:"gl",n:"3D-Brille"},laser:{s:"gl",n:"Laser-Visier"},
  stift:{s:"hand",n:"Bleistift"},mass:{s:"hand",n:"Maßkrug"},buch:{s:"hand",n:"Lexikon"},rechner:{s:"hand",n:"Taschenrechner"},mikro:{s:"hand",n:"Mikrofon"},zepter:{s:"hand",n:"Zepter"},pokal:{s:"hand",n:"Goldener Pokal"},fernglas:{s:"hand",n:"Fernglas"},dart:{s:"hand",n:"Dartpfeil"},kugel:{s:"hand",n:"Kristallkugel"},chips:{s:"hand",n:"Pokerchips"},laterne:{s:"hand",n:"Rote Laterne"},
  cap:{s:"hat",n:"Basecap"},cowboy:{s:"hat",n:"Cowboyhut"},koch:{s:"hat",n:"Kochmütze"},pirat:{s:"hat",n:"Piratenhut"},blumen:{s:"hat",n:"Blumenkranz"},zylinder:{s:"hat",n:"Zylinder"},
@@ -1318,7 +1437,7 @@ const ITEMS={
 const SLOTS=[["hat","Hut"],["gl","Brille"],["hand","In der Hand"],["fx","Effekt"]];
 const LEVEL_ITEMS={2:"party",3:"nerd",4:"stift",5:"seppl",6:"sonne",7:"mass",8:"doktor",9:"monokel",10:"buch",11:"wikinger",12:"rechner",13:"zauber",14:"brille3d",15:"mikro",16:"alu",17:"laser",18:"zepter",19:"halo",20:"pokal"};
 const LEVEL_ITEMS2={2:"cap",3:"brezn",4:"herz",5:"ball",6:"cowboy",7:"sterne",8:"pizza",9:"runde",10:"koch",11:"kaffee",12:"klappe",13:"pirat",14:"lupe",15:"ski",16:"blumen",17:"herzen",18:"schirm",19:"stern",20:"zylinder"};
-const BADGE_ITEMS={first_win:"lorbeer",adlerauge:"fernglas",punktlandung:"dart",schaetzkoenig:"kugel",allin:"chips",pechvogel:"wolke",rote_laterne:"laterne",nachteule:"schlafmuetze",comeback:"flammen",hundertschaft:"konfetti"};
+const BADGE_ITEMS={first_win:"lorbeer",adlerauge:"fernglas",punktlandung:"dart",schaetzkoenig:"kugel",allin:"chips",pechvogel:"wolke",rote_laterne:"laterne",nachteule:"schlafmuetze",comeback:"flammen",hundertschaft:"konfetti",xmas:"nikolaus",xmaswin:"rentier"};
 
 /* ========== EXTRAS (Okt 2026): Hintergrund, Haustier, Hals, Rahmen, Titel, Jubel ========== */
 Object.assign(ITEMS,{
@@ -1434,6 +1553,8 @@ function hatSvg(id,x,y){
   const t='translate('+x+' '+y+')';
   const g=b=>'<g transform="'+t+'">'+b+'</g>';
   switch(id){
+    case "nikolaus":return g('<path d="M-11 2Q-10-15 3-20Q13-22 16-9Q11-14 6-9L11 2z" fill="#d62839"/><rect x="-13" y="-1" width="26" height="6" rx="3" fill="#fff"/><circle cx="16" cy="-8" r="4" fill="#fff"/>');
+    case "rentier":return g('<path d="M-6 1q-3-10-9-14M-10-7q-5 0-8-5M-12-11q1-5-1-8M6 1q3-10 9-14M10-7q5 0 8-5M12-11q-1-5 1-8" stroke="#8a5a2b" stroke-width="2.6" fill="none" stroke-linecap="round"/>');
     case "party":return g('<path d="M-10 2L0-24L10 2z" fill="#ff5a8a"/><path d="M-7-6L7-10M-4-14L5-17" stroke="#ffe066" stroke-width="3"/><circle cx="0" cy="-25" r="3.5" fill="#ffe066"/>');
     case "seppl":return g('<ellipse cx="0" cy="1" rx="17" ry="4" fill="#3f6b3a"/><path d="M-10 1q0-15 10-15q10 0 10 15z" fill="#4d8046"/><rect x="-10" y="-4" width="20" height="3" fill="#7a4a24"/><path d="M8-6q10-14 4-20" stroke="#fff" stroke-width="2.4" fill="none"/>');
     case "doktor":return g('<path d="M-16-6L0-13L16-6L0 1z" fill="#1f2230"/><rect x="-9" y="-6" width="18" height="8" fill="#2b2f40"/><path d="M12-7v10" stroke="#ffc93c" stroke-width="2"/><circle cx="12" cy="4" r="2" fill="#ffc93c"/>');
@@ -1584,7 +1705,9 @@ const BADGES=[
  ["stammgast","Stammgast","10 Spiele gespielt","Treue"],
  ["inventar","Inventar","50 Spiele gespielt","Treue"],
  ["hundertschaft","Hundertschaft","100 Spiele gespielt","Treue"],
- ["rudel","Rudel","Ein Spiel mit 6 Leuten gespielt","Treue"]
+ ["rudel","Rudel","Ein Spiel mit 6 Leuten gespielt","Treue"],
+ ["xmas","Weihnachtself","Ein Weihnachtsspecial gespielt","Kurioses"],
+ ["xmaswin","Christkind","Ein Weihnachtsspecial gewonnen","Kurioses"]
 ];
 const BADGE_MAP={};BADGES.forEach(b=>{BADGE_MAP[b[0]]=b;});
 function levelOf(xp){let l=1;LEVELS.forEach((t,i)=>{if(xp>=t[0])l=i+1;});return l;}
@@ -1642,6 +1765,7 @@ function buildProg(results,skipV){
       if(typeof p.hr==="number"&&p.hr>=0&&p.hr<5)B("nachteule");
       if(a.games>=10)B("stammgast");if(a.games>=50)B("inventar");if(a.games>=100)B("hundertschaft");
       if(n>=6)B("rudel");
+      if(p.xm){B("xmas");if(p.rank===1)B("xmaswin");}
       g.players.forEach(o=>{if(o&&o.u!==p.u&&typeof o.u==="string"&&num0(o.rank)<num0(p.rank))a.beatBy[o.u]=(a.beatBy[o.u]||0)+1;});
       a.last=p.rank===1?"krone":(p.rank===n&&n>=2&&p.rank!==1?"esel":null);
     });
@@ -1921,15 +2045,14 @@ function lobbyShow(){
   const rows=[["Alle gegen alle",LN.mc+" Fragen","1"]];
   for(let k=0;k<LN.m;k++)rows.push(["Überraschungsrunde","zufällig gezogen",String(k+2)]);
   rows.push(["Geschicklichkeitsspiel","1 Spiel","🎯"],["Finale: Alles oder nichts","1 Frage",String(LN.m+2)]);
-  if(!host){const th0=themeOf();return '<div class="card"><div class="eyebrow">Einstellungen</div><div class="sumrow"><span class="thb on">⏱ '+LN.t+'</span><span class="thb on">'+THEME_ICON[th0]+' '+h(THEMES[th0][0])+'</span>'+(teamsOn()?'<span class="thb on">🔴🔵 Teams</span>':'')+'</div>'+flowHtml(LN)+'</div>';}
+  if(!host){const th0=themeOf();return '<div class="card"><div class="eyebrow">Einstellungen</div><div class="sumrow"><span class="thb on">⏱ '+LN.t+'</span><span class="thb on">'+THEME_ICON[th0]+' '+h(THEMES[th0][0])+'</span>'+(teamsOn()&&lobbyPlayers().length>=4?'<span class="thb on">🔴🔵 Teams</span>':'')+'</div>'+flowHtml(LN)+'</div>';}
   const LK=Object.keys(LENS);
   let o='<div class="card"><div class="eyebrow">Spiellänge</div><div class="hwbox"><div class="hwsel"></div><div class="hwheel" id="lnwheel"><div class="hpad"></div>'+LK.map((l,i)=>'<div class="hitem" data-wi="'+i+'"><span class="emo">'+({kurz:"⚡",normal:"⏱️",lang:"🍿"})[l]+'</span><b>'+LENS[l].t+'</b><small>'+LENS[l].d+'</small></div>').join('')+'<div class="hpad"></div></div></div>'+flowHtml(LN);
   o+='<button class="mrow2" data-act="showmodes"><span>🎲 <b>Überraschungsrunden</b></span><span class="muted" style="white-space:nowrap">'+on+'/'+POOL_MODES.length+'</span><span class="chev'+(L.showModes?' up':'')+'">›</span></button>'+(L.showModes?modeGrid():'');
   const th=themeOf();
-  const TK=lobbyThemes(),cnt=t=>{if(t==="ki")return KI_MC.length;if(t==="iq")return IQ.length;const c=THEMES[t][1];return c?THEME_MC.filter(x=>c.indexOf(x)>=0).length:MC.length;};
+  const TK=lobbyThemes(),cnt=t=>{if(t==="ki")return KI_MC.length;if(t==="iq")return IQ.length;const c=THEMES[t][1];return c?THEME_MC.filter(x=>c.indexOf(x)>=0).length:THEME_MC.filter(x=>x!=="xmas").length;};
   o+='<div class="eyebrow" style="margin-top:8px">Thema für Runde 1 und Finale</div>'+(host?'<div class="hwbox"><div class="hwsel"></div><div class="hwheel" id="thwheel"><div class="hpad"></div>'+TK.map((t,i)=>'<div class="hitem" data-wi="'+i+'"><span class="emo">'+(t==="ki"?"🧠":THEME_ICON[t])+'</span><b>'+(t==="ki"?"Google KI-Prüfung":h(THEMES[t][0]))+'</b><small>'+(t==="ki"?"nur solo, nur du":cnt(t)+' Fragen')+'</small></div>').join('')+'<div class="hpad"></div></div></div>'+(lobbyKI()?'<p class="muted small" style="margin:0">Nur Prüfungsfragen wie im Test „Generative AI Leader“. Starte mit „🤖 Solo spielen“.</p>':''):'<span class="thb on">'+THEME_ICON[th]+' '+h(THEMES[th][0])+'</span>');
   const np=lobbyPlayers().length,tOn=teamsOn();
-  o+='<div class="tgrow" style="margin-top:6px"><span class="tgl"><b>Team-Modus</b> <button class="infob" data-act="teaminfo" aria-label="Team-Modus erklären">i</button><small>'+(np>=4?'Rot gegen Blau, fair gemischt':tOn?'Ist an, gilt aber erst ab 4 Leuten. Jetzt spielt jeder für sich.':'ab 4 Leuten')+'</small></span>'+(host?'<button class="tsw'+(tOn?' on':'')+(np<4?' wait':'')+'" data-act="teamtog" role="switch" aria-checked="'+tOn+'" aria-label="Team-Modus"><i></i></button>':'<span class="tsw'+(tOn?' on':'')+'"><i></i></span>')+'</div>'+(L.teamInfo?'<div class="infobox">Ab 4 Leuten. Beim Start werden zwei Teams gebildet, 🔴 Rot und 🔵 Blau, fair gemischt nach Level. Jeder spielt wie immer am eigenen Handy, die Punkte im Team werden zusammengezählt. Ist ein Team kleiner (z. B. 3 gegen 2), wird es hochgerechnet. Das Team mit mehr Punkten gewinnt. Für Level, Abzeichen und Liga zählt weiter deine eigene Platzierung.</div>':'');
   return o+'</div>';
 }
 function modeGrid(){
@@ -1945,11 +2068,11 @@ function modeChips(){
 function modeOf(st){return st.m||LEGACY_R[st.r]||"mc";}
 function ansA(raw){return (raw&&typeof raw==="object"&&!Array.isArray(raw))?raw.a:raw;}
 
-function modeSteps(m,used){
+function modeSteps0(m,used,KP,EST,PCT,MATCHC,ODD,WHO,BLUFF,EVENTS){
   const out=[];
-  if(m==="iq"){pick(used,IQ,"iq",5).forEach((q,i)=>out.push({t:"mc",iq:1,q:q,opts:shuffle(q.a),n:i+1,of:5}));}
-  else if(m==="size"){pick(used,SIZE,"size",4).forEach((q,i)=>{const ratio=O[q.b].h/O[q.a].h,hi=Math.min(110,290/ratio),lo=Math.min(48,hi);out.push({t:"size",q:q,refPx:Math.round(lo+Math.random()*(hi-lo))});});}
-  else if(m==="est"){pick(used,EST,"est",4).forEach(q=>out.push({t:"est",q:q}));}
+  if(m==="iq"){pick(used,IQ,KP+"iq",5).forEach((q,i)=>out.push({t:"mc",iq:1,q:q,opts:shuffle(q.a),n:i+1,of:5}));}
+  else if(m==="size"){pick(used,SIZE,KP+"size",4).forEach((q,i)=>{const ratio=O[q.b].h/O[q.a].h,hi=Math.min(110,290/ratio),lo=Math.min(48,hi);out.push({t:"size",q:q,refPx:Math.round(lo+Math.random()*(hi-lo))});});}
+  else if(m==="est"){pick(used,EST,KP+"est",4).forEach(q=>out.push({t:"est",q:q}));}
   else if(m==="time"){
     const taken={};
     for(let s=0;s<3;s++){
@@ -1962,17 +2085,17 @@ function modeSteps(m,used){
       out.push({t:"time",items:sel.map(i=>({n:EVENTS[i][0],y:EVENTS[i][1],l:EVENTS[i][2]||String(EVENTS[i][1])}))});
     }
   }
-  else if(m==="pct"){pick(used,PCT,"pct",4).forEach(q=>out.push({t:"pct",q:q}));}
+  else if(m==="pct"){pick(used,PCT,KP+"pct",4).forEach(q=>out.push({t:"pct",q:q}));}
   else if(m==="match"){
-    pick(used,MATCHC,"match",3).forEach(c=>{
+    pick(used,MATCHC,KP+"match",3).forEach(c=>{
       const seen={},pairs=[];
       shuffle(c.p).forEach(p=>{if(pairs.length<4&&!seen[p[1]]){seen[p[1]]=1;pairs.push(p);}});
       const R=shuffle(pairs.map(p=>p[1]));
       out.push({t:"match",q:c.q,L:pairs.map(p=>p[0]),R:R,sol:pairs.map(p=>R.indexOf(p[1]))});
     });
   }
-  else if(m==="odd"){pick(used,ODD,"odd",5).forEach(o=>out.push({t:"odd",q:{q:"Welcher Begriff passt nicht dazu?",a:o.i.slice(),f:o.f},opts:shuffle(o.i)}));}
-  else if(m==="who"){pick(used,WHO,"who",3).forEach(w=>out.push({t:"who",q:{h:w.h.slice(),a:w.a.slice()},opts:shuffle(w.a)}));}
+  else if(m==="odd"){pick(used,ODD,KP+"odd",5).forEach(o=>out.push({t:"odd",q:{q:"Welcher Begriff passt nicht dazu?",a:o.i.slice(),f:o.f},opts:shuffle(o.i)}));}
+  else if(m==="who"){pick(used,WHO,KP+"who",3).forEach(w=>out.push({t:"who",q:{h:w.h.slice(),a:w.a.slice()},opts:shuffle(w.a)}));}
   else if(m==="hl"){
     const done={};
     for(let s=0;s<5;s++){
@@ -1990,10 +2113,13 @@ function modeSteps(m,used){
       if(made)out.push(made);
     }
   }
-  else if(m==="bluff"){pick(used,BLUFF,"bluff",2).forEach(q=>{out.push({t:"bluffw",q:q});out.push({t:"bluffv",q:q});});}
+  else if(m==="bluff"){pick(used,BLUFF,KP+"bluff",2).forEach(q=>{out.push({t:"bluffw",q:q});out.push({t:"bluffv",q:q});});}
   const qs=out.filter(x=>x.t!=="bluffv");
   let n=0;out.forEach(x=>{if(x.t!=="bluffv")n++;x.n=n;x.of=qs.length;});
   return out;
+}
+function modeSteps(m,used){
+  return used&&used.theme==="xmas"?modeSteps0(m,used,"x",XP.est,XP.pct,XP.match,XP.odd,XP.who,XP.bluff,XP.events):modeSteps0(m,used,"",EST,PCT,MATCHC,ODD,WHO,BLUFF,EVENTS);
 }
 /* ========== AUSGLEICH (Version 17) – Joker, Ereigniskarte ×2, Underdog, Gejagter, 3 Bauchgefühl-Spiele ========== */
 const MAJ=[
@@ -2056,7 +2182,13 @@ Object.assign(O,{"siegestor":{"n":"Siegestor München","e":"🏛️","h":21},"ra
 const MODE_WEIGHT={size:2,est:2,bluff:2,maj:2,know:2,lun:2};
 const MC_COUNT=4;
 const HC_TIME=60000,UNDERDOG=50;
-const NOBONUS={fin:1,bluffw:1};
+const NOBONUS={fin:1,bluffw:1,wichtel:1,tuer:1};
+const TUER_KINDS=["x2","letzter","alle","glueck"];
+function tuerPoints(st,R,pts,sb){
+  if(st.c==="alle")R.forEach((u,k)=>{pts[k]=50;});
+  else if(st.c==="glueck"){const j=R.indexOf(st.who);if(j>=0)pts[j]=100;}
+  else if(st.c==="letzter"&&R.length){const mn=Math.min.apply(null,sb),mx=Math.max.apply(null,sb);if(mn===mx)R.forEach((u,k)=>{pts[k]=50;});else sb.forEach((x,k)=>{if(x===mn)pts[k]=100;});}
+}
 
 function weightedPick(pool,n){
   const out=[],p=pool.slice();
@@ -2067,19 +2199,23 @@ function weightedPick(pool,n){
   }
   return out;
 }
-function extraSteps(m,used,R){
+function extraSteps0(m,used,R,KP,MAJ,KNOW){
   const out=[];
-  if(m==="maj")pick(used,MAJ,"maj",5).forEach(pr=>out.push({t:"maj",q:{q:"Was wählt die Mehrheit?",a:pr.slice()}}));
-  else if(m==="know"){const T=shuffle(R).slice(0,Math.min(4,R.length));pick(used,KNOW,"know",T.length).forEach((q,j)=>out.push({t:"know",who:T[j],q:{q:q.q,a:q.a.slice()}}));}
+  if(m==="maj")pick(used,MAJ,KP+"maj",5).forEach(pr=>out.push({t:"maj",q:{q:"Was wählt die Mehrheit?",a:pr.slice()}}));
+  else if(m==="know"){const T=shuffle(R).slice(0,Math.min(4,R.length));pick(used,KNOW,KP+"know",T.length).forEach((q,j)=>out.push({t:"know",who:T[j],q:{q:q.q,a:q.a.slice()}}));}
   else if(m==="lun"){for(let s=0;s<3;s++)out.push({t:"lun"});}
   out.forEach((x,j)=>{x.n=j+1;x.of=out.length;});
   return out;
+}
+function extraSteps(m,used,R){
+  return used&&used.theme==="xmas"?extraSteps0(m,used,R,"x",XP.maj,XP.know):extraSteps0(m,used,R,"",MAJ,KNOW);
 }
 const LENS={kurz:{mc:3,m:1,ev:false,t:"Kurz",d:"ca. 8 Min."},normal:{mc:4,m:2,ev:true,t:"Normal",d:"ca. 15 Min."},lang:{mc:6,m:3,ev:true,t:"Lang",d:"ca. 25 Min."}};
 let lenLocal=null;
 function lenOf(){if(lenLocal&&G&&lenLocal.v===G.v&&Date.now()-lenLocal.t<8000){if(G.used&&G.used.len===lenLocal.len)lenLocal=null;else return lenLocal.len;}const l=G&&G.used&&G.used.len;return LENS[l]?l:"normal";}
 function buildSteps(used,R){
   R=Array.isArray(R)?R:[];
+  if(used.theme==="xmas"&&!SOLO&&!xmasOn())used.theme="mix";
   const LN=LENS[used.len]||LENS.normal,NR=LN.m+2;
   const last=Array.isArray(used.lastModes)?used.lastModes:[];
   const offL=Array.isArray(used.off)?used.off:[];
@@ -2102,14 +2238,18 @@ function buildSteps(used,R){
   const st=[used.theme&&used.theme!=="mix"?{t:"intro",r:0,m:"mc",of:NR,theme:used.theme}:{t:"intro",r:0,m:"mc",of:NR}];
   mc.forEach((q,i)=>st.push(isIQ?{t:"mc",iq:1,q:q,opts:shuffle(q.a),n:i+1,of:LN.mc}:{t:"mc",q:q,opts:shuffle(q.a),n:i+1,of:LN.mc}));
   st.push({t:"stand",r:0});
-  const dblRound=Math.random()<0.5?Math.floor(Math.random()*modes.length):-1; // Ereigniskarte „Alles auf Rot“
+  const xmT=used.theme==="xmas"&&modes.length>0;
+  const dblRound=xmT?-1:(Math.random()<0.5?Math.floor(Math.random()*modes.length):-1); // Ereigniskarte „Alles auf Rot“
+  const tuerK=xmT?Math.floor(Math.random()*modes.length):-1,tuerC=xmT?rnd(TUER_KINDS):"";
   modes.forEach((m,k)=>{
     const ms=["maj","know","lun"].indexOf(m)>=0?extraSteps(m,used,R):modeSteps(m,used);
     if(k===dblRound){st.push({t:"evcard",c:"x2"});ms.forEach(x=>{x.x2=true;});}
-    st.push({t:"intro",r:k+1,m:m,x2:k===dblRound,of:NR});ms.forEach(x=>st.push(x));st.push({t:"stand",r:k+1});
+    if(k===tuerK){const td=new Date(),ts={t:"tuer",c:tuerC,d:(td.getMonth()===11&&td.getDate()<=24)?td.getDate():1+Math.floor(Math.random()*24)};if(tuerC==="glueck"&&R.length)ts.who=rnd(R);st.push(ts);if(tuerC==="x2")ms.forEach(x=>{x.x2=true;});}
+    st.push({t:"intro",r:k+1,m:m,x2:k===dblRound||(k===tuerK&&tuerC==="x2"),of:NR});ms.forEach(x=>st.push(x));st.push({t:"stand",r:k+1});
   });
-  st.push({t:"skill",g:pick(used,SKILLS,"skill",1)[0],seed:Math.floor(Math.random()*1e9)});
+  st.push({t:"skill",g:(used.theme==="xmas"&&Math.random()<0.5)?"hunt":pick(used,SKILLS,"skill",1)[0],seed:Math.floor(Math.random()*1e9)});
   if(LN.ev)st.push({t:"event"});
+  if(used.theme==="xmas"&&!SOLO&&R.length>=3)st.push({t:"wichtel"});
   st.push({t:"intro",r:NR-1,m:"fin",of:NR});
   st.push({t:"fin",q:fin,opts:shuffle(fin.a)});
   st.push({t:"end"});
@@ -2119,6 +2259,10 @@ function buildSteps(used,R){
 /* Punkte der Bauchgefühl-Spiele */
 function extraPoints(st,i,R,pts){
   if(st.t==="skill"){skillPoints(st,i,R,pts);return true;}
+  if(st.t==="wichtel"){
+    R.forEach((u,k)=>{const a=getAns(u,i);if(typeof a!=="string"||a===u)return;const j=R.indexOf(a);if(j<0)return;pts[j]+=100;if(getAns(a,i)===u)pts[k]+=50;});
+    return true;
+  }
   if(st.t==="maj"){
     const c=[0,0];R.forEach(u=>{const a=getAns(u,i);if(a===0||a===1)c[a]++;});const mx=Math.max(c[0],c[1]);
     if(mx>0)R.forEach((u,k)=>{const a=getAns(u,i);if((a===0||a===1)&&c[a]===mx)pts[k]=100;});return true;
@@ -2241,7 +2385,44 @@ function vLun(st){
   const grid='<div class="numgrid">'+[1,2,3,4,5,6,7,8,9,10].map(n=>'<div class="numb res'+(n===w?' win':c[n]&&c[n].length>1?' clash':'')+'"><b>'+n+'</b>'+(c[n]?'<span class="who-dots">'+c[n].map(u=>'<span class="wd" '+cv(u)+'>'+nm(u)+'</span>').join('')+'</span>':'')+'</div>').join('')+'</div>';
   return myVerdict(st,"Gewonnen!")+'<div class="card tight center"><p>'+(w?'Gewinnerzahl: <strong>'+w+'</strong>':'Keine Zahl war einzigartig. Diesmal gewinnt niemand.')+'</p></div>'+grid+hostBtn("Weiter","next");
 }
+function vTuer(st){
+  const R=roster(),no=Math.max(1,Math.min(24,Math.floor(Number(st.d)||1)));
+  if(!G.reveal)return '<div class="marquee fade"><div class="mq-in"><div class="eyebrow">Adventstürchen</div><h2 class="rtitle">Was steckt dahinter?</h2></div></div>'+
+    '<div class="tuerbox fade"><div class="tuer"><span class="tuer-n">'+no+'</span><i class="tuer-k"></i></div></div>'+
+    (amHost()?'<button class="btn stick" data-act="tueropen">🚪 Türchen öffnen</button>':waitNote('Gleich öffnet '+hostName()+' das Türchen …'));
+  const p=stepPoints(st,G.idx,scoresAt(G.idx)),who=R.filter((u,k)=>p[k]>0),names=who.map(nm).join(', ');
+  let ic="🎁",ti="Doppelte Bescherung",tx="Alle Punkte der nächsten Runde zählen doppelt.";
+  if(st.c==="alle"){ic="🍪";ti="Plätzchen für alle";tx="Jeder bekommt 50 Punkte geschenkt.";}
+  else if(st.c==="glueck"){ic="🎅";ti="Der Nikolaus war da";tx=who.length?'<strong>'+names+'</strong> findet 100 Punkte im Stiefel.':"Der Stiefel bleibt diesmal leer.";}
+  else if(st.c==="letzter"){ic="🧦";ti="Ein Herz für die Letzten";tx=who.length===R.length?"Alle liegen gleichauf. Darum bekommt jeder 50 Punkte.":'<strong>'+names+'</strong> '+(who.length>1?'bekommen':'bekommt')+' 100 Punkte geschenkt.';}
+  const k=R.indexOf(ME),mp=k>=0?p[k]:0;
+  return '<div class="marquee fade"><div class="mq-in"><div class="eyebrow">Türchen Nummer '+no+'</div><h2 class="rtitle">'+ti+'</h2></div></div>'+
+    '<div class="tuerbox"><div class="tuer open"><span class="tuer-e">'+ic+'</span></div></div>'+
+    '<div class="card center fade tight"><p>'+tx+'</p>'+(inGame()&&mp>0?'<p class="bdown">Für dich: <b>+'+fmt(mp)+'</b></p>':'')+'</div>'+hostBtn("Weiter","next");
+}
+function vWichtel(st){
+  const R=roster(),mine=getAns(ME,G.idx);
+  const head='<div class="card fade tight"><div class="eyebrow">🎁 Wichtel-Runde</div><p class="qtext">Wem schenkst du 100 Punkte?</p><p class="muted small">Es kostet dich nichts. Beschenkt ihr euch gegenseitig, bekommt ihr beide 50 Punkte obendrauf.</p></div>';
+  if(!G.reveal){
+    if(mine!==null||!inGame())return head+(typeof mine==="string"&&R.indexOf(mine)>=0?'<div class="card center tight"><div class="eyebrow">Dein Geschenk geht an</div><div class="rec-n">'+nm(mine)+'</div></div>':'')+waitOrReveal();
+    return head+'<div class="opts wi'+(R.length>=6?' many':'')+'">'+R.map((u,j)=>u===ME?'':'<button class="opt" data-act="wichtel" data-i="'+j+'" '+cv(u)+'>'+avHtml(u,28,{nobadge:true})+'<span class="ot">'+nm(u)+'</span></button>').join('')+'</div>'+hostRevealLink();
+  }
+  const k=R.indexOf(ME),p=stepPoints(st,G.idx,scoresAt(G.idx)),mp=k>=0?p[k]:0;
+  const verdict=inGame()?'<div class="verdict '+(mp>0?'ok':'neutral')+' fade"><span>'+(mp>0?'Bescherung! +'+fmt(mp):'Diesmal leer ausgegangen')+'</span><small>'+(mp>0?'Da hat jemand an dich gedacht.':'Nächstes Jahr braver sein.')+'</small></div>':'';
+  return '<div class="card fade tight"><div class="eyebrow">🎁 Wichtel-Runde</div><p class="qsmall">Wer hat wen beschenkt?</p></div>'+verdict+
+    ptsRows(st,u=>{const a=getAns(u,G.idx),from=R.filter(v=>v!==u&&getAns(v,G.idx)===u);return (typeof a==="string"&&R.indexOf(a)>=0&&a!==u?'schenkt '+nm(a):'schenkt niemandem')+(from.length?' · bekommt von '+from.map(nm).join(', '):'');})+hostBtn("Weiter","next");
+}
+function skInfo(g){return g==="hunt"&&xmasGame()?{t:"Geschenke-Jagd",e:"🎁",r:"10 Sekunden: Jedes Geschenk antippen gibt +1. Finger weg von der Kohle, die kostet 1."}:SKG[g];}
+/* Team-Schalter: erscheint erst ab 4 Leuten, direkt beim Startknopf */
+function teamRow(){
+  const np=lobbyPlayers().length,tOn=teamsOn(),host=amHost();
+  if(np<4||!host)return '';
+  let o='';
+  o+='<div class="tgrow"><span class="tgl"><b>🔴🔵 Team-Modus</b> <button class="infob" data-act="teaminfo" aria-label="Team-Modus erklären">i</button><small>'+(np>=4?'Rot gegen Blau, fair gemischt':tOn?'Ist an, gilt aber erst ab 4 Leuten. Jetzt spielt jeder für sich.':'ab 4 Leuten')+'</small></span>'+(host?'<button class="tsw'+(tOn?' on':'')+(np<4?' wait':'')+'" data-act="teamtog" role="switch" aria-checked="'+tOn+'" aria-label="Team-Modus"><i></i></button>':'<span class="tsw'+(tOn?' on':'')+'"><i></i></span>')+'</div>'+(L.teamInfo?'<div class="infobox">Ab 4 Leuten. Beim Start werden zwei Teams gebildet, 🔴 Rot und 🔵 Blau, fair gemischt nach Level. Jeder spielt wie immer am eigenen Handy, die Punkte im Team werden zusammengezählt. Ist ein Team kleiner (z. B. 3 gegen 2), wird es hochgerechnet. Das Team mit mehr Punkten gewinnt. Für Level, Abzeichen und Liga zählt weiter deine eigene Platzierung.</div>':'');
+  return '<div class="card tight teamcard'+(tOn?' on':'')+'">'+o+'</div>';
+}
 function vEvcard(){
+  if(xmasGame())return '<div class="marquee fade"><div class="mq-in"><div class="eyebrow">Adventstürchen</div><h2 class="rtitle">🚪 Doppelte Bescherung!</h2><p class="tag">Die nächste Runde zählt doppelt.</p></div></div><div class="card fade"><p>Hinter dem Türchen steckt eine Überraschung: Alle Punkte der nächsten Runde werden verdoppelt.</p></div>'+hostBtn("Weiter","next");
   return '<div class="marquee fade"><div class="mq-in"><div class="eyebrow">Ereigniskarte</div><h2 class="rtitle">Alles auf Rot!</h2><p class="tag">Die nächste Runde zählt doppelt.</p></div></div><div class="card fade"><p>Alle Punkte der nächsten Runde werden verdoppelt. Jetzt kann noch alles passieren!</p></div>'+hostBtn("Weiter","next");
 }
 /* ========== Ende AUSGLEICH ========== */
@@ -2317,7 +2498,7 @@ function skStage(st){
   return '<div class="skbox"><div class="skhud"><span id="sks">0 Tipps</span><span id="skt">5,0 s</span></div><button class="skpad" id="skp" data-sk="go">Tippe los!</button></div>';
 }
 function vSkill(st){
-  const K=SKG[st.g],mine=getAns(ME,G.idx),R=roster();
+  const K=skInfo(st.g),mine=getAns(ME,G.idx),R=roster();
   if(!G.reveal){
     const head='<div class="card fade tight"><div class="eyebrow">Geschicklichkeit · '+K.e+' '+K.t+'</div><p class="skrule">'+K.r+' <span class="muted">Ein Versuch. '+(R.length===2?'Platz 1: 150 Punkte, Platz 2: 50.':'Platz 1: 150 Punkte, Platz 2: 100, Platz 3: 50.')+'</span></p></div>';
     if(!inGame())return head+waitOrReveal();
@@ -2327,8 +2508,8 @@ function vSkill(st){
   }
   const PP=stepPoints(st,G.idx,scoresAt(G.idx)),m=R.map(u=>skMetric(st.g,getAns(u,G.idx)));
   const order=R.map((u,i)=>i).sort((a,b)=>(m[a]===null?1e12:m[a])-(m[b]===null?1e12:m[b]));
-  let rows='<div class="rows">';
-  order.forEach(i=>{const u=R[i],p=PP[i];rows+='<div class="row" '+cv(u)+'><span class="who">'+nm(u)+'</span><span class="val">'+skFmt(st.g,getAns(u,G.idx))+'</span><span class="pts'+(p>0?'':' zero')+'">'+(p>0?'+'+fmt(p):'0')+'</span></div>';});
+  let rows='<div class="rows'+(R.length>=5?' many':'')+'">';
+  order.forEach(i=>{const u=R[i],p=PP[i];rows+='<div class="row" '+cv(u)+'><span class="who">'+nm(u)+(R.length>=5?'<br><span class="muted" style="font-weight:600">'+skFmt(st.g,getAns(u,G.idx))+'</span>':'')+'</span>'+(R.length>=5?'':'<span class="val">'+skFmt(st.g,getAns(u,G.idx))+'</span>')+'<span class="pts'+(p>0?'':' zero')+'">'+(p>0?'+'+fmt(p):'0')+'</span></div>';});
   return '<div class="card fade tight"><div class="eyebrow">Geschicklichkeit</div><p class="qtext">'+K.e+' '+K.t+'</p></div>'+myVerdict(st,"Geschickt!")+rows+'</div>'+hostBtn("Weiter","next");
 }
 function skBarPos(now){const x=((now-SK.t0)/1300+SK.off)%2;return 100*(x<1?x:2-x);}
@@ -2350,7 +2531,7 @@ function skTick(st,now){
   else if(g==="hunt"){
     const e=now-s.t0;
     if(e>=10000){skFinish(s.score);return;}
-    for(let i=0;i<9;i++){const c=skEl("skc"+i);if(!c)continue;let em="";s.ev.forEach(v=>{if(v.c===i&&!v.hit&&e>=v.t&&e<v.t+v.life)em=v.good?"🥨":"💣";});if(c.textContent!==em)c.textContent=em;}
+    for(let i=0;i<9;i++){const c=skEl("skc"+i);if(!c)continue;let em="";s.ev.forEach(v=>{if(v.c===i&&!v.hit&&e>=v.t&&e<v.t+v.life)em=v.good?(xmasGame()?"🎁":"🥨"):(xmasGame()?"🪨":"💣");});if(c.textContent!==em)c.textContent=em;}
     const a=skEl("sks"),b=skEl("skt");if(a)a.textContent=s.score+(s.score===1?" Punkt":" Punkte");if(b)b.textContent=sec(10000-e);
   }
   else if(g==="simon"){
@@ -2539,7 +2720,7 @@ function authHits(st,i){return roster().filter(u=>u!==st.q.by&&(a=>typeof a==="n
 function ptsRows(st,detail){
   const R=roster(),p=stepPoints(st,G.idx,scoresAt(G.idx));
   const order=R.map((u,k)=>k).sort((x,y)=>p[y]-p[x]);
-  return '<div class="rows">'+order.map(k=>{const u=R[k];return '<div class="row" '+cv(u)+'><span class="who">'+nm(u)+'<br><span class="muted" style="font-weight:600">'+detail(u,k)+'</span></span><span class="pts'+(p[k]<0?' neg':p[k]===0?' zero':'')+'">'+(p[k]>0?'+'+fmt(p[k]):p[k]===0?'0':sgn(p[k]))+'</span></div>';}).join('')+'</div>';
+  return '<div class="rows'+(R.length>=5?' many':'')+'">'+order.map(k=>{const u=R[k];return '<div class="row" '+cv(u)+'><span class="who">'+nm(u)+'<br><span class="muted" style="font-weight:600">'+detail(u,k)+'</span></span><span class="pts'+(p[k]<0?' neg':p[k]===0?' zero':'')+'">'+(p[k]>0?'+'+fmt(p[k]):p[k]===0?'0':sgn(p[k]))+'</span></div>';}).join('')+'</div>';
 }
 function breakdownHtml(st){
   if(!isQ(st)||NOBONUS[st.t]||!inGame())return '';
@@ -2631,10 +2812,10 @@ function vBluffV(st){
   const head='<div class="card fade tight"><div class="eyebrow">Bluff '+st.n+' von '+st.of+' · Welche Antwort ist echt?</div><p class="qtext">'+blankQ(st)+'</p></div>';
   if(!G.reveal){
     if(mine!==null||!inGame())return head+(typeof mine==="number"&&O2[mine]?'<div class="card center tight"><div class="eyebrow">Deine Wahl</div><div class="rec-n">'+h(O2[mine].text)+'</div></div>':'')+waitOrReveal();
-    return head+'<div class="opts">'+O2.map((o,j)=>o.owners.indexOf(ME)>=0?'<div class="opt dim own"><span class="ot">'+h(o.text)+'<small class="muted">Dein Bluff</small></span></div>':'<button class="opt" data-act="bvote" data-i="'+j+'"><span class="ot">'+h(o.text)+'</span></button>').join('')+'</div>'+hostRevealLink();
+    return head+'<div class="opts'+(O2.length>=7?' many':'')+'">'+O2.map((o,j)=>o.owners.indexOf(ME)>=0?'<div class="opt dim own"><span class="ot">'+h(o.text)+'<small class="muted">Dein Bluff</small></span></div>':'<button class="opt" data-act="bvote" data-i="'+j+'"><span class="ot">'+h(o.text)+'</span></button>').join('')+'</div>'+hostRevealLink();
   }
   const R=roster();
-  const cards='<div class="opts">'+O2.map((o,j)=>{
+  const cards='<div class="opts bl'+(O2.length>=7?' many':'')+'">'+O2.map((o,j)=>{
     const voters=R.filter(u=>getAns(u,G.idx)===j);
     return '<div class="opt'+(o.truth?' right':'')+'"><span class="ot"><span>'+h(o.text)+'</span><small class="muted">'+(o.truth?'✅ Die echte Antwort':'Bluff von '+o.owners.map(nm).join(', '))+'</small>'+
       (voters.length?'<span class="who-dots">'+voters.map(u=>'<span class="wd" '+cv(u)+'>'+nm(u)+'</span>').join('')+'</span>':'')+'</span></div>';}).join('')+'</div>';
@@ -2643,9 +2824,9 @@ function vBluffV(st){
     return (o?(o.truth?'hat die echte gefunden':'ist reingefallen'):'keine Stimme')+(fooled?' · hat '+fooled+' reingelegt':'');})+hostBtn("Weiter","next");
 }
 
-const COLS=["#ff7a59","#3ed6c0","#ffc93c","#ff8fd8","#6cb8ff","#b8f06a"];
-const MAXP=6;
-const QTYPES={mc:1,size:1,est:1,fin:1,time:1,pct:1,match:1,odd:1,who:1,hl:1,bluffw:1,bluffv:1,maj:1,know:1,lun:1,skill:1};
+const COLS=["#ff7a59","#3ed6c0","#ffc93c","#ff8fd8","#6cb8ff","#b8f06a","#b69cff","#ff9f45","#7ee8a2","#f6f2ff"];
+const MAXP=10;
+const QTYPES={mc:1,size:1,est:1,fin:1,time:1,pct:1,match:1,odd:1,who:1,hl:1,bluffw:1,bluffv:1,maj:1,know:1,lun:1,skill:1,wichtel:1,tuer:1};
 
 const topEl=document.getElementById("top"),mainEl=document.getElementById("main"),statusEl=document.getElementById("status");
 let DB=null,ME=null,G=null,P={},dbState="loading",gotGame=false,gotPlayers=false,SOLO=false,LDB=null,RG=null,RP={},SOLORES=[];
@@ -2656,6 +2837,7 @@ const L={name:"",r:1,rKey:null,buf:"",bufKey:null,bet:0,betKey:null,finLocked:nu
 try{L.name=localStorage.getItem("dk_name")||"";}catch(e){}
 
 /* ---------- Helfer ---------- */
+function cln(x){try{return x===undefined||x===null?x:JSON.parse(JSON.stringify(x));}catch(e){return x;}}
 function h(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
 function rnd(a){return a[Math.floor(Math.random()*a.length)];}
 function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));const t=a[i];a[i]=a[j];a[j]=t;}return a;}
@@ -2713,7 +2895,8 @@ function sizeScore(st,r,u){
 function stepPoints(st,i,sb){return applyBonus(st,i,sb,stepBase(st,i,sb));}
 function stepBase(st,i,sb){
   const R=roster(),pts=R.map(()=>0);
-  if(extraPoints(st,i,R,pts)||miniPoints(st,i,R,pts)){
+  if(st.t==="tuer"){tuerPoints(st,R,pts,sb);
+  }else if(extraPoints(st,i,R,pts)||miniPoints(st,i,R,pts)){
   }else if(st.t==="size"){
     R.forEach((u,k)=>{const a=getAns(u,i);if(typeof a==="number"&&a>0&&isFinite(a))pts[k]=sizeScore(st,a,u).pts;});
   }else if(st.t==="est"){
@@ -2827,6 +3010,12 @@ function hostReveal(){
   snap._=1;
   gWrite(()=>gRef().update({reveal:true,A:{[String(i)]:snap},J:{[String(i)]:jl}}));
 }
+function endGame(){
+  const v=rid();
+  gWrite(()=>gRef().set({v:v,phase:"done",host:ME,roster:[],steps:[],idx:0,reveal:false,used:(G&&G.used)||{}}));
+}
+function atEnd(){const st=step();return !!(G&&G.phase==="play"&&st&&st.t==="end");}
+function leftGame(){return !!(G&&L.leftV&&L.leftV===G.v&&atEnd());}
 function takeOver(){gWrite(()=>gRef().update({host:ME}));}
 
 /* ---------- Sound ---------- */
@@ -2855,9 +3044,9 @@ const sfx={good:()=>tone([523,659,784],0.16,"triangle",0.09),bad:()=>tone([311,2
 
 /* ---------- Views ---------- */
 function vTop(){
-  const R=roster(),showScores=G&&G.phase==="play"&&R.length;
+  const R=roster(),showScores=G&&G.phase==="play"&&R.length&&!leftGame();
   const st0=step();let timer='';
-  if(showScores&&isQ(st0)&&!G.reveal){
+  if(showScores&&isQ(st0)&&!G.reveal&&st0.t!=="tuer"){
     const MW=myWindow(),has=MW.has,left=MW.left;
     timer='<div class="qtimer"><div class="tbar"><div class="tfill'+(left<=Q_LAST?' hurry':'')+'" id="qtfill" style="width:'+Math.max(0,Math.min(100,left/Q_TIME*100))+'%"></div></div><b id="qtnum">'+(has?'':'2:00')+'</b></div>';
   }
@@ -2865,17 +3054,17 @@ function vTop(){
   let out=(G&&dbState==="ok")?'<div class="top">'+timer+'<button class="iconbtn" data-act="menu">Menü</button></div>':'';
   if(showScores){
     const sc=curScores(),st=step();
-    const cols=R.length<=4?R.length:3,stack=cols>=4;
-    out+='<div class="scores'+(stack?' tall':'')+'" style="grid-template-columns:repeat('+cols+',minmax(0,1fr))">';
+    const nR=R.length,mini=nR>=7,cols=nR<=6?nR:Math.ceil(nR/2),stack=nR>=4&&!mini;
+    out+='<div class="scores'+(mini?' mini':stack?' tall':'')+(nR>=5?' many':'')+'" style="grid-template-columns:repeat('+cols+',minmax(0,1fr))">';
     const SR=streaks(),ldr=leaderOf(sc),mn=Math.min.apply(null,sc),mnN=sc.filter(v=>v===mn).length,allEq=mn===Math.max.apply(null,sc);
     R.forEach((u,k)=>{
       const key=G.v+"|"+u,prev=shownScores[key],d=prev===undefined?0:sc[k]-prev;
       const isL=ldr===u,isLast=R.length>=3&&!allEq&&mnN===1&&sc[k]===mn,sr=SR[k];
-      const extra=(isL?' lead':'')+(sr>=5?' fire2':sr>=3?' fire1':'')+(u===FOUNDER&&isPhx()?' phxchip'+(Date.now()<(badUntil[u]||0)?' ash':''):(Date.now()<(badUntil[u]||0)?' ouch':''));
-      const badges=(isL?'<span class="cb crown" aria-label="Führt">👑</span>':'')+(isLast?'<span class="cb lantern" aria-label="Letzter">🏮</span>':'')+(sr>=3?'<span class="streak">🔥'+sr+'</span>':'');
       const done=isQ(st)&&!G.reveal&&getAns(u,G.idx)!==null;
+      const extra=(done?' done':'')+(isL?' lead':'')+(sr>=5?' fire2':sr>=3?' fire1':'')+(u===FOUNDER&&isPhx()?' phxchip'+(Date.now()<(badUntil[u]||0)?' ash':''):(Date.now()<(badUntil[u]||0)?' ouch':''));
+      const badges=(isL?'<span class="cb crown" aria-label="Führt">'+(xmasGame()?'⭐':'👑')+'</span>':'')+(isLast?'<span class="cb lantern" aria-label="Letzter">'+(xmasGame()?'🧦':'🏮')+'</span>':'')+(sr>=3?'<span class="streak">🔥'+sr+'</span>':'');
       const md=moodOf(u),tag=u===ME?'div':'button',at=u===ME?'':' data-act="tease" data-u="'+h(u)+'" aria-label="'+nm(u)+' sticheln"';
-      out+='<'+tag+' class="chip'+(u===ME?' on':'')+extra+'" data-fxe="'+figFx(u).bad+'" '+cv(u)+at+'>'+badges+avHtml(u,stack?36:34,{mood:md,full:true})+'<span class="chip-t"><span class="nm">'+(G.teams&&(G.teams[u]===0||G.teams[u]===1)?'<i class="tdot" style="background:'+TEAMN[G.teams[u]][2]+'"></i>':'')+nm(u)+(done?' ✓':'')+'</span><span class="scl"><span class="sc">'+fmt(sc[k])+'</span><span class="lv">L'+progOf(u).lvl+(hcOf(u)>=1?' 🎯':'')+(hcOf(u)<1&&!jokerUsed(u)?' 🃏':'')+'</span></span></span>'+(d!==0?'<span class="delta'+(d<0?' neg':'')+'">'+sgn(d)+'</span>':'')+'</'+tag+'>';
+      out+='<'+tag+' class="chip'+(u===ME?' on':'')+extra+'" data-fxe="'+figFx(u).bad+'" '+cv(u)+at+'>'+badges+avHtml(u,mini?18:nR>=5?26:stack?36:34,{mood:md,full:true})+'<span class="chip-t"><span class="nm">'+(G.teams&&(G.teams[u]===0||G.teams[u]===1)?'<i class="tdot" style="background:'+TEAMN[G.teams[u]][2]+'"></i>':'')+nm(u)+'</span><span class="scl"><span class="sc">'+fmt(sc[k])+'</span><span class="lv">L'+progOf(u).lvl+(hcOf(u)>=1?' 🎯':'')+(hcOf(u)<1&&!jokerUsed(u)?' 🃏':'')+'</span></span></span>'+(d!==0?'<span class="delta'+(d<0?' neg':'')+'">'+sgn(d)+'</span>':'')+'</'+tag+'>';
       shownScores[key]=sc[k];
     });
     out+='</div>';
@@ -2906,7 +3095,7 @@ function vMain(){
   }
   if(dbState==="loading")return '<div class="card center"><p class="muted">Verbinde mit dem Spiel …</p></div>';
   if(dbState==="nodb")return '<div class="marquee"><div class="mq-in"><div class="logo">DREI<br>KAMPF</div></div></div><div class="card"><p>Keine Verbindung zum Spielstand. Prüf dein Internet und lade die Seite neu.</p></div>';
-  if(!G||(G.phase!=="lobby"&&G.phase!=="play")){
+  if(!G||(G.phase!=="lobby"&&G.phase!=="play")||leftGame()){
     return '<div class="marquee fade"><div class="mq-in"><div class="logo one">DREIKAMPF</div><p class="tag small">Jeder am eigenen Handy</p></div></div>'+
       vMyCard(true)+errBox()+pinSetCard()+
       '<button class="btn" data-act="newlobby">Neues Spiel eröffnen</button><p class="center muted small" style="margin-top:-4px">Die anderen öffnen denselben Link und treten bei.</p>'+vHome();
@@ -2915,9 +3104,9 @@ function vMain(){
     const joined=P[ME]&&P[ME].g===G.v;
     let out='<div class="marquee fade"><div class="mq-in"><div class="logo one">DREIKAMPF</div><p class="tag small">Lobby · '+hostName()+' leitet das Spiel</p></div></div>';
     if(!joined){
-      out+=(P[ME]&&P[ME].kicked===G.v?'<div class="msg">'+h(hostName())+' hat dich aus der Lobby genommen. Du kannst wieder beitreten.</div>':'')+vMyCard(true)+errBox()+'<button class="btn" data-act="join">Mitspielen</button>';
+      out+=(P[ME]&&P[ME].kicked===G.v?'<div class="msg">'+h(hostName())+' hat dich aus der Lobby genommen. Du kannst wieder beitreten.</div>':'')+vMyCard(true)+errBox()+(lobbyPlayers().length>=MAXP?'<div class="msg">Die Lobby ist voll ('+MAXP+' Leute). Du kannst zuschauen und in der nächsten Runde mitspielen.</div>':'<button class="btn" data-act="join">Mitspielen</button>');
     }else if(amHost()){
-      out+=errBox()+'<div class="strow"><button class="btn" id="startbtn" data-act="start">Spiel starten</button><button class="btn alt invb" data-act="invite" aria-label="Alle einladen">📣<small>Einladen</small></button></div><p class="center muted small">Allein gegen Computer, sonst 2 bis '+MAXP+' Leute</p>';
+      out+=errBox()+'<div class="strow"><button class="btn" id="startbtn" data-act="start">Spiel starten</button><button class="btn alt invb" data-act="invite" aria-label="Alle einladen">📣<small>Einladen</small></button></div>'+teamRow();
     }else{
       out+=errBox()+waitNote('Du bist dabei. Warten, bis '+hostName()+' startet …');
     }
@@ -2934,6 +3123,8 @@ function vMain(){
     case "maj":body=vMaj(st);break;
     case "know":body=vKnow(st);break;
     case "lun":body=vLun(st);break;
+    case "wichtel":body=vWichtel(st);break;
+    case "tuer":body=vTuer(st);break;
     case "evcard":body=vEvcard();break;
     case "skill":body=vSkill(st);break;
     case "mc":case "odd":case "hl":body=vMC(st);break;
@@ -2954,7 +3145,7 @@ function vMain(){
   if(isQ(st)&&G.reveal&&inGame()){
     const bd=breakdownHtml(st);
     if(bd){const ix=body.indexOf('</small></div>');if(body.indexOf('class="verdict')>=0&&ix>=0)body=body.slice(0,ix)+'</small>'+bd+'</div>'+body.slice(ix+'</small></div>'.length);else body='<div class="card tight fade">'+bd+'</div>'+body;}
-    if(st.t!=="maj"&&st.t!=="know"&&st.t!=="lun"&&st.t!=="skill"&&st.t!=="bluffw"){const rk=G.v+"|"+G.idx;body+=L.reported&&L.reported[rk]?'<button class="rpt done" disabled>✓ Gemeldet, danke!</button>':'<button class="rpt" data-act="report">⚑ Stimmt was nicht? Frage melden</button>';}
+    if(st.t!=="maj"&&st.t!=="know"&&st.t!=="lun"&&st.t!=="skill"&&st.t!=="bluffw"&&st.t!=="wichtel"&&st.t!=="tuer"){const rk=G.v+"|"+G.idx;body+=L.reported&&L.reported[rk]?'<button class="rpt done" disabled>✓ Gemeldet, danke!</button>':'<button class="rpt" data-act="report">⚑ Stimmt was nicht? Frage melden</button>';}
   }
   return spect+wbar+errBox()+jokerBar()+body;
 }
@@ -2967,7 +3158,7 @@ function hostRevealLink(){return amHost()?revBtn('Jetzt auflösen'):'';}
 
 function vIntro(st){
   const m=modeOf(st),r=MODES[m];
-  return '<div class="marquee fade"><div class="mq-in"><div class="eyebrow">Runde '+(st.r+1)+' von '+(st.of||4)+(m!=="mc"&&m!=="fin"&&m!=="ki"?' · Überraschung!':'')+'</div><h2 class="rtitle">'+h(r.t)+'</h2></div></div>'+
+  return '<div class="marquee fade"><div class="mq-in"><div class="eyebrow">Runde '+(st.r+1)+' von '+(st.of||4)+(m!=="mc"&&m!=="fin"&&m!=="ki"?' · Überraschung!':'')+'</div><h2 class="rtitle">'+h(m==="fin"&&xmasGame()?"Bescherung: Alles oder nichts":r.t)+'</h2></div></div>'+
     (st.x2?'<div class="x2b">×2 · Diese Runde zählt doppelt</div>':'')+(st.theme&&THEMES[st.theme]?'<div class="x2b" style="background:var(--p1)">Themenabend: '+h(THEMES[st.theme][0])+'</div>':'')+
     '<div class="card fade"><p>'+h(r.r)+'</p></div>'+(m==="fin"?finCatCard():'')+(st.r===0?balanceCard():'')+hostBtn("Los geht’s","next");
 }
@@ -3085,10 +3276,11 @@ function vSize(st){
       '<div class="zoomrow" '+cv(ME)+'><button class="zbtn" data-act="zm" data-f="0.95" aria-label="Kleiner">−</button><input type="range" id="szr" min="0" max="1000" value="'+sliderVal(st,L.r)+'" aria-label="Größe"><button class="zbtn" data-act="zm" data-f="1.05" aria-label="Größer">+</button></div>'+
       '<button class="btn pc" '+cv(ME)+' data-act="sizelock">Größe festlegen</button>'+hostRevealLink();
   }
-  let rows='<div class="rows">';
+  let rows='<div class="rows'+(roster().length>=5?' many':'')+'">';
   const PP=stepPoints(st,G.idx,scoresAt(G.idx));
   const list=roster().map((u,k)=>{const g=getAns(u,G.idx);return {u:u,g:g,p:PP[k],s:typeof g==="number"&&g>0?sizeScore(st,g,u):null};}).sort((x,y)=>(x.s?x.s.pct:1e9)-(y.s?y.s.pct:1e9));
-  list.forEach(o=>{rows+='<div class="row" '+cv(o.u)+'><span class="who">'+nm(o.u)+'</span><span class="val">'+(o.s?mFmt(a.h*o.g)+' · '+o.s.pct+' %':'kein Tipp')+'</span><span class="pts'+(o.p?'':' zero')+'">'+(o.p?'+'+fmt(o.p):'0')+'</span></div>';});
+  const manyS=roster().length>=5;
+  list.forEach(o=>{const vv=(o.s?mFmt(a.h*o.g)+' · '+o.s.pct+' %':'kein Tipp');rows+='<div class="row" '+cv(o.u)+'><span class="who">'+nm(o.u)+(manyS?'<br><span class="muted" style="font-weight:600">'+vv+'</span>':'')+'</span>'+(manyS?'':'<span class="val">'+vv+'</span>')+'<span class="pts'+(o.p?'':' zero')+'">'+(o.p?'+'+fmt(o.p):'0')+'</span></div>';});
   rows+='</div>';
   return '<div class="card fade"><p class="qsmall">'+h(b.n)+' ist '+mFmt(b.h)+' hoch.</p></div>'+stageHtml(st,"reveal",1)+rows+'<p class="fact">'+h(st.q.f)+'</p>'+hostBtn("Weiter","next");
 }
@@ -3129,7 +3321,7 @@ function standComment(sc){
 }
 function vStand(st){
   const R=roster(),sc=curScores(),o=R.map((u,i)=>i).sort((a,b)=>sc[b]-sc[a]),mx=Math.max(1,sc[o[0]]);
-  let b='<div class="bars">';
+  let b='<div class="bars'+(R.length>=7?' many':'')+'">';
   o.forEach(i=>{b+='<div '+cv(R[i])+'><div class="bar-l"><span>'+nm(R[i])+'</span><span>'+fmt(sc[i])+'</span></div><div class="bar-t"><div class="bar-f" style="width:'+Math.max(0,sc[i])/mx*100+'%"></div></div></div>';});
   b+='</div>';
   return (G.teams?'<div class="card fade tight">'+vTeamBar()+'</div>':'')+'<div class="card fade"><div class="eyebrow">Zwischenstand nach Runde '+(st.r+1)+'</div>'+b+'<p>'+standComment(sc)+'</p></div>'+hostBtn("Nächste Runde","next");
@@ -3157,7 +3349,7 @@ function vFin(st){
     return '<div class="card fade tight" '+cv(ME)+'><div class="eyebrow" style="color:var(--c)">Einsatz '+fmt(L.bet)+' · '+h(q.c)+'</div><p class="qtext">'+h(q.q)+'</p></div>'+optsHtml(st,"fin",false,null);
   }
   const R=roster(),sb=scoresAt(G.idx),p=stepPoints(st,G.idx,sb);
-  let rows='<div class="rows">';
+  let rows='<div class="rows'+(R.length>=5?' many':'')+'">';
   const seen=revealSeenAt[G.v+"|"+G.idx],drama=seen&&Date.now()-seen<4000&&fxAllowed();
   R.forEach((u,i)=>{const a=getAns(u,G.idx);rows+='<div class="row'+(drama?' drama':'')+'" '+cv(u)+(drama?' style="animation-delay:'+(1.1+i*0.6)+'s"':'')+'><span class="who">'+nm(u)+'<br><span class="muted" style="font-weight:600">'+(a&&typeof a.a==="number"?h(st.opts[a.a]):'keine Antwort')+'</span></span><span class="pts'+(p[i]<0?' neg':p[i]===0?' zero':'')+'">'+sgn(p[i])+'</span></div>';});
   rows+='</div>';
@@ -3175,14 +3367,14 @@ function vEnd(){
   o.forEach(i=>{const r=rank(i);rows+='<div class="row" '+cv(R[i])+'><span class="rank">'+r+'</span>'+avHtml(R[i],44,{mood:r===1?"happy":(r===n?"sweat":""),nobadge:true})+'<span class="who">'+nm(R[i])+'<br><span class="muted" style="font-weight:600">'+h(title(i,r))+'</span></span><span class="val" style="font-family:var(--display)">'+fmt(sc[i])+'</span></div>';});
   rows+='</div>';
   const wl=waiters(),wn=wl.map(u=>h(nameOf(u))).join(', ');
-  const btns=(wl.length?'<div class="waitbar">🙋 '+wn+(wl.length>1?' warten':' wartet')+(amHost()?' und '+(wl.length>1?'spielen':'spielt')+' bei der Revanche mit':' aufs nächste Spiel')+'</div>':'')+(amHost()?'<button class="btn stick" data-act="rematch">Revanche mit neuen Fragen</button><button class="btn alt" data-act="tolobby">'+(SOLO?'Solo beenden':'Neue Lobby öffnen')+'</button>':waitNote('Warten auf '+hostName()+' für die Revanche …'))+'<button class="btn alt" data-act="board">Siegerboard</button>';
+  const btns=(wl.length?'<div class="waitbar">🙋 '+wn+(wl.length>1?' warten':' wartet')+(amHost()?' und '+(wl.length>1?'spielen':'spielt')+' bei der Revanche mit':' aufs nächste Spiel')+'</div>':'')+(amHost()?'<button class="btn stick" data-act="rematch">Revanche mit neuen Fragen</button><button class="btn alt" data-act="tolobby">'+(SOLO?'Solo beenden':'Neue Lobby öffnen')+'</button>':waitNote('Warten auf '+hostName()+' für die Revanche …'))+'<button class="btn alt" data-act="board">Siegerboard</button>'+(SOLO?'':'<button class="btn alt" data-act="endgame">'+(amHost()?'Spiel beenden':'Zur Startseite')+'</button>');
   return '<div class="marquee fade"><div class="mq-in"><div class="eyebrow">Endstand</div><h2 class="rtitle">'+head+'</h2><p class="tag">'+(tops.length>1?'Das Stechen findet am Küchentisch statt.':'Applaus, Applaus. Bitte verbeugen.')+'</p></div></div>'+rows+(tw?vTeamBar():'')+'<p class="muted center">Der Sieger trägt bis zum nächsten Spiel die Krone, der Letzte die Eselsohren.</p>'+vRecap()+vXpCard()+btns+vShot();
 }
 
 function lobbyPlayersCard(){
   let out='';
   const lp=lobbyPlayers();
-    out+='<div class="card"><div class="eyebrow">Dabei ('+lp.length+' von max. '+MAXP+')</div>';
+    out+='<div class="card"><div class="eyebrow">Dabei ('+lp.length+')</div>';
     out+=lp.length?'<div class="rows">'+lp.map(u=>{const pr=progOf(u);return '<div class="row'+(champTier(u)>=3?' ch'+champTier(u):'')+'" '+cv(u)+'>'+avHtml(u,48)+'<span class="who">'+nm(u)+(u===ME?' <small class="muted">(du)</small>':'')+'<br><span class="muted" style="font-weight:600;font-size:13px">Lvl '+pr.lvl+' · '+h(titleOf(u))+champTag(u)+(hcPreview(u)>=1?' · 🎯 Gejagt':'')+'</span></span>'+(u===G.host?'<span class="pts zero">Leitung</span>':(amHost()&&u!==ME?'<button class="kickb" data-act="kick" data-u="'+h(u)+'" aria-label="Entfernen">'+(L.confirm==="kick"+u?'Raus?':'✕')+'</button>':''))+'</div>';}).join('')+'</div>':'<p class="muted">Noch niemand.</p>';
     out+='</div>';
   return out;
@@ -3197,18 +3389,20 @@ function vStatus(){
 function vMenu(){
   let b='<button class="btn" data-act="menuclose">Weiter</button><button class="btn alt" data-act="board">Siegerboard</button><button class="btn alt" data-act="avatar">Avatar</button><button class="btn alt" data-act="custom">✍️ Eigene Frage</button>';
   b+='<button class="btn alt" data-act="guide">📖 Anleitung</button>';
+  if(xmasOn()||ME===FOUNDER)b+='<button class="btn alt" data-act="xspot">🎬 Weihnachtsspot ansehen</button>';
   if(canSwitch())b+='<button class="btn alt" data-act="pinview">🔐 '+(PINS[ME]?'PIN ändern':'PIN festlegen')+'</button>';
   if(ME===FOUNDER){const n=REPS.length;b+='<button class="btn alt" data-act="reports">🚩 Gemeldete Fragen'+(n?' ('+n+')':'')+'</button><button class="btn alt" data-act="merge">🔗 Profile zusammenführen</button>';}
   b+='<div class="mduo"><button class="btn alt" data-act="devcopy">📲 Code kopieren</button><button class="btn alt" data-act="devload">📥 Profil laden</button></div>';
   b+='<div class="mtog"><button class="mtg" data-act="sound"><span>🔊 Sound</span><span class="tsw'+(soundOn?' on':'')+'"><i></i></span></button><button class="mtg" data-act="fxtoggle"><span>✨ Effekte</span><span class="tsw'+(fxOn?' on':'')+'"><i></i></span></button></div>';
   if(!amHost()&&G&&(G.phase==="lobby"||G.phase==="play"))b+='<button class="btn alt" data-act="takeover">'+(L.confirm==="takeover"?'Sicher? Nochmal tippen':'Spielleitung übernehmen')+'</button>';
-  if(amHost()&&G.phase==="play")b+='<button class="btn alt" data-act="abort">'+(L.confirm==="abort"?'Wirklich abbrechen? Nochmal tippen':'Spiel abbrechen, neue Lobby')+'</button>';
+  if(atEnd()&&!SOLO&&!leftGame())b+='<button class="btn alt" data-act="endgame">'+(amHost()?'Spiel beenden':'Zur Startseite')+'</button>';
+  else if(amHost()&&G.phase==="play")b+='<button class="btn alt" data-act="abort">'+(L.confirm==="abort"?'Wirklich abbrechen? Nochmal tippen':'Spiel abbrechen, neue Lobby')+'</button>';
   return '<div class="overlay"><div class="card"><h3 class="rtitle" style="font-size:26px">Menü</h3><p class="muted">Spielleitung: '+hostName()+'</p>'+b+'</div></div>';
 }
 
 /* ---------- Rendern ---------- */
 function viewKey(){return viewKey0()+"|p"+(L.pinMsg||"")+!!(PINS&&PINS[ME])+(L.pinAsk?1:0);}
-function viewKey0(){if(L.view==="guide")return "guide"+(SAMPLE?1:0);if(L.view==="reports")return "rep"+repSig+(L.confirm||"");if(L.pinAsk)return "pinask"+L.pinErr+!!PINS[L.pinAsk.u];if(L.view==="pin")return "pin"+L.pinMsg+!!PINS[ME];if(L.view==="merge")return "mg"+L.mA+L.mB+(L.migMsg||"")+(L.autoMsg||"")+JSON.stringify(ALIAS)+RAW.res.length+(L.confirm||"");return (L.showDaily?"D":"")+(L.view==="solo"?JSON.stringify([L.soloN,L.soloD,L.soloLen,L.soloTheme,FOUNDER]):"")+(SOLO?"S":"")+(L.view?L.view+"|"+L.pu+"|"+(L.view==="avatar"?L.edTab:"")+"|"+profVer:"")+"|"+progVer;}
+function viewKey0(){if(L.view==="guide")return "guide"+(SAMPLE?1:0);if(L.view==="reports")return "rep"+repSig+(L.confirm||"");if(L.pinAsk)return "pinask"+L.pinErr+!!PINS[L.pinAsk.u];if(L.view==="pin")return "pin"+L.pinMsg+!!PINS[ME];if(L.view==="merge")return "mg"+L.mA+L.mB+(L.migMsg||"")+(L.autoMsg||"")+JSON.stringify(ALIAS)+RAW.res.length+(L.confirm||"");return (L.view==="solo"?JSON.stringify([L.soloN,L.soloD,L.soloLen,L.soloTheme,FOUNDER]):"")+(SOLO?"S":"")+(L.view?L.view+"|"+L.pu+"|"+(L.view==="avatar"?L.edTab:"")+"|"+profVer:"")+"|"+progVer;}
 function mainKey(){
   if(dbState!=="ok")return dbState;
   if(!G)return "nogame"+viewKey();
@@ -3216,8 +3410,44 @@ function mainKey(){
   const ansSig=G.reveal?roster().map(u=>JSON.stringify(getAns(u,i))).join(","):"";
   return [viewKey(),ansSig,G.phase==="play"?waiters().join()+"|"+amWaiting():"",G.phase==="play"?(expired(ME)+"|"+jokerOf(ME,i)+"|"+jokerUsed(ME)):"",G.v,G.phase,i,G.reveal,G.host===ME,P[ME]&&P[ME].g===G.v,inGame(),getAns(ME,i)!==null,L.finLocked,L.err,(G.phase==="lobby")?(lobbyPlayers().length>=2)+JSON.stringify(offModes())+lenOf()+L.showModes+(amHost()?"":themeOf())+teamsOn()+lobbyPlayers().map(u=>u+nameOf(u)).join()+profVer+L.teamInfo+lobbyKI()+L.confirm+(P[ME]&&P[ME].kicked):0,st&&st.t].join("|");
 }
+const STEP_T={intro:1,maj:1,know:1,lun:1,evcard:1,skill:1,mc:1,odd:1,hl:1,who:1,time:1,pct:1,match:1,bluffw:1,bluffv:1,size:1,est:1,stand:1,event:1,fin:1,end:1,wichtel:1,tuer:1};
+function saneGame(g){
+  if(!g||typeof g!=="object"||typeof g.v!=="string"||!g.v)return null;
+  if(g.phase!=="lobby"&&g.phase!=="play")return g;
+  if(!Array.isArray(g.roster))g.roster=[];
+  g.roster=g.roster.filter(u=>typeof u==="string");
+  if(!Array.isArray(g.steps))g.steps=[];
+  if(g.phase==="play"){
+    if(!g.steps.length||!g.roster.length)return null;
+    if(!g.steps.every(x=>x&&typeof x==="object"&&STEP_T[x.t]===1))return null;
+    g.idx=Math.max(0,Math.min(g.steps.length-1,Math.floor(Number(g.idx)||0)));
+  }
+  return g;
+}
+let renderFail="";
 function renderAll(force){
+  try{renderAll0(force);renderFail="";}
+  catch(e){
+    const k=(G?G.v+"|"+G.idx+"|"+G.reveal:"-");
+    if(renderFail!==k){renderFail=k;logErr("render",e&&e.message,e&&e.stack);}
+    lastKey=null;
+    try{
+      mainEl.innerHTML='<div class="card"><div class="rtitle" style="font-size:22px">Ups, Anzeige-Fehler</div><p>Diese Ansicht konnte nicht angezeigt werden. Das Spiel selbst läuft weiter.</p>'+
+        (G&&G.phase==="play"&&amHost()?'<button class="btn" data-act="reveal">Auflösen</button><button class="btn" data-act="next">Weiter</button><button class="btn alt" data-act="abort">'+(L.confirm==="abort"?'Wirklich abbrechen? Nochmal tippen':'Spiel abbrechen, neue Lobby')+'</button>':'<p class="muted">Die Spielleitung kann weiterschalten.</p>')+'</div>';
+    }catch(e2){}
+  }
+}
+function xmasSkin(){
+  const on=xmasGame()&&dbState==="ok";
+  document.body.classList.toggle("xmas",on);
+  let sn=document.getElementById("snow");
+  const want=on&&fxOn&&!(window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+  if(want&&!sn){sn=document.createElement("div");sn.id="snow";sn.setAttribute("aria-hidden","true");let o="";for(let i=0;i<28;i++){const z=2+Math.random()*4;o+='<i style="left:'+(Math.random()*100).toFixed(1)+'%;width:'+z.toFixed(1)+'px;height:'+z.toFixed(1)+'px;animation-duration:'+(7+Math.random()*9).toFixed(1)+'s;animation-delay:-'+(Math.random()*14).toFixed(1)+'s;opacity:'+(0.35+Math.random()*0.5).toFixed(2)+'"></i>';}sn.innerHTML=o;document.body.appendChild(sn);}
+  else if(!want&&sn)sn.remove();
+}
+function renderAll0(force){
   document.body.classList.toggle("nofx",!fxOn);
+  try{xmasSkin();}catch(e){}
   const key=mainKey();
   topEl.innerHTML=vTop();
   if(force||key!==lastKey){
@@ -3232,10 +3462,11 @@ function renderAll(force){
   const sb=document.getElementById("startbtn");
   if(sb){const n=lobbyPlayers().length;sb.disabled=false;sb.textContent=n<2?"🤖 Solo spielen":"Spiel starten ("+n+" Leute)";}
   statusEl.innerHTML=vStatus();
+  const fsg=topEl.offsetHeight+"|"+window.innerHeight+"|"+(G?G.phase+G.idx+G.reveal:"")+"|"+(L.view||"");if(fsg!==renderAll.fsg){renderAll.fsg=fsg;try{fitLayout();if(mainEl.querySelector("#stage"))fitZoom();}catch(e){}}
 }
 function fitStage(){
   const el=document.getElementById("stage");if(!el)return false;
-  const key=G.v+"|"+G.idx+"|"+window.innerHeight;
+  const key=G.v+"|"+G.idx+"|"+window.innerHeight+"|"+!!G.reveal+"|"+(getAns(ME,G.idx)!==null);
   if(stageFitKey===key)return false;
   stageFitKey=key;
   const over=document.documentElement.scrollHeight-window.innerHeight;
@@ -3243,14 +3474,44 @@ function fitStage(){
   if(Math.abs(want-STAGE_H)<4)return false;
   STAGE_H=want;return true;
 }
+/* Einpassen: Spielansichten sollen ohne Scrollen aufs Handy passen.
+   Stufen: d1..d3 = engere Abstände/kleinere Schrift, --k = flachere Spielfelder, zuletzt leichtes Verkleinern (nur Anzeige-Seiten). */
+const FIT_FLEX=".tuer,.skpad,.skcell,.sksim,.skcv,.skbal,.skaim,.skcol,.skn,.key,.skword,.skdisp,.sktrack";
+function fitPlay(){const st=step();return !!(G&&G.phase==="play"&&st&&st.t!=="end"&&!L.view&&dbState==="ok");}
+function fitOver(){return Math.max(document.documentElement.scrollHeight,document.body.scrollHeight)-window.innerHeight;}
+function fitLayout(){
+  const app=document.getElementById("app");if(!app)return;
+  const cl=app.classList;cl.remove("d1","d2","d3","d4","d5");mainEl.querySelectorAll(".fm").forEach(e=>{e.classList.remove("many","fm");});mainEl.style.zoom="";app.style.removeProperty("--k");
+  cl.toggle("play",fitPlay());
+  if(!fitPlay()||fitOver()<=0)return;
+  const D=["d1","d2","d3"];
+  for(let i=0;i<D.length;i++){cl.add(D[i]);if(fitOver()<=0)return;}
+  if(mainEl.querySelector(FIT_FLEX)){
+    app.style.setProperty("--k","0.55");
+    if(fitOver()<=0){let lo=0.55,hi=1;for(let i=0;i<6;i++){const m=(lo+hi)/2;app.style.setProperty("--k",String(m));if(fitOver()<=0)lo=m;else hi=m;}app.style.setProperty("--k",String(lo));return;}
+  }
+  if(fitOver()>0){cl.add("d4");mainEl.querySelectorAll(".rows:not(.many),.opts.bl:not(.many)").forEach(e=>{e.classList.add("many","fm");});}
+  if(fitOver()>0&&mainEl.querySelector(".rows.many")){const mh=mainEl.offsetHeight,ov=fitOver(),passive=!mainEl.querySelector("#stage,.skbox,select,input");if(!(passive&&mh>0&&(mh-ov-2)/mh>=0.88))cl.add("d5");}
+  if(!mainEl.querySelector("#stage"))fitZoom();
+}
+function fitZoom(){
+  if(!fitPlay()||mainEl.querySelector("#stage.live,.skbox,select,input"))return;
+  mainEl.style.zoom="";
+  const mh=mainEl.offsetHeight,ov=fitOver();
+  if(mh>0&&ov>0)mainEl.style.zoom=String(Math.max(0.8,Math.floor((mh-ov-2)/mh*1000)/1000));
+}
+let fitRaf=0;
+window.addEventListener("resize",()=>{cancelAnimationFrame(fitRaf);fitRaf=requestAnimationFrame(()=>{try{fitLayout();}catch(e){}});});
 function afterMain(){
   const st=step();
+  try{fitLayout();}catch(e){logErr("fit",e&&e.message,e&&e.stack);}
   if(L.view==="avatar")edWheelInit();else if(L.view==="solo")soloThemeInit();else themeWheelInit();
   skAfter();
   if(G&&G.phase==="play"&&st&&st.t==="size")requestAnimationFrame(()=>drawStage());
-  if(G&&G.phase==="play"&&st&&st.t==="size"&&!G.reveal&&fitStage()){mainEl.innerHTML=vMain();requestAnimationFrame(()=>drawStage());}
+  if(G&&G.phase==="play"&&st&&st.t==="size"&&!L.view&&fitStage()){mainEl.innerHTML=vMain();requestAnimationFrame(()=>drawStage());}
+  if(G&&G.phase==="play"&&st&&st.t==="size"){try{fitZoom();}catch(e){}}
   if(G&&G.phase==="play"&&st&&st.t==="size"&&!G.reveal&&getAns(ME,G.idx)===null&&inGame())bindStage(st);
-  if(G&&G.phase==="play"&&st&&st.t==="end")startConfetti();
+  if(G&&G.phase==="play"&&st&&st.t==="end"&&!leftGame())startConfetti();
 }
 
 /* ---------- Bühne ---------- */
@@ -3299,25 +3560,25 @@ function act(a,d){
   switch(a){
     case "newlobby":newLobby();break;
     case "pinok":if(L.pinAsk){const v=((document.getElementById("pinin")||{}).value||"").trim(),a=L.pinAsk,pr=PINS[a.u];if(pr&&pr.h===pinHash(a.u,v)){DK_SWITCH(a.u,a.n);}else{L.pinErr="Die PIN stimmt nicht.";renderAll(true);}}break;
+    case "pinme":if(L.pinAsk&&pinFresh(L.pinAsk.u)&&canSwitch()){DK_SWITCH(L.pinAsk.u,L.pinAsk.n);}break;
     case "pinother":L.pinAsk=null;L.name="";try{localStorage.removeItem("dk_name");}catch(e){}renderAll(true);break;
     case "pinno":if(L.pinAsk){const a=L.pinAsk;L.pinSkip=L.pinSkip||{};L.pinSkip[a.n.trim().toLowerCase()]=1;L.pinAsk=null;if(a.act)act(a.act,a.d);else renderAll(true);}break;
     case "pinsave":{const v=((document.getElementById("pinset")||{}).value||"").trim();if(!/^\d{4}$/.test(v)){L.pinMsg="Bitte genau 4 Ziffern.";renderAll(true);break;}PINS[ME]={h:pinHash(ME,v),at:Date.now()};meWrite(()=>DB.doc("pins/"+ME).set(PINS[ME]));L.pinMsg="✓ PIN gespeichert. Merk sie dir gut!";renderAll(true);}break;
     case "pinlater":try{localStorage.setItem("dk_pinlater",String(Date.now()));}catch(e){}renderAll(true);break;
     case "pinview":L.view="pin";L.pinMsg="";L.menu=false;renderAll(true);window.scrollTo(0,0);break;
     case "pindel":if(ME===FOUNDER&&L.mA){const u=L.mA;delete PINS[u];meWrite(()=>DB.doc("pins/"+u).delete());L.mA=null;renderAll(true);}break;
-    case "join":join(G.v);break;
+    case "join":if(G&&G.phase==="lobby"&&lobbyPlayers().length>=MAXP&&!(P[ME]&&P[ME].g===G.v)){renderAll(true);break;}join(G.v);break;
     case "waitjoin":if(G&&G.phase==="play"&&!inGame()){const n=saveName();if(n)meWrite(()=>myRef().set({name:n,g:"",wait:G.v,t:Date.now(),seen:Date.now(),ans:{}}));}break;
     case "start":if(amHost()){if(lobbyPlayers().length<2){L.view="solo";L.soloTheme=lobbyKI()?"ki":themeOf();renderAll(true);}else startGame();}break;
     case "next":hostNext();break;
     case "reveal":if(L.confirm!=="reveal"){L.confirm="reveal";renderAll(true);setTimeout(()=>{if(L.confirm==="reveal"){L.confirm=null;renderAll(true);}},4000);break;}L.confirm=null;hostReveal();break;
     case "rematch":if(amHost())rematch();break;
+    case "endgame":if(atEnd()&&!SOLO){L.menu=false;L.view=null;if(amHost())endGame();else{L.leftV=G.v;renderAll(true);}window.scrollTo(0,0);}break;
     case "tolobby":if(SOLO)soloExit();else if(amHost())toLobby();break;
     case "menu":L.menu=true;renderAll();break;
-    case "themeset":if(amHost()&&G&&G.phase==="lobby"&&THEMES[d.x]){themeLocal={v:G.v,x:d.x,t:Date.now()};sfx.pop();renderAll(true);const used=Object.assign({},G.used||{},{theme:d.x});gWrite(()=>gRef().update({used:used}));}break;
+    case "themeset":if(amHost()&&G&&G.phase==="lobby"&&themeKeys().indexOf(d.x)>=0){themeLocal={v:G.v,x:d.x,t:Date.now()};sfx.pop();renderAll(true);const used=Object.assign({},G.used||{},{theme:d.x});gWrite(()=>gRef().update({used:used}));}break;
     case "teaminfo":L.teamInfo=!L.teamInfo;renderAll(true);break;
     case "teamtog":if(amHost()&&G&&G.phase==="lobby"){const x=!teamsOn();teamLocal={v:G.v,x:x,t:Date.now()};sfx.pop();renderAll(true);const used=Object.assign({},G.used||{},{teams:x});gWrite(()=>gRef().update({used:used}));}break;
-    case "dailytoggle":L.showDaily=!L.showDaily;renderAll(true);break;
-    case "daily":{const k=dayKey();if(!ME||dailyOf(ME,k))break;const D=dailyQ(k),i=Number(d.i),ok=D.opts[i]===D.q.a[0];const doc={d:k,u:ME,name:nameOf(ME)||L.name||"",a:i,ok:ok,at:Date.now()};DAILY.push(doc);PROG=buildProg(RES);progVer++;(ok?sfx.good:sfx.bad)();if(ok&&fxAllowed())fxParticles("confetti");meWrite(()=>DB.doc("daily/"+k+"_"+ME).set(doc));renderAll(true);}break;
     case "custom":L.view="custom";L.menu=false;L.err="";renderAll(true);window.scrollTo(0,0);break;
     case "custadd":custAdd();break;
     case "custdel":{const c=CUST.find(x=>x.id===d.id);if(c&&c.u===ME){c.del=true;progVer++;const doc=Object.assign({},c,{del:true});meWrite(()=>DB.doc("custom/"+d.id).set(doc));renderAll(true);}}break;
@@ -3361,7 +3622,7 @@ function act(a,d){
     case "fxtoggle":fxOn=!fxOn;try{localStorage.setItem("dk_fx",fxOn?"1":"0");}catch(e){}renderAll();break;
     case "takeover":if(L.confirm==="takeover"){L.confirm=null;L.menu=false;takeOver();}else{L.confirm="takeover";renderAll();}break;
     case "abort":if(L.confirm==="abort"){L.confirm=null;L.menu=false;if(SOLO)soloExit();else toLobby();}else{L.confirm="abort";renderAll();}break;
-    case "kick":if(amHost()&&G&&G.phase==="lobby"&&d.u&&d.u!==ME){if(L.confirm!=="kick"+d.u){L.confirm="kick"+d.u;renderAll(true);setTimeout(()=>{if(L.confirm==="kick"+d.u){L.confirm=null;renderAll(true);}},4000);break;}L.confirm=null;const u=d.u,v=G.v;if(P[u])P[u].g="";gWrite(()=>DB.doc("players/"+u).update({g:"",kicked:v}));renderAll(true);}break;
+    case "kick":if(amHost()&&G&&G.phase==="lobby"&&d.u&&d.u!==ME){if(L.confirm!=="kick"+d.u){L.confirm="kick"+d.u;renderAll(true);setTimeout(()=>{if(L.confirm==="kick"+d.u){L.confirm=null;renderAll(true);}},4000);break;}L.confirm=null;const u=d.u,v=G.v;if(P[u])P[u]=Object.assign({},P[u],{g:""});gWrite(()=>DB.doc("players/"+u).update({g:"",kicked:v}));renderAll(true);}break;
     case "solo":L.view="solo";renderAll(true);break;
     case "solon":L.soloN=Math.max(1,Math.min(3,Number(d.n)||1));renderAll(true);break;
     case "solod":{const a=(L.soloD||[1,1,1]).slice();a[Number(d.k)]=Number(d.v);L.soloD=a;renderAll(true);}break;
@@ -3384,6 +3645,9 @@ function act(a,d){
     case "maj":if(st&&st.t==="maj"){sfx.pop();answer(Number(d.i));}break;
     case "know":if(st&&st.t==="know"){sfx.pop();answer(Number(d.i));}break;
     case "lun":if(st&&st.t==="lun"){sfx.pop();answer(Number(d.i));}break;
+    case "xspot":L.menu=false;renderAll();xmasIntro(true);break;
+    case "tueropen":if(st&&st.t==="tuer"&&amHost()&&!G.reveal)hostReveal();break;
+    case "wichtel":if(st&&st.t==="wichtel"){const wu=roster()[Number(d.i)];if(typeof wu==="string"&&wu!==ME){sfx.pop();answer(wu);}}break;
     case "joker":if(L.confirm==="joker"){L.confirm=null;useJoker();}else if(canJoker()){L.confirm="joker";renderAll(true);}break;
     case "who":if(st&&st.t==="who"){sfx.pop();answer({h:L.whoN,a:Number(d.i)});}break;
     case "whomore":if(st&&st.t==="who"&&L.whoN<5){L.whoN++;renderAll(true);}break;
@@ -3440,13 +3704,13 @@ window.addEventListener&&window.addEventListener("resize",()=>{const st=step();i
 document.addEventListener("change",e=>{const t=e.target;if(t&&/^mt\d$/.test(t.id)&&L.match){L.match[Number(t.id.slice(2))]=Number(t.value);const b=document.getElementById("mtok");if(b)b.disabled=!L.match.every(x=>x>=0);}});
 document.addEventListener("keydown",e=>{
   if(e.key==="Enter"&&e.target.id==="bluffin"){e.preventDefault();unlockAudio();act("bluffok",{});return;}
-  if(e.key==="Enter"&&e.target.id==="myname"){e.preventDefault();unlockAudio();if(G&&G.phase==="lobby")join(G.v);else if(!G||G.phase!=="play")newLobby();}
+  if(e.key==="Enter"&&e.target.id==="myname"){e.preventDefault();unlockAudio();if(G&&G.phase==="lobby"){if(lobbyPlayers().length<MAXP)join(G.v);}else if(!G||G.phase!=="play")newLobby();}
 });
 
 /* ---------- Statistik ---------- */
 function gameSummary(){
   const R=roster(),sc=curScores(),rank=(arr,k)=>1+arr.filter(v=>v>arr[k]).length;
-  const S=R.map((u,k)=>({u:u,name:nameOf(u),score:sc[k],rank:rank(sc,k),margin:0,rbf:0,mcR:0,mcN:0,szSum:0,szN:0,szHit:0,szEagle:0,sz25all:false,szMax:0,estW:0,estX:0,estWorst:0,finA:false,finOk:false,finBet:0,finMax:0,jk:0,ud:0,hr:new Date().getHours()}));
+  const S=R.map((u,k)=>({xm:(G.used&&G.used.theme==="xmas")?1:0,u:u,name:nameOf(u),score:sc[k],rank:rank(sc,k),margin:0,rbf:0,mcR:0,mcN:0,szSum:0,szN:0,szHit:0,szEagle:0,sz25all:false,szMax:0,estW:0,estX:0,estWorst:0,finA:false,finOk:false,finBet:0,finMax:0,jk:0,ud:0,hr:new Date().getHours()}));
   R.forEach((u,k)=>{if(S[k].rank===1){const others=sc.filter((v,j)=>j!==k);S[k].margin=others.length?sc[k]-Math.max.apply(null,others):0;}});
   let sb=R.map(()=>0),szSteps=0;
   G.steps.forEach((st,i)=>{
@@ -3540,7 +3804,8 @@ function profOf(u){
   return {fig:fig,col:col,eq:eq};
 }
 function avHtml(u,size,opt){
-  opt=opt||{};const pf=profOf(u),pr=progOf(u);
+  opt=opt||{};const pf0=profOf(u),pr=progOf(u);
+  const pf=(xmasGame()&&L.view!=="avatar"&&!opt.eq)?Object.assign({},pf0,{eq:Object.assign({},pf0.eq||{},{hat:uHash(u)%2?"rentier":"nikolaus"})}):pf0;
   return '<span class="av'+(opt.mood==="shiver"?' shiver':'')+(opt.cls?' '+opt.cls:'')+'" style="width:'+size+'px;height:'+size+'px">'+
     avatarSVG({fig:pf.fig,col:pf.col,lvl:opt.lvl||pr.lvl,eq:opt.eq||pf.eq,mood:opt.mood||"",badge:opt.nobadge?null:pr.last,bg:!!opt.bg,full:!!opt.full,anim:opt.anim!==false})+'</span>';
 }
@@ -3569,11 +3834,9 @@ function vMyCard(withName){
 }
 function vHome(){
   if(!ME)return '';
-  const k=dayKey(),mine=dailyOf(ME,k),L2=leagueOf(monthKey()),pi=L2.findIndex(a=>a.u===ME),nc=CUST.filter(c=>c.u===ME&&!c.del).length;
+  const L2=leagueOf(monthKey()),pi=L2.findIndex(a=>a.u===ME),nc=CUST.filter(c=>c.u===ME&&!c.del).length;
   const row=(act,ic,t,sub,right)=>'<button class="mrow" data-act="'+act+'"><span class="mic">'+ic+'</span><span class="mt">'+t+(sub?'<small>'+sub+'</small>':'')+'</span>'+right+'</button>';
   let o='<div class="card menu fade">';
-  o+=row("dailytoggle","📅","Tagesfrage",mine?(mine.ok?"Heute richtig, +1 Ligapunkt":"Heute leider falsch"):"Ein Versuch · 1 Ligapunkt",(mine?'<span class="mr">'+(mine.ok?'✅':'❌')+'</span>':'<span class="pill">offen</span>')+'<span class="chev'+(L.showDaily?' up':'')+'">›</span>');
-  if(L.showDaily)o+='<div class="mexp">'+dailyBody()+'</div>';
   o+=row("board","🏆","Liga & Siegerboard",monthName(monthKey()).split(" ")[0]+": "+(pi>=0?"Platz "+(pi+1)+" · "+L2[pi].pts+" Pkt":"noch keine Punkte"),'<span class="chev">›</span>');
   o+=row("guide","📖","Anleitung","Regeln, Punkte, Freischaltungen",'<span class="chev">›</span>');
   o+=row("solo","🤖","Solo gegen Computer","Leicht, mittel oder Profi",'<span class="chev">›</span>');
@@ -3990,7 +4253,7 @@ function urgentTick(){
 /* ---------- Zeitlimit (nur Spielleitung schreibt) ---------- */
 function hostTick(){
   if(!amHost()||!G||G.phase!=="play")return;
-  const st=step();if(!isQ(st)||G.reveal)return;
+  const st=step();if(!isQ(st)||G.reveal||st.t==="tuer")return;
   const k=G.v+"|"+G.idx,now=Date.now();
   if(G.dlk!==k||typeof G.dl!=="number"){
     if(dlSet!==k){dlSet=k;gWrite(()=>gRef().update({dl:now+Q_TIME,dlk:k,ds:now}));}
@@ -4017,7 +4280,8 @@ function timerTick(){
   if(G&&G.phase==="play"){const ex=expired(ME);if(ex!==lastExpired){lastExpired=ex;renderAll(true);}}
 }
 let lastExpired=false;
-setInterval(timerTick,250);
+(function(){const g0=sfx.good,w0=sfx.win;sfx.good=()=>{if(xmasGame())tone([1047,1319,1568,2093],0.2,"sine",0.09);else g0();};})();
+setInterval(()=>{try{timerTick();}catch(e){logErr("tick",e&&e.message,e&&e.stack);}},250);
 
 /* ---------- Verbindung ---------- */
 let prevReveal=null;
@@ -4027,15 +4291,18 @@ function onChange(){
   if(!SOLO&&G&&G.phase==="lobby"&&P[ME]&&P[ME].wait&&P[ME].g!==G.v&&autoJ!==G.v){autoJ=G.v;const n=P[ME].name||L.name||"Mitspieler";meWrite(()=>myRef().set({name:n,g:G.v,t:Date.now(),seen:Date.now(),ans:{}}));}
   // Ton beim Auflösen
   const rk=G?G.v+"|"+G.idx+"|"+G.reveal:null;
+  try{
   if(G&&G.reveal&&prevReveal!==rk&&!firstChange&&inGame())revealFx();
   if(G&&G.reveal&&prevReveal!==rk&&!firstChange)figRevealFx();
   figLobbyFx();
+  }catch(e){logErr("fx",e&&e.message,e&&e.stack);}
   prevReveal=rk;
-  leaderFx();
+  try{leaderFx();}catch(e){logErr("fx",e&&e.message,e&&e.stack);}
   // Spielleitung speichert das Ergebnis fürs Siegerboard
   if(amHost()&&G&&G.phase==="play"&&step()&&step().t==="end"&&resWritten!==G.v){
-    resWritten=G.v;const sum=gameSummary();
-    if(SOLO)soloFinish(sum);else gWrite(()=>DB.doc("results/"+sum.v).set(sum));
+    resWritten=G.v;
+    try{const sum=gameSummary();
+    if(SOLO)soloFinish(sum);else gWrite(()=>DB.doc("results/"+sum.v).set(sum));}catch(e){logErr("summary",e&&e.message,e&&e.stack);}
   }
   // Spielleitung löst automatisch auf, sobald alle geantwortet haben
   if(amHost()&&G.phase==="play"&&isQ(step())&&!G.reveal&&answeredAll()){
@@ -4058,11 +4325,11 @@ function mergeDir(a,b){if(isOld(b)&&!isOld(a))return [b,a];if(isOld(a)&&!isOld(b
 function normAlias(m){const out={},fix=[];Object.keys(m).forEach(k=>{const d=mergeDir(k,m[k]);if(d[0]!==k)fix.push([k,d[0],d[1]]);if(d[0]!==d[1]&&!out[d[1]])out[d[0]]=d[1];});return {m:out,fix:fix};}
 function aliFix(o){const ks=Object.keys(ALIAS);if(!ks.length)return o;let t=JSON.stringify(o),hit=false;ks.forEach(k=>{if(t.indexOf(k)>=0){hit=true;let to=ALIAS[k],n=0;while(ALIAS[to]&&n++<5)to=ALIAS[to];t=t.split(k).join(to);}});return hit?JSON.parse(t):o;}
 function applyAlias(){RES=RAW.res.map(aliFix);SOLORES=RAW.solo.map(aliFix);DAILY=RAW.daily.map(aliFix);PROG=buildProg(allRes());progVer++;renderAll();}
-function mergeList(){const m={};const add=(u,n,at,solo)=>{if(!u||/^bot_/.test(u))return;const x=m[u]||(m[u]={u:u,n:"",g:0,s:0,last:0});if(n)x.n=n;if(solo)x.s++;else x.g++;x.last=Math.max(x.last,num0(at));};
+function mergeList(){const m={};const add=(u,n,at,solo)=>{if(typeof u!=="string"||!u||/^bot_/.test(u))return;if(typeof n!=="string")n="";const x=m[u]||(m[u]={u:u,n:"",g:0,s:0,last:0});if(n)x.n=n;if(solo)x.s++;else x.g++;x.last=Math.max(x.last,num0(at));};
   RAW.res.forEach(r=>{if(r&&Array.isArray(r.players))r.players.forEach(p=>p&&add(p.u,p.name,r.at,false));});
   RAW.solo.forEach(r=>{if(r&&Array.isArray(r.players))r.players.forEach(p=>p&&add(p.u,p.name,r.at,true));});
   Object.keys(P).forEach(u=>{if(!m[u]&&P[u]&&P[u].name)add(u,P[u].name,0,false),m[u].g--;});
-  return Object.values(m).sort((a,b)=>(a.n||"").localeCompare(b.n||"")||b.last-a.last);}
+  return Object.values(m).sort((a,b)=>String(a.n||"").localeCompare(String(b.n||""))||b.last-a.last);}
 const NAME_SYN={seppl:["juli","julian"]};
 /* ===== PIN: Profil auf neuem Gerät wiederfinden ===== */
 let PINS={};
@@ -4070,6 +4337,8 @@ function pinHash(u,p){let x=5381;for(const c of u+":"+p+":dk")x=((x*33)^c.charCo
 function canSwitch(){return typeof DK_SWITCH==="function";}
 function knownByName(n){const k=(n||"").trim().toLowerCase();if(!k)return null;let best=null,bt=-1;
   mergeList().forEach(x=>{if(x.u===ME||ALIAS[x.u]||OLD_IDS[x.u]||/^bot_/.test(x.u))return;if((x.n||"").trim().toLowerCase()!==k)return;const t=lastAct(x.u);if(t>bt){bt=t;best=x;}});return best;}
+/* neues Profil ohne Spiele und ohne PIN: darf ohne PIN übernommen werden */
+function pinFresh(u){if(PINS[u])return false;const pr=progOf(u);return !(pr.games>0)&&!(num0(pr.soloG)>0)&&!(num0(pr.xp)>0);}
 function pinCheck(n){
   if(!canSwitch()||!ME||progOf(ME).games>0)return false;
   L.pinSkip=L.pinSkip||{};const k=n.trim().toLowerCase();if(L.pinSkip[k])return false;
@@ -4080,12 +4349,13 @@ function vPinAsk(){
   const a=L.pinAsk,has=!!PINS[a.u];
   let o='<div class="marquee fade"><div class="mq-in"><div class="logo one">DREIKAMPF</div></div></div><div class="card"><h3 class="rtitle" style="font-size:24px;margin-top:0">👋 „'+h(a.n)+'“ gibt es schon</h3>';
   if(has)o+='<p>Bist du das? Gib deine 4-stellige PIN ein, dann hast du dein Profil mit Level und Punkten zurück.</p><input id="pinin" class="gq" type="tel" inputmode="numeric" maxlength="4" autocomplete="off" placeholder="PIN" style="text-align:center;letter-spacing:8px;font-size:24px">'+(L.pinErr?'<p class="center" style="color:var(--bad);font-weight:700">'+h(L.pinErr)+'</p>':'')+'<button class="btn" data-act="pinok">Mein Profil holen</button>';
-  else o+='<p>Bist du das? Dieses Profil hat noch keine PIN. Bitte die Spielleitung, deine Profile zusammenzuführen, oder nutze auf deinem alten Gerät Menü → „Code kopieren“.</p>';
+  else if(pinFresh(a.u))return o+'<p>Bist du das? Das Profil ist noch ganz neu und hat keine PIN.</p><button class="btn" data-act="pinme">Ja, das bin ich</button><button class="btn alt" data-act="pinno">Nein, ich bin jemand anderes</button><button class="linkbtn" style="display:block;margin:6px auto 0" data-act="pinother">Anderen Namen wählen</button></div>';
+  else return o+'<p>Bist du das? Dieses Profil hat noch keine PIN, deshalb kannst du es hier nicht selbst holen.</p><p><b>Spiel einfach mit.</b> Du bekommst fürs Erste ein neues Profil. Danach kann '+(G&&G.host&&G.host!==ME?hostName():'die Spielleitung')+' die beiden im Menü unter „Profile zusammenführen“ verbinden, und dein Level ist wieder da.</p><button class="btn" data-act="pinno">Jetzt mitspielen</button><button class="btn alt" data-act="pinother">Anderen Namen wählen</button></div>';
   o+='<button class="btn alt" data-act="pinother">Anderen Namen wählen</button><button class="linkbtn" style="display:block;margin:6px auto 0" data-act="pinno">Ich bin jemand anderes, trotzdem weiter</button></div>';
   return o;
 }
 function pinSetCard(force){
-  if(!canSwitch()||!ME||!(force||(!PINS[ME]&&progOf(ME).games>0)))return '';
+  if(!canSwitch()||!ME||!(force||(!PINS[ME]&&(progOf(ME).games>0||(P[ME]&&typeof P[ME].name==="string"&&P[ME].name.trim())))))return '';
   if(!force){let t=0;try{t=Number(localStorage.getItem("dk_pinlater"))||0;}catch(e){}if(Date.now()-t<3*864e5)return '';}
   return '<div class="card"><div class="eyebrow">🔐 '+(PINS[ME]?'PIN ändern':'PIN festlegen')+'</div><p class="small" style="margin-top:4px">Damit findest du dein Profil auf einem anderen Handy oder Browser wieder: einfach deinen Namen und die PIN eingeben.</p><input id="pinset" class="gq" type="tel" inputmode="numeric" maxlength="4" autocomplete="off" placeholder="4 Ziffern" style="text-align:center;letter-spacing:8px;font-size:22px">'+(L.pinMsg?'<p class="center"><b>'+h(L.pinMsg)+'</b></p>':'')+'<button class="btn" data-act="pinsave">PIN speichern</button>'+(force?'':'<button class="linkbtn" style="display:block;margin:4px auto 0" data-act="pinlater">Später</button>')+'</div>';
 }
@@ -4192,48 +4462,24 @@ function vShot(){
     '<p class="muted small">Tipp: Bild gedrückt halten, um es zu sichern oder zu teilen.</p>'+(canShare?'<button class="btn" data-act="shotshare">Teilen</button>':'')+'<button class="btn alt" data-act="shotclose">Schließen</button></div></div>';
 }
 
-/* ---------- Tagesfrage ---------- */
-function dailyQ(k){const i=hstr("dq|"+k)%(k<="2026-10-10"?773:MC.length),q=MC[i],r=skRand(hstr("dqo|"+k)),o=q.a.slice();for(let j=o.length-1;j>0;j--){const t=Math.floor(r()*(j+1));[o[j],o[t]]=[o[t],o[j]];}return {i:i,q:q,opts:o};}
-function dailyOf(u,k){return DAILY.find(d=>d&&d.u===u&&d.d===k)||null;}
-function dailyStreak(u){let n=0,t=Date.now();for(let k=0;k<400;k++){const d=dailyOf(u,dayKey(t-k*86400000));if(d&&d.ok)n++;else if(k===0)continue;else break;}return n;}
-function vDaily(){
-  if(!ME)return '';
-  const k=dayKey(),D=dailyQ(k),mine=dailyOf(ME,k);
-  return '<div class="card fade"><div class="eyebrow">📅 Tagesfrage · '+new Date().toLocaleDateString("de-DE",{weekday:"long",day:"numeric",month:"long"})+'</div>'+dailyBody()+'</div>';
-}
-function dailyBody(){
-  const k=dayKey(),D=dailyQ(k),mine=dailyOf(ME,k);
-  let out='<p class="qtext" style="font-size:18px">'+h(D.q.q)+'</p>';
-  if(!mine){
-    out+='<div class="opts">'+D.opts.map((o,j)=>'<button class="opt" data-act="daily" data-i="'+j+'"><span class="lt">'+"ABCD"[j]+'</span><span class="ot">'+h(o)+'</span></button>').join('')+'</div><p class="muted small">Richtig gibt 1 Ligapunkt. Nur ein Versuch!</p>';
-  }else{
-    out+='<div class="verdict '+(mine.ok?'ok':'no')+'"><span>'+(mine.ok?'Richtig! +1 Ligapunkt':'Leider falsch')+'</span><small>Richtig: '+h(D.q.a[0])+'</small></div>'+(D.q.f?'<p class="fact">'+h(D.q.f)+'</p>':'');
-    const others=DAILY.filter(d=>d.d===k&&d.u!==ME);
-    out+='<p class="small" style="margin-top:8px">'+(others.length?'Heute: '+others.map(d=>h(d.name||nameOf(d.u))+' '+(d.ok?'✅':'❌')).join(' · '):'Noch keiner von den anderen hat geantwortet.')+'</p>';
-    const s=dailyStreak(ME);if(s>=2)out+='<p class="small">🔥 '+s+' Tage in Folge richtig</p>';
-  }
-  return out;
-}
-
 /* ---------- Monatsliga ---------- */
 function leagueOf(mk){
-  const M={},add=(u,name,p,key)=>{const a=M[u]||(M[u]={u:u,name:"",pts:0,w:0,g:0,dq:0});if(name)a.name=name;a.pts+=p;if(key)a[key]++;};
+  const M={},add=(u,name,p,key)=>{const a=M[u]||(M[u]={u:u,name:"",pts:0,w:0,g:0});if(name)a.name=name;a.pts+=p;if(key)a[key]++;};
   RES.forEach(r=>{if(!r||!Array.isArray(r.players)||r.players.length<2||monthKey(r.at)!==mk)return;const n=r.players.length,tab=n===2?[3,1]:[5,3,1];
     r.players.forEach(p=>{if(!p||typeof p.u!=="string")return;add(p.u,p.name,tab[(p.rank||9)-1]||0,"g");if(p.rank===1)M[p.u].w++;});});
-  DAILY.forEach(d=>{if(d&&d.ok&&typeof d.d==="string"&&d.d.slice(0,7)===mk)add(d.u,d.name,1,"dq");});
   return Object.values(M).sort((a,b)=>b.pts-a.pts||b.w-a.w);
 }
 function monthChampions(){
-  const cur=monthKey(),ms={};RES.forEach(r=>{if(r&&r.at)ms[monthKey(r.at)]=1;});DAILY.forEach(d=>{if(d&&d.d)ms[d.d.slice(0,7)]=1;});
+  const cur=monthKey(),ms={};RES.forEach(r=>{if(r&&r.at)ms[monthKey(r.at)]=1;});
   const champ={};Object.keys(ms).filter(m=>m<cur).forEach(m=>{const L2=leagueOf(m);if(!L2.length||L2[0].pts<=0)return;L2.filter(a=>a.pts===L2[0].pts).forEach(a=>{(champ[a.u]=champ[a.u]||[]).push(m);});});
   return champ;
 }
 function vLeague(full){
   const mk=monthKey(),L2=leagueOf(mk);
   let out='<div class="card fade"><div class="eyebrow">🏆 Liga '+monthName(mk)+'</div>';
-  if(!L2.length)out+='<p class="muted">Noch keine Punkte diesen Monat. Spielt eine Runde oder beantwortet die Tagesfrage!</p>';
-  else out+='<div class="rows">'+(full?L2:L2.slice(0,3)).map((a,i)=>'<div class="row" '+cv(a.u)+'><span class="rank">'+(i+1)+'</span><span class="who">'+h(a.name||nameOf(a.u))+(a.u===ME?' <small class="muted">(du)</small>':'')+'<br><span class="muted" style="font-weight:600;font-size:12px">'+a.w+' Siege · '+a.g+' Spiele · '+a.dq+' Tagesfragen</span></span><span class="pts">'+a.pts+'</span></div>').join('')+'</div>';
-  out+='<p class="muted small">Sieg 5 · Platz 2: 3 · Platz 3: 1 · Tagesfrage richtig: 1. Zu zweit: Sieg 3, Platz 2: 1. Am Monatsende gibt es den Titel „Monatschampion“.</p>';
+  if(!L2.length)out+='<p class="muted">Noch keine Punkte diesen Monat. Spielt eine Runde!</p>';
+  else out+='<div class="rows">'+(full?L2:L2.slice(0,3)).map((a,i)=>'<div class="row" '+cv(a.u)+'><span class="rank">'+(i+1)+'</span><span class="who">'+h(a.name||nameOf(a.u))+(a.u===ME?' <small class="muted">(du)</small>':'')+'<br><span class="muted" style="font-weight:600;font-size:12px">'+a.w+' Siege · '+a.g+' Spiele</span></span><span class="pts">'+a.pts+'</span></div>').join('')+'</div>';
+  out+='<p class="muted small">Sieg 5 · Platz 2: 3 · Platz 3: 1. Zu zweit: Sieg 3, Platz 2: 1. Am Monatsende gibt es den Titel „Monatschampion“.</p>';
   if(full){const ch=monthChampions(),rows=[];Object.keys(ch).forEach(u=>ch[u].forEach(m=>rows.push([m,u])));rows.sort((a,b)=>a[0]<b[0]?1:-1);
     if(rows.length)out+='<div class="eyebrow" style="margin-top:8px">Bisherige Monatschampions</div>'+rows.map(r=>'<p class="small">👑 '+monthName(r[0])+': <b>'+h(progOf(r[1]).name||nameOf(r[1]))+'</b></p>').join('');}
   return out+'</div>';
@@ -4260,7 +4506,7 @@ function custAdd(){
 }
 
 /* ---------- Themenabend ---------- */
-const THEME_ICON={mix:"🎲",bayern:"🥨",sport:"⚽",sportlerinnen:"🏅",welt:"🌍",natur:"🌿",kultur:"🎬",alltag:"🍽️",iq:"🧩"};
+const THEME_ICON={xmas:"🎄",mix:"🎲",bayern:"🥨",sport:"⚽",sportlerinnen:"🏅",welt:"🌍",natur:"🌿",kultur:"🎬",alltag:"🍽️",iq:"🧩"};
 const H_IW=124;
 function hw3d(w){const c=w.scrollLeft+w.clientWidth/2;w.querySelectorAll(".hitem").forEach(it=>{const d=Math.min(2,Math.abs(it.offsetLeft+it.offsetWidth/2-c)/H_IW);it.style.transform="scale("+(1-0.16*d)+")";it.style.opacity=String(Math.max(0.3,1-0.4*d));});}
 function lobbyWheel(id,TK,cur,pick,any){
@@ -4278,13 +4524,18 @@ function themeWheelInit(){
   lobbyWheel("thwheel",lobbyThemes(),()=>lobbyKI()?"ki":themeOf(),t=>{if(t==="ki"){L.lobbyKI=true;renderAll(true);return;}if(L.lobbyKI){L.lobbyKI=false;renderAll(true);}themeLocal={v:G.v,x:t,t:Date.now()};const used=Object.assign({},G.used||{},{theme:t});gWrite(()=>gRef().update({used:used}));});
   lobbyWheel("lnwheel",Object.keys(LENS),lenOf,l=>{lenLocal={v:G.v,len:l,t:Date.now()};renderAll(true);const used=Object.assign({},G.used||{},{len:l});gWrite(()=>gRef().update({used:used}));});
 }
-const THEMES={mix:["Gemischt",null],bayern:["Bayern & München",["bayern"]],sport:["Sport",["sport","sportlerinnen"]],sportlerinnen:["Sportlerinnen",["sportlerinnen"]],welt:["Geschichte & Welt",["geschichte","geo"]],natur:["Natur & Wissen",["natur","wissen"]],kultur:["Kultur & Unterhaltung",["kultur"]],alltag:["Essen & Alltag",["essen","alltag"]],iq:["Logik & IQ",["iq"]]};
+const THEMES={mix:["Gemischt",null],bayern:["Bayern & München",["bayern"]],sport:["Sport",["sport","sportlerinnen"]],sportlerinnen:["Sportlerinnen",["sportlerinnen"]],welt:["Geschichte & Welt",["geschichte","geo"]],natur:["Natur & Wissen",["natur","wissen"]],kultur:["Kultur & Unterhaltung",["kultur"]],alltag:["Essen & Alltag",["essen","alltag"]],iq:["Logik & IQ",["iq"]],xmas:["Weihnachten",["xmas"]]};
+/* Weihnachtsspecial: sichtbar vom 1. Dezember bis 6. Januar */
+function xmasOn(t){const d=t?new Date(t):new Date(),m=d.getMonth();return m===11||(m===0&&d.getDate()<=6);}
+function themeKeys(){const k=Object.keys(THEMES).filter(t=>t!=="xmas");if(xmasOn())k.splice(1,0,"xmas");return k;}
+function xmasGame(){if(!G||!G.used)return false;if(G.phase==="play")return G.used.theme==="xmas";return G.phase==="lobby"&&themeOf()==="xmas";}
+function uHash(u){let n=0;const t=String(u);for(let i=0;i<t.length;i++)n=(n*31+t.charCodeAt(i))>>>0;return n;}
 let themeLocal=null,teamLocal=null;
-function themeOf(){if(themeLocal&&G&&themeLocal.v===G.v&&Date.now()-themeLocal.t<8000){if(G.used&&G.used.theme===themeLocal.x)themeLocal=null;else return themeLocal.x;}const t=G&&G.used&&G.used.theme;return THEMES[t]?t:"mix";}
+function themeOf(){if(themeLocal&&G&&themeLocal.v===G.v&&Date.now()-themeLocal.t<8000){if(G.used&&G.used.theme===themeLocal.x)themeLocal=null;else return themeLocal.x;}const t=G&&G.used&&G.used.theme;return THEMES[t]&&(t!=="xmas"||xmasOn())?t:"mix";}
 function teamsOn(){if(teamLocal&&G&&teamLocal.v===G.v&&Date.now()-teamLocal.t<8000){if(G.used&&!!G.used.teams===teamLocal.x)teamLocal=null;else return teamLocal.x;}return !!(G&&G.used&&G.used.teams);}
 function pickTheme(used,pool,key,n,cats,TH){
-  if(!cats)return pick(used,pool,key,n);
-  const ok=pool.map((_,i)=>i).filter(i=>cats.indexOf(TH[i])>=0);
+  if(!cats&&(!TH||TH.indexOf("xmas")<0))return pick(used,pool,key,n);
+  const ok=pool.map((_,i)=>i).filter(i=>cats?cats.indexOf(TH[i])>=0:TH[i]!=="xmas");
   let u=Array.isArray(used[key])?used[key].slice():[];
   let avail=ok.filter(i=>u.indexOf(i)<0);
   if(avail.length<n){u=u.filter(i=>ok.indexOf(i)<0);avail=ok.slice();}
@@ -4328,9 +4579,9 @@ function makeLDB(){
     collection:c=>({onSnapshot:fn=>{const f=()=>fn({docs:Object.keys(store).filter(k=>k.indexOf(c+"/")===0&&k.split("/").length===2).map(snap)});subs.push(f);setTimeout(f,0);return ()=>{};}})};
 }
 function kiLobbyOk(){return !!(ME===FOUNDER&&KI_MC.length&&G&&G.phase==="lobby"&&amHost()&&lobbyPlayers().length<2);}
-function lobbyThemes(){return Object.keys(THEMES).concat(kiLobbyOk()?["ki"]:[]);}
+function lobbyThemes(){return themeKeys().concat(kiLobbyOk()?["ki"]:[]);}
 function lobbyKI(){return !!(L.lobbyKI&&kiLobbyOk());}
-function soloThemes(){return Object.keys(THEMES).concat(ME===FOUNDER&&KI_MC.length?["ki"]:[]);}
+function soloThemes(){return themeKeys().concat(ME===FOUNDER&&!xmasOn()?["xmas"]:[]).concat(ME===FOUNDER&&KI_MC.length?["ki"]:[]);}
 function soloThemeInit(){lobbyWheel("sothwheel",soloThemes(),()=>soloThemes().indexOf(L.soloTheme)>=0?L.soloTheme:"mix",t=>{L.soloTheme=t;renderAll(true);},true);}
 function soloDiff(){let m=0;roster().forEach(u=>{if(BOT_BY[u])m=Math.max(m,BOT_BY[u].d);});return SOLO_DK[m];}
 function soloStart(){
@@ -4478,7 +4729,7 @@ function gSec(){
   add("Freischalten","Figuren",Object.keys(FIG_LOCK).map(f=>"<b>"+h(FIGS[f].n)+"</b>: "+h(FIG_LOCK[f][0])).join(" · ")+". Alle anderen Figuren sind frei.","figur avatar loewe tiger hase schildkroete");
   add("Freischalten","Champion-Auftritt","Ab 10 Gruppenspielen zählt deine Siegquote: ab 40 % 🎺 Favorit, ab 50 % 👑 Champion, ab 60 % 🏆 Legende, ab 80 % ⚡ Quizgott. Je höher, desto größer dein Auftritt in der Lobby.","siegquote favorit champion legende quizgott");
   add("Solo","Solo gegen Computer","Startseite → „🤖 Solo gegen Computer“, oder allein in der Lobby auf „Solo spielen“. 1 bis 3 Gegner, je Leicht, Mittel oder Profi. Ohne Bluff, Mehrheit, Kleinste Zahl, „Wie gut kennst du …?“ und Gruppenfragen. Zählt halb fürs Level, nicht für Liga und Siegerboard. Manche Belohnungen gibt es nur solo.","computer bots einzelspieler");
-  add("Mehr","Tagesfrage und Liga","Jeden Tag eine Frage, ein Versuch, richtig gibt 1 Ligapunkt. In der Monatsliga zählen Gruppenspiele: Sieg 5, Platz 2: 3, Platz 3: 1 (zu zweit 3 und 1). Am Monatsende gibt es den Titel „Monatschampion“.","tagesfrage liga monat");
+  add("Mehr","Monatsliga","In der Monatsliga zählen Gruppenspiele: Sieg 5, Platz 2: 3, Platz 3: 1 (zu zweit 3 und 1). Am Monatsende gibt es den Titel „Monatschampion“.","liga monat");
   add("Mehr","Frage melden","Nach der Auflösung unten „⚑ Stimmt was nicht? Frage melden“. So landen Fehler bei der Spielleitung.","fehler report");
   add("Mehr","Profil auf ein anderes Gerät mitnehmen","Startseite oder Menü: „📲 Profil mitnehmen“ kopiert deinen Code. Auf dem anderen Gerät oder in der App vom Home-Bildschirm „📥 Profil laden“ und Code einfügen. Code nicht weitergeben.","handy code geraet");
   add("Mehr","Sound, Effekte und Updates","Im Menü schaltest du Sound und Effekte an oder aus. Gibt es eine neue Version, erscheint unten ein gelber Balken zum Neuladen.","ton laut stumm aktualisieren");
@@ -4602,27 +4853,47 @@ function founderWatch(){
 }
 if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js",{scope:"./"}).catch(()=>{});
 function DK_SWITCH(id,n){try{localStorage.setItem("dk_id",id);if(n)localStorage.setItem("dk_name",n);}catch(e){}location.reload();}
-const BUILD_ID="1791696596";
+const BUILD_ID="1791740736";
 function verCheck(){fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(r=>r.json()).then(j=>{if(j&&j.v&&j.v!==BUILD_ID&&!document.getElementById("upd")){const b=document.createElement("button");b.id="upd";b.textContent="✨ Neue Version da. Tippen zum Laden";b.onclick=()=>location.reload();document.body.appendChild(b);}}).catch(()=>{});}
 setInterval(verCheck,60000);document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")verCheck();});setTimeout(verCheck,5000);
+/* ========== WEIHNACHTSSPECIAL (Dez 2026) ========== */
+const XP={est:[{"q":"Wie viele Rentiere ziehen den Schlitten des Weihnachtsmanns, wenn Rudolph dabei ist?","a":9,"u":"Rentiere"},{"q":"In welchem Jahr kam „Drei Haselnüsse für Aschenbrödel“ ins Kino?","a":1973,"u":"","y":true},{"q":"In welchem Jahr erfand Johann Hinrich Wichern den Adventskranz?","a":1839,"u":"","y":true},{"q":"Wie hoch war der höchste Weihnachtsbaum, der je aufgestellt wurde (Seattle 1950)?","a":67,"u":"Meter"},{"q":"In welchem Jahr wurde Tschaikowskys „Nussknacker“ uraufgeführt?","a":1892,"u":"","y":true},{"q":"In welchem Jahr nahm Bing Crosby „White Christmas“ auf?","a":1942,"u":"","y":true},{"q":"Wie viele isländische Weihnachtsgesellen gibt es?","a":13,"u":"Gesellen"},{"q":"Wie viele Tage hat die kürzestmögliche Adventszeit, vom 1. Advent bis Heiligabend, beide mitgezählt?","a":22,"u":"Tage"},{"q":"Wie viele Tage hat die längstmögliche Adventszeit, vom 1. Advent bis Heiligabend, beide mitgezählt?","a":28,"u":"Tage"},{"q":"In welchem Jahr kam „Tatsächlich … Liebe“ ins Kino?","a":2003,"u":"","y":true},{"q":"In welchem Jahr kam „Stirb langsam“ ins Kino?","a":1988,"u":"","y":true},{"q":"In welchem Jahr wurde der Dresdner Striezelmarkt zum ersten Mal erwähnt?","a":1434,"u":"","y":true},{"q":"In welchem Jahr erschien „In der Weihnachtsbäckerei“ von Rolf Zuckowski?","a":1987,"u":"","y":true},{"q":"In welchem Jahr kam „Der Grinch“ mit Jim Carrey ins Kino?","a":2000,"u":"","y":true},{"q":"Wie viele Geschenke bekommt man im Lied „The Twelve Days of Christmas“ am zwölften Tag allein?","a":78,"u":"Geschenke"},{"q":"In welchem Jahr lief Loriots „Weihnachten bei Hoppenstedts“ zum ersten Mal im Fernsehen?","a":1978,"u":"","y":true},{"q":"In welchem Jahr sendeten die Astronauten von Apollo 8 eine Weihnachtsbotschaft aus der Mondumlaufbahn?","a":1968,"u":"","y":true},{"q":"Seit welchem Jahr schenkt Norwegen London jedes Jahr den Baum für den Trafalgar Square?","a":1947,"u":"","y":true}],pct:[{"q":"Wie viel Prozent Alkohol muss Glühwein in der EU mindestens haben?","a":7,"f":"Mindestens 7 und höchstens 14,5 Volumenprozent."},{"q":"Wie viel Prozent Marzipanrohmasse muss Lübecker Edelmarzipan mindestens enthalten?","a":90,"f":"90 % Rohmasse, höchstens 10 % zugesetzter Zucker."},{"q":"Zu wie viel Prozent besteht frisch gefallener Pulverschnee ungefähr aus Luft?","a":90,"f":"Rund 90 bis 95 %. Deshalb dämmt Schnee so gut."},{"q":"Wie viel Prozent Mandeln und Nüsse müssen in Elisenlebkuchen mindestens stecken?","a":25,"f":"Mindestens 25 %."},{"q":"Wie viel Prozent Mehl dürfen Elisenlebkuchen höchstens enthalten?","a":10,"f":"Höchstens 10 %."},{"q":"Wie viel Kilo Butter kommen im Dresdner Christstollen mindestens auf 100 Kilo Mehl? (Antwort als Prozent)","a":50,"f":"Mindestens 50 Teile Butter auf 100 Teile Mehl."}],match:[{"q":"Wie heißt der Gabenbringer in welchem Land?","p":[["Niederlande","Sinterklaas"],["Russland","Väterchen Frost"],["Finnland","Joulupukki"],["Frankreich","Père Noël"],["Italien","Babbo Natale"],["USA","Santa Claus"]]},{"q":"Wer singt welchen Weihnachtshit?","p":[["Wham!","Last Christmas"],["Mariah Carey","All I Want for Christmas Is You"],["Chris Rea","Driving Home for Christmas"],["Bing Crosby","White Christmas"],["José Feliciano","Feliz Navidad"],["Rolf Zuckowski","In der Weihnachtsbäckerei"]]},{"q":"Welche Spezialität kommt aus welcher Stadt?","p":[["Dresden","Christstollen"],["Aachen","Printen"],["Lübeck","Marzipan"],["Nürnberg","Elisenlebkuchen"],["Mailand","Panettone"]]},{"q":"Wie sagt man „Frohe Weihnachten“?","p":[["Englisch","Merry Christmas"],["Spanisch","Feliz Navidad"],["Französisch","Joyeux Noël"],["Italienisch","Buon Natale"],["Schwedisch","God Jul"],["Niederländisch","Vrolijk Kerstfeest"]]},{"q":"Wer gehört zu welchem Weihnachtsfilm?","p":[["Kevin McCallister","Kevin – Allein zu Haus"],["John McClane","Stirb langsam"],["Clark Griswold","Schöne Bescherung"],["Buddy","Buddy – Der Weihnachtself"],["Jack Skellington","Nightmare Before Christmas"]]}],odd:[{"i":["Shrek","Der Grinch","Kevin – Allein zu Haus","Der Polarexpress"],"f":"Shrek ist kein Weihnachtsfilm."},{"i":["Pumuckl","Rudolph","Dasher","Blitzen"],"f":"Pumuckl ist ein Kobold, die anderen sind Rentiere des Weihnachtsmanns."},{"i":["Basilikum","Zimt","Nelken","Kardamom"],"f":"Basilikum gehört nicht ins Lebkuchengewürz."},{"i":["Krapfen","Vanillekipferl","Zimtsterne","Spekulatius"],"f":"Krapfen gehören zum Fasching."},{"i":["Herodes","Caspar","Melchior","Balthasar"],"f":"Herodes war keiner der Heiligen Drei Könige."},{"i":["Osterhase","Christkind","Nikolaus","Weihnachtsmann"],"f":"Der Osterhase bringt im Dezember nichts."},{"i":["Tulpe","Weihnachtsstern","Christrose","Mistel"],"f":"Die Tulpe ist eine Frühlingsblume."},{"i":["Thriller","Last Christmas","White Christmas","Feliz Navidad"],"f":"„Thriller“ von Michael Jackson ist kein Weihnachtslied."},{"i":["Palme","Nordmanntanne","Blaufichte","Kiefer"],"f":"Die Palme ist kein Nadelbaum."},{"i":["Sangria","Glühwein","Feuerzangenbowle","Eierpunsch"],"f":"Sangria trinkt man kalt im Sommer."},{"i":["Kürbis","Lametta","Christbaumkugel","Strohstern"],"f":"Der Kürbis gehört zu Halloween, nicht an den Baum."},{"i":["Pfingsten","Nikolaus","Heiligabend","Dreikönig"],"f":"Pfingsten liegt im Frühsommer."},{"i":["Lissabon","Nürnberg","Dresden","Straßburg"],"f":"Die anderen drei sind für ihre Weihnachtsmärkte berühmt."}],who:[{"h":["Meine Gebeine wurden im Jahr 1087 nach Bari gebracht.","Ich lebte im 4. Jahrhundert in Kleinasien.","Ich bin Schutzpatron der Seefahrer und der Kinder.","Ich war Bischof von Myra.","Am 6. Dezember fülle ich Stiefel."],"a":["Der heilige Nikolaus","Der heilige Martin","Der heilige Christophorus","Der heilige Benedikt"]},{"h":["Mich erfand 1939 ein Werbetexter für ein Kaufhaus.","Ein Lied über mich wurde 1949 ein Welthit.","Die anderen haben mich zuerst ausgelacht.","Ich ziehe einen Schlitten.","Meine Nase leuchtet rot."],"a":["Rudolph","Bambi","Sven aus „Die Eiskönigin“","Olaf"]},{"h":["Mein Geschäftspartner starb sieben Jahre vor meiner Geschichte.","Mein Lieblingswort ist „Humbug“.","Mich erfand Charles Dickens.","In einer Nacht besuchen mich drei Geister.","Ich bin der berühmteste Geizhals der Weihnachtsliteratur."],"a":["Ebenezer Scrooge","Der Grinch","Oliver Twist","Sherlock Holmes"]},{"h":["Im Mittelalter backten mich vor allem Klöster.","Mein Teig kommt meist ohne Hefe aus.","In Aachen heiße ich Printe.","In Nürnberg bin ich besonders berühmt.","Aus mir baut man Hexenhäuser."],"a":["Lebkuchen","Stollen","Spekulatius","Marzipan"]},{"h":["Ich bin das jüngste von fünf Geschwistern.","Meine Familie fliegt ohne mich nach Paris.","Ich wohne in einem Vorort von Chicago.","Zwei Einbrecher bereuen es, mein Haus ausgesucht zu haben.","Mich spielte Macaulay Culkin."],"a":["Kevin McCallister","Harry Potter","Buddy der Weihnachtself","Charlie Brown"]},{"h":["Bei meiner Uraufführung begleitete mich eine Gitarre.","Ein Hilfspfarrer schrieb meinen Text.","Ich entstand 1818 in Oberndorf bei Salzburg.","Mich gibt es in über 300 Sprachen und Dialekten.","Mich singt man an Heiligabend auf der ganzen Welt."],"a":["Stille Nacht","O Tannenbaum","O du fröhliche","Leise rieselt der Schnee"]},{"h":["Ich wurde auf Long Island geboren.","Meine Stimme umfasst rund fünf Oktaven.","Mein Weihnachtshit erschien 1994.","Jedes Jahr im Dezember stehe ich wieder in den Charts.","Ich singe „All I Want for Christmas Is You“."],"a":["Mariah Carey","Whitney Houston","Céline Dion","Madonna"]}],bluff:[{"q":"In Japan isst man an Weihnachten traditionell Hähnchen von ______.","a":"KFC","alt":["Kentucky Fried Chicken","Kentucky"]},{"q":"In Caracas fahren viele Menschen an Weihnachten auf ______ zur Kirche.","a":"Rollschuhen","alt":["Rollschuhe","Inlineskates","Inlinern"]},{"q":"In der Ukraine schmückt man den Weihnachtsbaum gern mit künstlichen ______.","a":"Spinnweben","alt":["Spinnennetzen","Spinnen","Spinnennetze"]},{"q":"In Schweden schauen an Heiligabend Millionen Menschen im Fernsehen ______.","a":"Donald Duck","alt":["Kalle Anka","Disney"]},{"q":"Im schwedischen Gävle wird jedes Jahr ein riesiger ______ aus Stroh aufgestellt.","a":"Ziegenbock","alt":["Bock","Julbock","Ziege"]},{"q":"In Katalonien schlagen Kinder an Weihnachten auf einen ______, damit er Geschenke hergibt.","a":"Holzklotz","alt":["Baumstamm","Holzstamm","Holzscheit","Klotz"]},{"q":"In Island schenkt man sich an Heiligabend traditionell ______.","a":"Bücher","alt":["Buch","ein Buch"]},{"q":"„Jingle Bells“ wurde vermutlich gar nicht für Weihnachten geschrieben, sondern für ______.","a":"Thanksgiving","alt":["Erntedank","Erntedankfest"]},{"q":"In Norwegen versteckt man an Heiligabend der Sage nach alle ______, damit Hexen sie nicht stehlen.","a":"Besen","alt":["Hexenbesen"]},{"q":"Die isländische Weihnachtskatze frisst der Sage nach alle, die zu Weihnachten keine neuen ______ bekommen haben.","a":"Kleider","alt":["Kleidung","Klamotten","Kleidungsstücke","Anziehsachen"]}],events:[["Der Dresdner Striezelmarkt wird zum ersten Mal erwähnt",1434],["„Stille Nacht“ wird zum ersten Mal gesungen",1818],["Wichern erfindet den Adventskranz",1839],["Dickens veröffentlicht „Eine Weihnachtsgeschichte“",1843],["Tschaikowskys „Nussknacker“ wird uraufgeführt",1892],["Weihnachtsfrieden an der Westfront",1914],["Coca-Cola wirbt zum ersten Mal mit dem rot-weißen Weihnachtsmann",1931],["Rudolph mit der roten Nase wird erfunden",1939],["„Ist das Leben nicht schön?“ kommt ins Kino",1946],["„Jingle Bells“ erklingt als erstes Lied im Weltall",1965],["„Drei Haselnüsse für Aschenbrödel“ kommt ins Kino",1973],["Loriots „Weihnachten bei Hoppenstedts“ läuft im Fernsehen",1978],["„Last Christmas“ erscheint",1984],["„Kevin – Allein zu Haus“ kommt ins Kino",1990],["„All I Want for Christmas Is You“ erscheint",1994],["„Tatsächlich … Liebe“ kommt ins Kino",2003],["„Die Eiskönigin“ kommt ins Kino",2013],["Prinz Albert macht den Weihnachtsbaum in England berühmt",1848],["Norwegen schenkt London zum ersten Mal den Baum für den Trafalgar Square",1947]],maj:[["Echter Baum","Plastikbaum"],["Raclette","Fondue"],["Bescherung vor dem Essen","Bescherung nach dem Essen"],["Glühwein","Kinderpunsch"],["Lebkuchen","Spekulatius"],["Vanillekipferl","Zimtsterne"],["Weihnachtsmann","Christkind"],["Lametta","Strohsterne"],["Bunte Lichterkette","Warmweiße Lichterkette"],["Weiße Weihnachten im Schnee","Weihnachten am Strand"],["Kevin – Allein zu Haus","Drei Haselnüsse für Aschenbrödel"],["Last Christmas","All I Want for Christmas Is You"],["Geschenke schon im November kaufen","Geschenke am 23. Dezember kaufen"],["Würstchen mit Kartoffelsalat","Gans mit Knödeln"],["Stollen","Plätzchen"],["Adventskalender mit Schokolade","Adventskalender mit Kleinigkeiten"],["Wichteln","Jeder beschenkt jeden"],["Gutschein schenken","Selbstgemachtes schenken"],["Abend auf dem Weihnachtsmarkt","Sofa mit Weihnachtsfilm"],["Baum schon am 1. Advent","Baum erst an Heiligabend"],["Feuerzangenbowle","Eierpunsch"],["Gebrannte Mandeln","Schokofrüchte"],["Bratwurstsemmel","Reiberdatschi"],["Stille Nacht","In der Weihnachtsbäckerei"],["Hässlicher Weihnachtspulli","Schickes Festtagsoutfit"],["Christmette","Früh ins Bett"],["Geschenkpapier aufreißen","Geschenkpapier vorsichtig öffnen"],["Silvester groß feiern","Silvester gemütlich daheim"],["Dominosteine","Marzipankartoffeln"],["Schlittenfahren","Schneeballschlacht"]],know:[{"q":"Wann kaufst du deine Weihnachtsgeschenke?","a":["Schon im Herbst","Im Advent","In der letzten Woche","Am 24. vormittags"]},{"q":"Was ist dein liebstes Weihnachtsgebäck?","a":["Vanillekipferl","Zimtsterne","Lebkuchen","Stollen"]},{"q":"Was gibt es bei dir an Heiligabend zu essen?","a":["Würstchen mit Kartoffelsalat","Raclette oder Fondue","Braten oder Gans","Fisch"]},{"q":"Wie verpackst du Geschenke?","a":["Perfekt mit Schleife","Schnell und schief","In Zeitungspapier","Ich lasse verpacken"]},{"q":"Was machst du mit einem Geschenk, das dir nicht gefällt?","a":["Umtauschen","Weiterverschenken","Behalten und nie benutzen","Ehrlich sagen"]},{"q":"Welcher Weihnachtsfilm muss bei dir sein?","a":["Kevin – Allein zu Haus","Drei Haselnüsse für Aschenbrödel","Tatsächlich … Liebe","Stirb langsam"]},{"q":"Wie viele Glühwein trinkst du an einem Abend auf dem Weihnachtsmarkt?","a":["Einen","Zwei","Drei","Ich höre auf zu zählen"]},{"q":"Was nervt dich an Weihnachten am meisten?","a":["Der Geschenkestress","„Last Christmas“ im Radio","Zu viel Essen","Familiendiskussionen"]},{"q":"Wann hörst du das erste Weihnachtslied des Jahres freiwillig?","a":["Schon im November","Ab dem 1. Advent","Erst kurz vor Heiligabend","Am liebsten gar nicht"]},{"q":"Wer schmückt bei dir den Baum?","a":["Ich allein","Alle zusammen","Jemand anderes","Es gibt keinen Baum"]},{"q":"Was wäre dein Traumgeschenk?","a":["Eine Reise","Technik","Zeit und Ruhe","Geld"]},{"q":"Wie verbringst du den zweiten Weihnachtsfeiertag am liebsten?","a":["Auf dem Sofa","Bei der Familie","Draußen an der frischen Luft","Mit Resteessen"]},{"q":"Welche Rolle würdest du im Krippenspiel bekommen?","a":["Maria oder Josef","Ein Hirte","Ein König","Der Esel"]},{"q":"Was kommt bei dir auf die Baumspitze?","a":["Ein Stern","Eine Glasspitze","Ein Engel","Nichts"]},{"q":"Wie reagierst du auf Socken als Geschenk?","a":["Ehrliche Freude","Höfliches Lächeln","Stille Enttäuschung","Ich verschenke selbst Socken"]},{"q":"Was trinkst du auf dem Weihnachtsmarkt?","a":["Glühwein","Kinderpunsch","Feuerzangenbowle","Heiße Schokolade"]},{"q":"Wie viel Plätzchenteig naschst du beim Backen?","a":["Gar keinen","Ein bisschen","Gefühlt die Hälfte","Ich backe nicht"]},{"q":"Wo würdest du Weihnachten am liebsten einmal feiern?","a":["Zu Hause","In einer Berghütte","Am Strand","In New York"]},{"q":"Was machst du an Silvester um Mitternacht?","a":["Anstoßen","Feuerwerk schauen","Jemanden küssen","Schlafen"]},{"q":"Welcher gute Vorsatz hält bei dir am längsten?","a":["Mehr Sport","Gesünder essen","Weniger Handy","Ich mache keine"]}]};
+(function(){const m=[{"q":"In welchem Land entstand das Lied „Stille Nacht, heilige Nacht“?","a":["Österreich","Deutschland","Schweiz","Tschechien"],"f":"Es wurde 1818 in Oberndorf bei Salzburg zum ersten Mal gesungen."},{"q":"Wer schrieb den Text von „Stille Nacht“?","a":["Joseph Mohr","Franz Xaver Gruber","Michael Haydn","Franz Schubert"],"f":"Der Hilfspfarrer Joseph Mohr schrieb den Text, der Lehrer Franz Xaver Gruber die Melodie."},{"q":"Wie heißt das Rentier mit der roten Nase?","a":["Rudolph","Blitzen","Comet","Dasher"]},{"q":"Wie viele Rentiere ziehen den Schlitten im berühmten Gedicht von 1823, also noch ohne Rudolph?","a":["8","6","9","12"],"f":"Rudolph kam erst 1939 als neuntes dazu."},{"q":"Wie viele Kerzen hatte der allererste Adventskranz von 1839?","a":["Mehr als 20, für jeden Tag eine","4","7","12"],"f":"Kleine Kerzen für die Werktage, große für die Sonntage."},{"q":"In welcher Stadt eröffnet das Christkind den Markt jedes Jahr mit einem feierlichen Prolog?","a":["Nürnberg","Dresden","Köln","Rothenburg"],"f":"Der Nürnberger Christkindlesmarkt ist einer der berühmtesten der Welt."},{"q":"Wie heißt der Dresdner Weihnachtsmarkt?","a":["Striezelmarkt","Christkindlesmarkt","Lichtermarkt","Printenmarkt"],"f":"Striezel ist ein altes Wort für den Stollen."},{"q":"Welches Gebäck ist die Weihnachtsspezialität aus Dresden?","a":["Christstollen","Printen","Elisenlebkuchen","Spekulatius"]},{"q":"Aus welcher Stadt kommen die Printen?","a":["Aachen","Nürnberg","Lübeck","Köln"]},{"q":"Für welche Süßigkeit ist Lübeck berühmt?","a":["Marzipan","Lebkuchen","Dominosteine","Baumkuchen"]},{"q":"In welchem Land bringt die Hexe Befana den Kindern am 6. Januar Geschenke?","a":["Italien","Spanien","Portugal","Griechenland"],"f":"Brave Kinder bekommen Süßes, freche ein Stück Kohle, heute meist aus Zucker."},{"q":"Was essen viele Menschen in Japan traditionell an Weihnachten?","a":["Frittiertes Hähnchen von KFC","Sushi","Ramen","Truthahn"],"f":"Das geht auf eine Werbekampagne aus den 1970ern zurück. Man bestellt oft Wochen vorher."},{"q":"In welchem Land versteckt man an Weihnachten eine Mandel im Milchreis?","a":["Dänemark","Polen","Niederlande","Irland"],"f":"Wer die Mandel im „Risalamande“ findet, bekommt ein kleines Geschenk."},{"q":"Wie heißt der Gabenbringer in Russland?","a":["Väterchen Frost","Väterchen Schnee","Onkel Winter","Zar Nikolaus"],"f":"Er kommt zu Neujahr, begleitet von seiner Enkelin Snegurotschka."},{"q":"An welchem Datum feiert die russisch-orthodoxe Kirche Weihnachten?","a":["7. Januar","6. Dezember","25. Dezember","1. Januar"],"f":"Sie rechnet nach dem alten julianischen Kalender."},{"q":"Was hängt man in den USA traditionell an den Kamin?","a":["Strümpfe","Mützen","Handschuhe","Schuhe"]},{"q":"Wie heißt der grüne Weihnachtsmuffel von Dr. Seuss?","a":["Der Grinch","Scrooge","Krampus","Shrek"]},{"q":"Wie heißt der Geizhals in „Eine Weihnachtsgeschichte“ von Charles Dickens?","a":["Ebenezer Scrooge","Jacob Marley","Bob Cratchit","Oliver Twist"]},{"q":"Wie viele Geister besuchen Scrooge nach dem Geist seines Partners Marley?","a":["3","2","4","7"],"f":"Die Geister der vergangenen, der gegenwärtigen und der zukünftigen Weihnacht."},{"q":"Wohin fliegt Kevins Familie in „Kevin – Allein zu Haus“ ohne ihn?","a":["Paris","London","Rom","Florida"]},{"q":"In welcher Stadt landet Kevin im zweiten Teil allein?","a":["New York","Chicago","Los Angeles","Miami"]},{"q":"In welchem Jahr kam „Kevin – Allein zu Haus“ ins Kino?","a":["1990","1987","1993","1996"]},{"q":"In welchem Film kämpft Bruce Willis an Heiligabend im Nakatomi Plaza?","a":["Stirb langsam","Lethal Weapon","Speed","Con Air"]},{"q":"Wie heißt der Märchenfilm, der jedes Jahr zu Weihnachten läuft: „Drei Haselnüsse für …“?","a":["Aschenbrödel","Schneewittchen","Dornröschen","Rapunzel"]},{"q":"Welche zwei Länder drehten „Drei Haselnüsse für Aschenbrödel“ 1973 gemeinsam?","a":["Tschechoslowakei und DDR","Polen und Bundesrepublik","Österreich und Ungarn","Sowjetunion und DDR"]},{"q":"Welche Band sang „Last Christmas“?","a":["Wham!","Modern Talking","a-ha","Duran Duran"]},{"q":"In welchem Jahr erschien „Last Christmas“?","a":["1984","1979","1988","1991"]},{"q":"Wer singt „All I Want for Christmas Is You“?","a":["Mariah Carey","Whitney Houston","Céline Dion","Britney Spears"]},{"q":"In welchem Jahr erschien „All I Want for Christmas Is You“?","a":["1994","1989","1999","2004"]},{"q":"Welches Projekt sang 1984 „Do They Know It’s Christmas?“","a":["Band Aid","USA for Africa","Live Aid","Wham!"],"f":"Bob Geldof und Midge Ure sammelten damit Geld gegen die Hungersnot in Äthiopien."},{"q":"Wer sang „White Christmas“, eine der meistverkauften Singles aller Zeiten?","a":["Bing Crosby","Frank Sinatra","Elvis Presley","Dean Martin"]},{"q":"Wer komponierte das „Weihnachtsoratorium“?","a":["Johann Sebastian Bach","Georg Friedrich Händel","Wolfgang Amadeus Mozart","Georg Philipp Telemann"]},{"q":"Von welchem Komponisten stammt das Ballett „Der Nussknacker“?","a":["Peter Tschaikowsky","Igor Strawinsky","Sergei Prokofjew","Frédéric Chopin"]},{"q":"Wer schrieb die Erzählung „Nussknacker und Mausekönig“?","a":["E. T. A. Hoffmann","Die Brüder Grimm","Hans Christian Andersen","Wilhelm Hauff"]},{"q":"Welche Farbe hat die Kerze, die mancherorts am dritten Advent angezündet wird?","a":["Rosa","Blau","Grün","Weiß"],"f":"Der dritte Advent heißt „Gaudete“, also „Freut euch“."},{"q":"Was bedeutet das Wort „Advent“?","a":["Ankunft","Erwartung","Licht","Stille"],"f":"Vom lateinischen „adventus“."},{"q":"Wie heißen die Heiligen Drei Könige der Überlieferung nach?","a":["Caspar, Melchior und Balthasar","Caspar, Michael und Benedikt","Caspar, Melchior und Barnabas","Caspar, Matthias und Balthasar"]},{"q":"Welche Gaben brachten die Weisen aus dem Morgenland?","a":["Gold, Weihrauch und Myrrhe","Gold, Silber und Seide","Weihrauch, Wein und Brot","Gold, Öl und Myrrhe"]},{"q":"In welcher Stadt wurde Jesus laut Bibel geboren?","a":["Bethlehem","Nazareth","Jerusalem","Jericho"]},{"q":"Was bedeutet der Segen „C+M+B“, den Sternsinger an die Tür schreiben?","a":["Christus segne dieses Haus","Christus, Maria, Bethlehem","Christkind macht Bescherung","Caritas, Mission, Barmherzigkeit"],"f":"Lateinisch: „Christus mansionem benedicat“."},{"q":"Der heilige Nikolaus war Bischof von …","a":["Myra","Rom","Konstantinopel","Antiochia"]},{"q":"In welchem heutigen Land liegt Myra, die Stadt des heiligen Nikolaus?","a":["Türkei","Griechenland","Italien","Syrien"]},{"q":"Wie heißt der finstere Begleiter des Nikolaus im Alpenraum?","a":["Krampus","Wolpertinger","Rübezahl","Belsazar"]},{"q":"Wie heißt der Nikolaus in den Niederlanden?","a":["Sinterklaas","Kerstman","Joulupukki","Père Noël"],"f":"Aus „Sinterklaas“ wurde in Amerika „Santa Claus“."},{"q":"In welcher finnischen Stadt steht das Weihnachtsmanndorf am Polarkreis?","a":["Rovaniemi","Helsinki","Oulu","Tampere"]},{"q":"In welchem Bundesland liegt das Weihnachtspostamt Himmelpfort?","a":["Brandenburg","Bayern","Sachsen","Hessen"]},{"q":"Aus welchem Land stammt der Weihnachtsstern, die Pflanze mit den roten Blättern?","a":["Mexiko","China","Südafrika","Indien"]},{"q":"Unter welchem Zweig darf man sich zu Weihnachten küssen?","a":["Mistel","Stechpalme","Efeu","Tanne"]},{"q":"Welcher Baum ist in Deutschland der beliebteste Weihnachtsbaum?","a":["Nordmanntanne","Blaufichte","Kiefer","Douglasie"]},{"q":"Woher stammt die Nordmanntanne ursprünglich?","a":["Aus dem Kaukasus","Aus Skandinavien","Aus Kanada","Aus den Alpen"]},{"q":"Wonach ist die Nordmanntanne benannt?","a":["Nach einem finnischen Botaniker","Nach den Normannen","Nach Norwegen","Nach dem Nordpol"],"f":"Alexander von Nordmann beschrieb den Baum im 19. Jahrhundert."},{"q":"Was wird bei der Feuerzangenbowle angezündet?","a":["Ein mit Rum getränkter Zuckerhut","Eine Orangenschale","Eine Zimtstange","Der Wein selbst"]},{"q":"Wer spielte die Hauptrolle im Film „Die Feuerzangenbowle“ von 1944?","a":["Heinz Rühmann","Hans Albers","Theo Lingen","Heinz Erhardt"]},{"q":"Was kommt in Deutschland laut Umfragen an Heiligabend am häufigsten auf den Tisch?","a":["Würstchen mit Kartoffelsalat","Gans","Karpfen","Raclette"]},{"q":"Welcher Fisch ist in Polen und Tschechien das klassische Weihnachtsessen?","a":["Karpfen","Lachs","Hering","Forelle"]},{"q":"Aus welcher Stadt stammt der Panettone?","a":["Mailand","Neapel","Venedig","Turin"]},{"q":"Was passiert mit dem englischen Christmas Pudding, bevor er serviert wird?","a":["Er wird mit Brandy übergossen und angezündet","Er wird paniert und frittiert","Er wird eingefroren","Er wird in Tee getunkt"]},{"q":"Was ziehen Briten beim Weihnachtsessen zu zweit auseinander, bis es knallt?","a":["Christmas Cracker","Luftschlangen","Glückskekse","Wunderkerzen"],"f":"Drin stecken eine Papierkrone, ein kleiner Scherzartikel und ein Witz."},{"q":"An welchem Datum ist in Großbritannien „Boxing Day“?","a":["26. Dezember","24. Dezember","27. Dezember","31. Dezember"]},{"q":"Was ist „El Gordo“, das in Spanien am 22. Dezember stattfindet?","a":["Die Weihnachtslotterie","Ein Stierlauf","Ein Feuerwerk","Eine Tomatenschlacht"],"f":"„Der Dicke“ ist der Hauptgewinn. Die Zahlen werden von Schulkindern gesungen."},{"q":"Was schauen Millionen Schweden an Heiligabend um 15 Uhr im Fernsehen?","a":["Donald Duck","Ein ABBA-Konzert","Die Rede des Königs","Skispringen"],"f":"Die Sendung „Kalle Anka“ läuft seit 1960 jedes Jahr."},{"q":"Welches Tier aus Stroh wird im schwedischen Gävle jedes Jahr riesengroß aufgestellt?","a":["Ein Ziegenbock","Ein Elch","Ein Rentier","Ein Bär"],"f":"Berühmt ist er vor allem, weil er so oft angezündet wird."},{"q":"Wie viele Weihnachtsgesellen kommen in Island nacheinander aus den Bergen?","a":["13","3","7","24"],"f":"Sie heißen zum Beispiel Türenknaller, Topfschaber oder Wurststibitzer."},{"q":"Welches Lichterfest feiert Schweden am 13. Dezember?","a":["Luciafest","Midsommar","Julbock","Krebsfest"]},{"q":"Was heißt „Frohe Weihnachten“ auf Hawaii?","a":["Mele Kalikimaka","Aloha Nui","Feliz Navidad","Hakuna Matata"]},{"q":"Welche Firma prägte ab 1931 mit ihrer Werbung das Bild vom rot-weißen Weihnachtsmann?","a":["Coca-Cola","Pepsi","Kellogg’s","Nestlé"],"f":"Erfunden hat sie ihn nicht, aber weltweit bekannt gemacht."},{"q":"Welcher aus der Pfalz stammende Zeichner gab Santa Claus im 19. Jahrhundert sein Aussehen?","a":["Thomas Nast","Wilhelm Busch","Carl Spitzweg","Heinrich Hoffmann"],"f":"Er wurde in Landau geboren und wanderte als Kind in die USA aus."},{"q":"In welcher Stadt steht der berühmte Weihnachtsbaum am Rockefeller Center?","a":["New York","Chicago","Boston","Washington"]},{"q":"Welches Land schenkt London jedes Jahr den Weihnachtsbaum für den Trafalgar Square?","a":["Norwegen","Schweden","Kanada","Deutschland"],"f":"Als Dank für die britische Hilfe im Zweiten Weltkrieg, seit 1947."},{"q":"Welches dieser Dinge ist ein typisches Weihnachtsprodukt aus dem Erzgebirge?","a":["Schwibbogen","Kuckucksuhr","Gartenzwerg","Matroschka"]},{"q":"Aus welchem Ort im Erzgebirge kommen besonders viele Nussknacker und Räuchermännchen?","a":["Seiffen","Oberammergau","Rothenburg","Lauscha"]},{"q":"Aus welchem Thüringer Ort stammt die gläserne Christbaumkugel?","a":["Lauscha","Seiffen","Meißen","Jena"]},{"q":"Was sollte Lametta am Baum ursprünglich darstellen?","a":["Eiszapfen","Engelshaar","Sternschnuppen","Regen"]},{"q":"Wie geht der berühmte Loriot-Satz weiter: „Früher war mehr …“?","a":["Lametta","Schnee","Stimmung","Gans"]},{"q":"Wie heißt die Familie in Loriots Weihnachtssketch?","a":["Hoppenstedt","Müller-Lüdenscheidt","Kempowski","Blöhmann"]},{"q":"In welchem Jahr legten Soldaten an der Westfront zu Weihnachten spontan die Waffen nieder?","a":["1914","1916","1918","1870"],"f":"Beim „Weihnachtsfrieden“ sangen Deutsche und Briten gemeinsam und tauschten Geschenke."},{"q":"Wofür ist die Weihnachtsinsel im Indischen Ozean berühmt?","a":["Für die Wanderung von Millionen roter Krabben","Für ihre Pinguine","Für ihre Tannenwälder","Für wilde Rentiere"]},{"q":"Welche Jahreszeit ist in Australien an Weihnachten?","a":["Sommer","Winter","Herbst","Frühling"]},{"q":"An welchem Datum ist Nikolaustag?","a":["6. Dezember","5. Dezember","8. Dezember","13. Dezember"]},{"q":"Wie heißt der 26. Dezember auch?","a":["Stephanstag","Johannistag","Martinstag","Barbaratag"]},{"q":"Auf welches Datum fällt der erste Advent frühestens?","a":["27. November","24. November","30. November","1. Dezember"],"f":"Spätestens ist er am 3. Dezember."},{"q":"Wie heißt es richtig: „O Tannenbaum, o Tannenbaum, wie … sind deine Blätter“?","a":["treu","grün","schön","hell"],"f":"Fast alle singen „grün“. Im Original steht „treu“."},{"q":"Wie geht das Lied weiter: „Alle Jahre wieder kommt das …“?","a":["Christuskind","Weihnachtskind","Christkindlein","Jesuskind"]},{"q":"Für welches Fest wurde „Jingle Bells“ vermutlich ursprünglich geschrieben?","a":["Thanksgiving","Neujahr","Ostern","Den Unabhängigkeitstag"],"f":"Weihnachten kommt im Text gar nicht vor."},{"q":"Welches Lied wurde 1965 als erstes im Weltall gespielt?","a":["Jingle Bells","Stille Nacht","White Christmas","O Tannenbaum"],"f":"Die Astronauten von Gemini 6 hatten eine Mundharmonika und Glöckchen an Bord geschmuggelt."},{"q":"Von wem stammt der Hit „Feliz Navidad“?","a":["José Feliciano","Julio Iglesias","Ricky Martin","Carlos Santana"]},{"q":"Wer singt „Driving Home for Christmas“?","a":["Chris Rea","Chris de Burgh","Shakin’ Stevens","Cliff Richard"]},{"q":"Von wem stammt das Lied „In der Weihnachtsbäckerei“?","a":["Rolf Zuckowski","Reinhard Mey","Peter Maffay","Detlev Jöcker"]},{"q":"In welcher Stadt spielt der Film „Tatsächlich … Liebe“?","a":["London","New York","Paris","Dublin"]},{"q":"Wer spielt den Schaffner im Film „Der Polarexpress“?","a":["Tom Hanks","Jim Carrey","Robin Williams","Tim Allen"]},{"q":"Wer spielt Buddy in „Buddy – Der Weihnachtself“?","a":["Will Ferrell","Jim Carrey","Adam Sandler","Ben Stiller"]},{"q":"Wer spielt den Grinch im Film aus dem Jahr 2000?","a":["Jim Carrey","Mike Myers","Robin Williams","Eddie Murphy"]},{"q":"Wie heißt der Kürbiskönig in „Nightmare Before Christmas“?","a":["Jack Skellington","Oogie Boogie","Beetlejuice","Edward"]},{"q":"Wie heißt die Chaosfamilie im Film „Schöne Bescherung“?","a":["Griswold","McCallister","Bundy","Tanner"]},{"q":"Wer spielt die Kaiserin in den „Sissi“-Filmen, die jedes Jahr zu Weihnachten laufen?","a":["Romy Schneider","Senta Berger","Maria Schell","Uschi Glas"]},{"q":"Wer spielt den grantigen Earl im Weihnachtsklassiker „Der kleine Lord“ von 1980?","a":["Alec Guinness","Peter Ustinov","Laurence Olivier","Sean Connery"]},{"q":"Welche Nuss steckt in klassischen Zimtsternen?","a":["Mandeln","Haselnüsse","Walnüsse","Erdnüsse"]},{"q":"Welche Form haben Vanillekipferl?","a":["Halbmond","Stern","Herz","Ring"]},{"q":"Was ist Kletzenbrot?","a":["Ein Früchtebrot mit getrockneten Birnen","Ein Nussstrudel","Ein Käsegebäck","Ein Sauerteigbrot mit Kümmel"],"f":"„Kletzen“ sind Dörrbirnen."},{"q":"Auf welchem Platz findet der Münchner Christkindlmarkt statt?","a":["Marienplatz","Odeonsplatz","Stachus","Königsplatz"]},{"q":"Welches Winterfestival findet in München auf der Theresienwiese statt?","a":["Tollwood","Auer Dult","Frühlingsfest","Starkbierfest"]},{"q":"Was bekommt man auf dem Münchner Kripperlmarkt?","a":["Krippenfiguren","Krapfen","Kerzen","Krawatten"]},{"q":"Wer bringt in Bayern traditionell die Geschenke?","a":["Das Christkind","Der Weihnachtsmann","Der Nikolaus","Väterchen Frost"]},{"q":"Wer soll das Christkind als Gabenbringer eingeführt haben?","a":["Martin Luther","Karl der Große","König Ludwig II.","Papst Gregor XIII."],"f":"Er wollte die Bescherung vom Nikolaustag auf Weihnachten verlegen."},{"q":"Was sind die „Raunächte“?","a":["Die Nächte zwischen Weihnachten und Dreikönig","Die vier Adventssonntage","Die Nächte vor Nikolaus","Die Polarnächte in Lappland"]},{"q":"Was sollen Perchtenläufe im Alpenraum vertreiben?","a":["Den Winter und böse Geister","Wölfe","Den Schnee","Touristen"]},{"q":"Wie heißt Weihnachten auf Schwedisch, Dänisch und Norwegisch?","a":["Jul","Kerst","Nadal","Joulu"]},{"q":"Welcher Deutsche machte den Weihnachtsbaum in England populär?","a":["Prinz Albert","Georg Friedrich Händel","Karl Marx","Kaiser Wilhelm II."],"f":"Der Ehemann von Queen Victoria brachte den Brauch aus Coburg mit."},{"q":"Wie viele Strahlen hat ein Schneekristall?","a":["6","4","5","8"]},{"q":"Wo liegt der geografische Nordpol?","a":["Auf dem Eis des Arktischen Ozeans","In Grönland","Auf Spitzbergen","Auf dem kanadischen Festland"]},{"q":"Warum ist Schnee weiß?","a":["Weil die Eiskristalle das Licht in alle Richtungen streuen","Weil er Kalk enthält","Weil gefrorenes Wasser weiß ist","Weil Salz darin gefriert"]},{"q":"Was verfolgt die nordamerikanische Luftverteidigung NORAD jedes Jahr an Heiligabend?","a":["Den Schlitten des Weihnachtsmanns","Sternschnuppen","Zugvögel","Wetterballons"],"f":"Angefangen hat es 1955 mit einer falsch abgedruckten Telefonnummer."},{"q":"Welcher britische König hielt 1932 die erste Weihnachtsansprache im Radio?","a":["Georg V.","Eduard VII.","Georg VI.","Eduard VIII."]},{"q":"Wofür steht das „X“ in „Xmas“?","a":["Für den griechischen Buchstaben Chi, den Anfang von „Christus“","Für ein Kreuz","Für „Extra“","Für eine Unbekannte"]},{"q":"Wie viele Geschenke bekommt man im Lied „The Twelve Days of Christmas“ insgesamt?","a":["364","78","144","12"]},{"q":"Was gibt es im Lied „The Twelve Days of Christmas“ am ersten Tag?","a":["Ein Rebhuhn im Birnbaum","Zwei Turteltauben","Fünf goldene Ringe","Eine Gans"]},{"q":"In welchem Land schenkt man sich an Heiligabend traditionell Bücher und liest die Nacht durch?","a":["Island","Finnland","Irland","Estland"],"f":"Der Brauch heißt „Jólabókaflóð“, die Weihnachtsbücherflut."},{"q":"In welchem Land gehört der Saunagang an Heiligabend fest dazu?","a":["Finnland","Portugal","Belgien","Schottland"]},{"q":"Wie fahren viele Menschen in Caracas traditionell zur Weihnachtsmesse?","a":["Auf Rollschuhen","Mit dem Fahrrad","Auf Eseln","Mit dem Boot"]},{"q":"Womit schmückt man in der Ukraine gern den Weihnachtsbaum, weil es Glück bringen soll?","a":["Mit künstlichen Spinnweben","Mit Zwiebeln","Mit Münzen","Mit Fischschuppen"]},{"q":"Was ist der katalanische „Caga Tió“?","a":["Ein Holzklotz, der Geschenke hergibt, wenn man ihn schlägt","Ein Esel aus Marzipan","Ein Weihnachtstanz","Ein scharfer Likör"]},{"q":"Was ist „Julklapp“?","a":["Der skandinavische Brauch des Wichtelns","Ein Weihnachtsgebäck","Ein Volkstanz","Ein heißer Punsch"]},{"q":"In welchem Monat feierten die alten Römer die Saturnalien, bei denen man sich beschenkte?","a":["Dezember","März","Juni","Oktober"]},{"q":"In welcher französischen Stadt gibt es seit 1570 einen der ältesten Weihnachtsmärkte Europas?","a":["Straßburg","Paris","Lyon","Nizza"]},{"q":"In welchem Land liegt der Ort Christkindl mit eigenem Weihnachtspostamt?","a":["Österreich","Schweiz","Italien","Liechtenstein"],"f":"Christkindl ist ein Ortsteil von Steyr."},{"q":"Wie viele Kantaten gehören zu Bachs Weihnachtsoratorium?","a":["6","3","4","12"]},{"q":"Wer oder was ist „Joulupukki“?","a":["Der finnische Weihnachtsmann","Ein schwedischer Glühwein","Ein norwegisches Rentier","Ein dänischer Weihnachtskuchen"],"f":"Wörtlich heißt das „Weihnachtsbock“."}],f=[{"c":"Weihnachtslieder","q":"In welchem Jahr wurde „Stille Nacht“ zum ersten Mal gesungen?","a":["1818","1789","1848","1871"],"f":"An Heiligabend 1818 in Oberndorf bei Salzburg."},{"c":"Weihnachtsfilme","q":"Wie heißt der Engel im Klassiker „Ist das Leben nicht schön?“","a":["Clarence","Gabriel","George","Harry"],"f":"Er muss sich erst noch seine Flügel verdienen."},{"c":"Weihnachten weltweit","q":"In welchem Land feiert man vor Weihnachten neun Abende lang „Las Posadas“?","a":["Mexiko","Portugal","Italien","Brasilien"],"f":"Dabei wird die Herbergssuche von Maria und Josef nachgespielt."},{"c":"Weihnachtsbäckerei","q":"Was ist Hirschhornsalz?","a":["Ein Backtriebmittel für Lebkuchen","Ein Streusalz für Gehwege","Ein Gewürz aus Wacholder","Ein Pökelsalz für Wild"],"f":"Früher wurde es wirklich aus Horn und Hufen gewonnen."},{"c":"Weihnachtsgeschichte","q":"Welcher römische Kaiser ordnete laut Lukasevangelium die Volkszählung an?","a":["Augustus","Nero","Tiberius","Konstantin"]},{"c":"Winter","q":"Wann ist auf der Nordhalbkugel die Wintersonnenwende?","a":["Am 21. oder 22. Dezember","Am 13. Dezember","Am 24. Dezember","Am 31. Dezember"],"f":"Danach werden die Tage wieder länger."},{"c":"Weihnachtsmärkte","q":"In welchem Mittelgebirge liegt der Weihnachtsmarkt in der Ravennaschlucht?","a":["Im Schwarzwald","Im Harz","In der Eifel","Im Bayerischen Wald"],"f":"Er steht unter einem 40 Meter hohen Eisenbahnviadukt."},{"c":"Rentiere","q":"Wie heißen Rentiere in Nordamerika?","a":["Karibu","Wapiti","Bison","Kojote"]},{"c":"Weihnachtsliteratur","q":"In welchem Jahr erschien „Eine Weihnachtsgeschichte“ von Charles Dickens?","a":["1843","1799","1871","1901"]},{"c":"Weihnachtsbräuche","q":"Was verstecken Norweger der Sage nach an Heiligabend, damit Hexen es nicht stehlen?","a":["Ihre Besen","Ihre Schuhe","Ihre Kerzen","Ihre Töpfe"]},{"c":"Weihnachtsmusik","q":"Zu welchem Ballett gehört der „Tanz der Zuckerfee“?","a":["Der Nussknacker","Schwanensee","Dornröschen","Giselle"]},{"c":"Weihnachtsmann","q":"In welchem Jahr wurde Rudolph mit der roten Nase erfunden?","a":["1939","1823","1902","1964"],"f":"Ein Werbetexter schrieb die Geschichte für ein Kaufhaus in Chicago."}];MC.push.apply(MC,m);m.forEach(()=>THEME_MC.push("xmas"));FIN.push.apply(FIN,f);f.forEach(()=>THEME_FIN.push("xmas"));})();
+
+function xmasIntro(force){
+  if(!force&&!xmasOn())return;
+  if(document.getElementById("xintro"))return;
+  const o=document.createElement("div");o.id="xintro";
+  o.innerHTML='<video playsinline webkit-playsinline muted autoplay preload="auto" src="weihnachtsspot.mp4"></video><div class="xi-b"><button type="button" class="xi-snd">🔊 Ton an</button><button type="button" class="xi-skip">Überspringen ›</button></div>';
+  const v=o.querySelector("video"),sb=o.querySelector(".xi-snd");let gone=false;
+  const close=()=>{if(gone)return;gone=true;try{v.pause();}catch(e){}o.remove();};
+  const snd=()=>{v.muted=!v.muted;sb.textContent=v.muted?"🔊 Ton an":"🔇 Ton aus";if(!v.muted){const pr=v.play();if(pr&&pr.catch)pr.catch(()=>{});}};
+  v.addEventListener("ended",close);v.addEventListener("error",close);
+  o.querySelector(".xi-skip").addEventListener("click",close);
+  sb.addEventListener("click",snd);v.addEventListener("click",snd);
+  document.body.appendChild(o);
+  try{const pr=v.play();if(pr&&pr.catch)pr.catch(()=>{});}catch(e){close();}
+  setTimeout(()=>{if(!gone&&v.readyState<2)close();},7000);
+}
 (async function boot(){
+  try{xmasIntro();}catch(e){}
   renderAll(true);
   let user=null;
   try{[DB,user]=await fbInit();}catch(e){DB=null;}
   if(user){try{ME=await user.id();}catch(e){ME=null;}}
   if(!DB||!ME){dbState="nodb";renderAll(true);return;}
   founderWatch();
-  gRef().onSnapshot(s=>{RG=s.exists?s.data():null;if(SOLO)return;G=RG;gotGame=true;onChange();},()=>{dbState="nodb";renderAll(true);});
+  gRef().onSnapshot(s=>{RG=s.exists?saneGame(cln(s.data())):null;if(SOLO)return;G=RG;gotGame=true;onChange();},()=>{dbState="nodb";renderAll(true);});
   let resSig="",profSig="";
   DB.collection("results").onSnapshot(s=>{const r=s.docs.filter(d=>d.exists).map(d=>d.data()),sig=JSON.stringify(r);if(sig===resSig)return;resSig=sig;RAW.res=r;applyAlias();},()=>{});
   DB.collection("pins").onSnapshot(s=>{const m={};s.docs.forEach(d=>{if(d.exists&&d.data())m[d.id]=d.data();});PINS=m;renderAll();},()=>{});
   DB.collection("alias").onSnapshot(s=>{const m={};s.docs.forEach(d=>{if(d.exists&&d.data()&&typeof d.data().to==="string")m[d.id]=d.data().to;});const nm2=normAlias(m);if(ME===FOUNDER)nm2.fix.forEach(f=>{meWrite(()=>DB.doc("alias/"+f[0]).delete());meWrite(()=>DB.doc("alias/"+f[1]).set({to:f[2],at:Date.now(),fixed:1}));});if(JSON.stringify(nm2.m)===JSON.stringify(ALIAS))return;ALIAS=nm2.m;applyAlias();},()=>{});
-  DB.collection("profiles").onSnapshot(s=>{const m={};s.docs.forEach(d=>{if(d.exists)m[d.id]=d.data();});const sig=JSON.stringify(m);if(sig===profSig)return;profSig=sig;PROFS=m;profVer++;renderAll();},()=>{});
+  DB.collection("profiles").onSnapshot(s=>{const m={};s.docs.forEach(d=>{if(d.exists)m[d.id]=cln(d.data());});const sig=JSON.stringify(m);if(sig===profSig)return;profSig=sig;PROFS=m;profVer++;renderAll();},()=>{});
   DB.collection("solo").onSnapshot(s=>{RAW.solo=s.docs.filter(d=>d.exists).map(d=>d.data());applyAlias();},()=>{});
   DB.collection("daily").onSnapshot(s=>{RAW.daily=s.docs.filter(d=>d.exists).map(d=>d.data());applyAlias();},()=>{});
   DB.collection("reports").onSnapshot(s=>{const r=s.docs.filter(d=>d.exists).map(d=>Object.assign({id:d.id},d.data())).sort((a,b)=>(b.at||0)-(a.at||0)),sig=JSON.stringify(r.map(x=>x.id));if(sig===repSig)return;repSig=sig;REPS=r;renderAll();},()=>{});
   DB.collection("custom").onSnapshot(s=>{CUST=s.docs.filter(d=>d.exists).map(d=>Object.assign({id:d.id},d.data()));progVer++;renderAll();},()=>{});
-  DB.collection("players").onSnapshot(s=>{const m={};s.docs.forEach(d=>{if(d.exists)m[d.id]=d.data();});RP=m;if(SOLO)return;P=m;gotPlayers=true;checkEmos();onChange();},()=>{dbState="nodb";renderAll(true);});
+  DB.collection("players").onSnapshot(s=>{const m={};s.docs.forEach(d=>{if(d.exists)m[d.id]=cln(d.data());});RP=m;if(SOLO)return;P=m;gotPlayers=true;checkEmos();onChange();},()=>{dbState="nodb";renderAll(true);});
 })();
 
 })();
