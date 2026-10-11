@@ -296,7 +296,7 @@ button.chip{cursor:pointer}
 .sktgt{position:absolute;width:58px;height:58px;margin:-29px 0 0 -29px;border-radius:50%;border:0;background:radial-gradient(circle,#fff 0 18%,#ff5a78 19% 38%,#fff 39% 58%,#ff5a78 59%);font-size:0;padding:0;touch-action:manipulation}
 .skword{font-family:var(--display);font-size:46px;text-align:center;padding:24px 0;min-height:60px}
 .skcols{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
-.skcol{height:72px;border-radius:14px;border:2px solid rgba(255,255,255,.25);touch-action:manipulation}
+.skcol{height:72px;border-radius:14px;border:2px solid rgba(255,255,255,.25);touch-action:manipulation;font:800 15px var(--body)}
 .skord{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
 .skn{font-family:var(--display);font-size:26px;color:var(--fg)}
 .skn.done{opacity:.15}
@@ -2439,11 +2439,11 @@ const SKG={
  balloon:{t:"Ballon-Poker",e:"🎈",r:"Pumpe den Ballon auf, jeder Pumpstoß zählt. Irgendwann platzt er! Kassiere rechtzeitig. Geplatzt gibt nichts."},
  blind:{t:"Gefühlte Zeit",e:"🙈",r:"Stoppe genau nach der angezeigten Zeit. Eine Uhr gibt es nicht, nur dein Gefühl."},
  aim:{t:"Treffsicher",e:"🏹",r:"Tippe 10 Zielscheiben so schnell du kannst. Daneben tippen kostet 0,25 Sekunden."},
- stroop:{t:"Farb-Chaos",e:"🌈",r:"Tippe die SCHRIFTFARBE, nicht das Wort. Beispiel: Steht „ROT“ in grüner Schrift da, tippst du Grün. 10 Runden, jeder Fehler kostet 1,5 Sekunden."},
+ stroop:{t:"Farb-Chaos",e:"🌈",r:"Tippe die SCHRIFTFARBE, nicht das Wort. Beispiel: Steht „ROT“ in gelber Schrift da, tippst du Gelb. Die Knöpfe sind beschriftet. 10 Runden, jeder Fehler kostet 1,5 Sekunden."},
  order:{t:"Zahlen-Jagd",e:"🔢",r:"Tippe die Zahlen von 1 bis 12 der Reihe nach, so schnell du kannst. Falsch tippen kostet 1 Sekunde."}
 };
 const SK_LOW={stop:1,react:1,bar:1,blind:1,aim:1,stroop:1,order:1};
-const STROOP=[["ROT","#ff5a5a"],["BLAU","#4da3ff"],["GRÜN","#4ade80"],["GELB","#ffd23c"]];
+const STROOP=[["ROT","#ff4d4d","Rot","#fff"],["BLAU","#3d8bff","Blau","#fff"],["GELB","#ffd23c","Gelb","#1a1442"],["WEISS","#ffffff","Weiß","#1a1442"]];
 function skBlindT(seed){return 5+Math.floor(skRand(seed)()*6);}
 function skBalloonMax(seed){const r=skRand(seed+7);return 8+Math.floor(r()*25);}
 function skAimPos(seed){const r=skRand(seed+3),o=[];for(let i=0;i<10;i++)o.push([8+r()*84,8+r()*84]);return o;}
@@ -2493,7 +2493,7 @@ function skStage(st){
   if(g==="balloon")return '<div class="skbox"><div class="skhud"><span id="sks">0 Pumpstöße</span><span id="skt"></span></div>'+go+'<div class="skbal" id="skbl">🎈</div><div class="skduo"><button class="btn skhide" id="skpump" data-sk="c">Pumpen</button><button class="btn alt skhide" id="skcash" data-sk="cash">Kassieren</button></div></div>';
   if(g==="blind")return '<div class="skbox"><div class="skdisp">'+skBlindT(st.seed)+' Sekunden</div><p class="muted small center">Starten, im Kopf zählen, Stopp tippen.</p>'+go+'</div>';
   if(g==="aim")return '<div class="skbox"><div class="skhud"><span id="sks">0 von 10</span><span id="skt">0,0 s</span></div>'+go+'<div class="skaim" id="ska" data-sk="miss"><button class="sktgt skhide" id="skg" data-sk="c">🎯</button></div></div>';
-  if(g==="stroop")return '<div class="skbox"><div class="skhud"><span id="sks">Runde 1 von 10</span><span id="skt">0,0 s</span></div>'+go+'<div class="skword" id="skw">&nbsp;</div><div class="skcols">'+STROOP.map((c,i)=>'<button class="skcol" data-sk="c" data-i="'+i+'" style="background:'+c[1]+'" aria-label="'+c[0]+'"></button>').join('')+'</div></div>';
+  if(g==="stroop")return '<div class="skbox"><div class="skhud"><span id="sks">Runde 1 von 10</span><span id="skt">0,0 s</span></div>'+go+'<div class="skword" id="skw">&nbsp;</div><div class="skcols">'+STROOP.map((c,i)=>'<button class="skcol" data-sk="c" data-i="'+i+'" style="background:'+c[1]+';color:'+c[3]+'" aria-label="'+c[2]+'">'+c[2]+'</button>').join('')+'</div></div>';
   if(g==="order")return '<div class="skbox"><div class="skhud"><span id="sks">Nächste: 1</span><span id="skt">0,0 s</span></div>'+go+'<div class="skord">'+skOrderGrid(st.seed).map(v=>'<button class="skcell skn" id="sko'+v+'" data-sk="c" data-v="'+v+'">'+v+'</button>').join('')+'</div></div>';
   return '<div class="skbox"><div class="skhud"><span id="sks">0 Tipps</span><span id="skt">5,0 s</span></div><button class="skpad" id="skp" data-sk="go">Tippe los!</button></div>';
 }
@@ -4887,7 +4887,7 @@ function founderWatch(){
 }
 if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js",{scope:"./"}).catch(()=>{});
 function DK_SWITCH(id,n){try{localStorage.setItem("dk_id",id);if(n)localStorage.setItem("dk_name",n);}catch(e){}location.reload();}
-const BUILD_ID="1791747453";
+const BUILD_ID="1791748838";
 function verCheck(){fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(r=>r.json()).then(j=>{if(j&&j.v&&j.v!==BUILD_ID&&!document.getElementById("upd")){const b=document.createElement("button");b.id="upd";b.textContent="✨ Neue Version da. Tippen zum Laden";b.onclick=()=>location.reload();document.body.appendChild(b);}}).catch(()=>{});}
 setInterval(verCheck,60000);document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")verCheck();});setTimeout(verCheck,5000);
 (async function boot(){
