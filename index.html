@@ -2768,6 +2768,7 @@ function saveName(){
   const n=(L.name||"").trim().slice(0,14);
   if(!n){L.err="Bitte gib zuerst einen Namen ein.";renderAll(true);return null;}
   L.err="";L.name=n;try{localStorage.setItem("dk_name",n);}catch(e){}
+  if(pinCheck(n))return null;
   return n;
 }
 function join(v){
@@ -2891,6 +2892,8 @@ function waitNote(t){return '<p class="center muted wait">'+t+'</p>';}
 function hostBtn(label,act){return amHost()?'<button class="btn stick" data-act="'+act+'">'+label+'</button>':waitNote('Warten auf '+hostName()+' …');}
 
 function vMain(){
+  if(L.pinAsk&&dbState==="ok")return vPinAsk();
+  if(L.view==="pin"&&dbState==="ok"&&ME)return pinSetCard(true)+'<button class="btn alt" data-act="boardclose">Zurück</button>';
   if(L.view&&dbState==="ok"&&ME){
     if(L.view==="board")return vBoard();
     if(L.view==="custom")return vCustom();
@@ -2905,7 +2908,7 @@ function vMain(){
   if(dbState==="nodb")return '<div class="marquee"><div class="mq-in"><div class="logo">DREI<br>KAMPF</div></div></div><div class="card"><p>Keine Verbindung zum Spielstand. Prüf dein Internet und lade die Seite neu.</p></div>';
   if(!G||(G.phase!=="lobby"&&G.phase!=="play")){
     return '<div class="marquee fade"><div class="mq-in"><div class="logo one">DREIKAMPF</div><p class="tag small">Jeder am eigenen Handy</p></div></div>'+
-      vMyCard(true)+errBox()+
+      vMyCard(true)+errBox()+pinSetCard()+
       '<button class="btn" data-act="newlobby">Neues Spiel eröffnen</button><p class="center muted small" style="margin-top:-4px">Die anderen öffnen denselben Link und treten bei.</p>'+vHome();
   }
   if(G.phase==="lobby"){
@@ -2918,7 +2921,7 @@ function vMain(){
     }else{
       out+=errBox()+waitNote('Du bist dabei. Warten, bis '+hostName()+' startet …');
     }
-    out+=lobbyPlayersCard()+lobbyShow();
+    out+=lobbyPlayersCard()+(joined?pinSetCard():'')+lobbyShow();
     return out;
   }
   const st=step();if(!st)return '';
@@ -3194,6 +3197,7 @@ function vStatus(){
 function vMenu(){
   let b='<button class="btn" data-act="menuclose">Weiter</button><button class="btn alt" data-act="board">Siegerboard</button><button class="btn alt" data-act="avatar">Avatar</button><button class="btn alt" data-act="custom">✍️ Eigene Frage</button>';
   b+='<button class="btn alt" data-act="guide">📖 Anleitung</button>';
+  if(canSwitch())b+='<button class="btn alt" data-act="pinview">🔐 '+(PINS[ME]?'PIN ändern':'PIN festlegen')+'</button>';
   if(ME===FOUNDER){const n=REPS.length;b+='<button class="btn alt" data-act="reports">🚩 Gemeldete Fragen'+(n?' ('+n+')':'')+'</button><button class="btn alt" data-act="merge">🔗 Profile zusammenführen</button>';}
   b+='<div class="mduo"><button class="btn alt" data-act="devcopy">📲 Code kopieren</button><button class="btn alt" data-act="devload">📥 Profil laden</button></div>';
   b+='<div class="mtog"><button class="mtg" data-act="sound"><span>🔊 Sound</span><span class="tsw'+(soundOn?' on':'')+'"><i></i></span></button><button class="mtg" data-act="fxtoggle"><span>✨ Effekte</span><span class="tsw'+(fxOn?' on':'')+'"><i></i></span></button></div>';
@@ -3203,7 +3207,8 @@ function vMenu(){
 }
 
 /* ---------- Rendern ---------- */
-function viewKey(){if(L.view==="guide")return "guide"+(SAMPLE?1:0);if(L.view==="reports")return "rep"+repSig+(L.confirm||"");if(L.view==="merge")return "mg"+L.mA+L.mB+(L.migMsg||"")+(L.autoMsg||"")+JSON.stringify(ALIAS)+RAW.res.length+(L.confirm||"");return (L.showDaily?"D":"")+(L.view==="solo"?JSON.stringify([L.soloN,L.soloD,L.soloLen,L.soloTheme,FOUNDER]):"")+(SOLO?"S":"")+(L.view?L.view+"|"+L.pu+"|"+(L.view==="avatar"?L.edTab:"")+"|"+profVer:"")+"|"+progVer;}
+function viewKey(){return viewKey0()+"|p"+(L.pinMsg||"")+!!(PINS&&PINS[ME])+(L.pinAsk?1:0);}
+function viewKey0(){if(L.view==="guide")return "guide"+(SAMPLE?1:0);if(L.view==="reports")return "rep"+repSig+(L.confirm||"");if(L.pinAsk)return "pinask"+L.pinErr+!!PINS[L.pinAsk.u];if(L.view==="pin")return "pin"+L.pinMsg+!!PINS[ME];if(L.view==="merge")return "mg"+L.mA+L.mB+(L.migMsg||"")+(L.autoMsg||"")+JSON.stringify(ALIAS)+RAW.res.length+(L.confirm||"");return (L.showDaily?"D":"")+(L.view==="solo"?JSON.stringify([L.soloN,L.soloD,L.soloLen,L.soloTheme,FOUNDER]):"")+(SOLO?"S":"")+(L.view?L.view+"|"+L.pu+"|"+(L.view==="avatar"?L.edTab:"")+"|"+profVer:"")+"|"+progVer;}
 function mainKey(){
   if(dbState!=="ok")return dbState;
   if(!G)return "nogame"+viewKey();
@@ -3289,9 +3294,17 @@ function startConfetti(){
 /* ---------- Eingaben ---------- */
 function act(a,d){
   const st=step();
+  if(a==="newlobby"||a==="join"||a==="waitjoin"){L.curAct=a;L.curD=d;}
   if(a!=="takeover"&&a!=="abort"&&a!=="joker"&&a!=="kick"&&a!=="mdo"&&a!=="mauto"&&a!=="reveal")L.confirm=null;
   switch(a){
     case "newlobby":newLobby();break;
+    case "pinok":if(L.pinAsk){const v=((document.getElementById("pinin")||{}).value||"").trim(),a=L.pinAsk,pr=PINS[a.u];if(pr&&pr.h===pinHash(a.u,v)){DK_SWITCH(a.u,a.n);}else{L.pinErr="Die PIN stimmt nicht.";renderAll(true);}}break;
+    case "pinother":L.pinAsk=null;L.name="";try{localStorage.removeItem("dk_name");}catch(e){}renderAll(true);break;
+    case "pinno":if(L.pinAsk){const a=L.pinAsk;L.pinSkip=L.pinSkip||{};L.pinSkip[a.n.trim().toLowerCase()]=1;L.pinAsk=null;if(a.act)act(a.act,a.d);else renderAll(true);}break;
+    case "pinsave":{const v=((document.getElementById("pinset")||{}).value||"").trim();if(!/^\d{4}$/.test(v)){L.pinMsg="Bitte genau 4 Ziffern.";renderAll(true);break;}PINS[ME]={h:pinHash(ME,v),at:Date.now()};meWrite(()=>DB.doc("pins/"+ME).set(PINS[ME]));L.pinMsg="✓ PIN gespeichert. Merk sie dir gut!";renderAll(true);}break;
+    case "pinlater":try{localStorage.setItem("dk_pinlater",String(Date.now()));}catch(e){}renderAll(true);break;
+    case "pinview":L.view="pin";L.pinMsg="";L.menu=false;renderAll(true);window.scrollTo(0,0);break;
+    case "pindel":if(ME===FOUNDER&&L.mA){const u=L.mA;delete PINS[u];meWrite(()=>DB.doc("pins/"+u).delete());L.mA=null;renderAll(true);}break;
     case "join":join(G.v);break;
     case "waitjoin":if(G&&G.phase==="play"&&!inGame()){const n=saveName();if(n)meWrite(()=>myRef().set({name:n,g:"",wait:G.v,t:Date.now(),seen:Date.now(),ans:{}}));}break;
     case "start":if(amHost()){if(lobbyPlayers().length<2){L.view="solo";L.soloTheme=lobbyKI()?"ki":themeOf();renderAll(true);}else startGame();}break;
@@ -4051,6 +4064,31 @@ function mergeList(){const m={};const add=(u,n,at,solo)=>{if(!u||/^bot_/.test(u)
   Object.keys(P).forEach(u=>{if(!m[u]&&P[u]&&P[u].name)add(u,P[u].name,0,false),m[u].g--;});
   return Object.values(m).sort((a,b)=>(a.n||"").localeCompare(b.n||"")||b.last-a.last);}
 const NAME_SYN={seppl:["juli","julian"]};
+/* ===== PIN: Profil auf neuem Gerät wiederfinden ===== */
+let PINS={};
+function pinHash(u,p){let x=5381;for(const c of u+":"+p+":dk")x=((x*33)^c.charCodeAt(0))>>>0;return x.toString(36);}
+function canSwitch(){return typeof DK_SWITCH==="function";}
+function knownByName(n){const k=(n||"").trim().toLowerCase();if(!k)return null;let best=null,bt=-1;
+  mergeList().forEach(x=>{if(x.u===ME||ALIAS[x.u]||OLD_IDS[x.u]||/^bot_/.test(x.u))return;if((x.n||"").trim().toLowerCase()!==k)return;const t=lastAct(x.u);if(t>bt){bt=t;best=x;}});return best;}
+function pinCheck(n){
+  if(!canSwitch()||!ME||progOf(ME).games>0)return false;
+  L.pinSkip=L.pinSkip||{};const k=n.trim().toLowerCase();if(L.pinSkip[k])return false;
+  const x=knownByName(n);if(!x)return false;
+  L.pinAsk={u:x.u,n:x.n,act:L.curAct,d:L.curD};L.pinErr="";renderAll(true);return true;
+}
+function vPinAsk(){
+  const a=L.pinAsk,has=!!PINS[a.u];
+  let o='<div class="marquee fade"><div class="mq-in"><div class="logo one">DREIKAMPF</div></div></div><div class="card"><h3 class="rtitle" style="font-size:24px;margin-top:0">👋 „'+h(a.n)+'“ gibt es schon</h3>';
+  if(has)o+='<p>Bist du das? Gib deine 4-stellige PIN ein, dann hast du dein Profil mit Level und Punkten zurück.</p><input id="pinin" class="gq" type="tel" inputmode="numeric" maxlength="4" autocomplete="off" placeholder="PIN" style="text-align:center;letter-spacing:8px;font-size:24px">'+(L.pinErr?'<p class="center" style="color:var(--bad);font-weight:700">'+h(L.pinErr)+'</p>':'')+'<button class="btn" data-act="pinok">Mein Profil holen</button>';
+  else o+='<p>Bist du das? Dieses Profil hat noch keine PIN. Bitte die Spielleitung, deine Profile zusammenzuführen, oder nutze auf deinem alten Gerät Menü → „Code kopieren“.</p>';
+  o+='<button class="btn alt" data-act="pinother">Anderen Namen wählen</button><button class="linkbtn" style="display:block;margin:6px auto 0" data-act="pinno">Ich bin jemand anderes, trotzdem weiter</button></div>';
+  return o;
+}
+function pinSetCard(force){
+  if(!canSwitch()||!ME||!(force||(!PINS[ME]&&progOf(ME).games>0)))return '';
+  if(!force){let t=0;try{t=Number(localStorage.getItem("dk_pinlater"))||0;}catch(e){}if(Date.now()-t<3*864e5)return '';}
+  return '<div class="card"><div class="eyebrow">🔐 '+(PINS[ME]?'PIN ändern':'PIN festlegen')+'</div><p class="small" style="margin-top:4px">Damit findest du dein Profil auf einem anderen Handy oder Browser wieder: einfach deinen Namen und die PIN eingeben.</p><input id="pinset" class="gq" type="tel" inputmode="numeric" maxlength="4" autocomplete="off" placeholder="4 Ziffern" style="text-align:center;letter-spacing:8px;font-size:22px">'+(L.pinMsg?'<p class="center"><b>'+h(L.pinMsg)+'</b></p>':'')+'<button class="btn" data-act="pinsave">PIN speichern</button>'+(force?'':'<button class="linkbtn" style="display:block;margin:4px auto 0" data-act="pinlater">Später</button>')+'</div>';
+}
 function doAuto(){
   Object.keys(ALIAS).forEach(k=>meWrite(()=>DB.doc("alias/"+k).delete()));ALIAS={};
   const all=mergeList(),norm=x=>(x||"").trim().toLowerCase(),msg=[],bad={"":1,"?":1,"mitspieler":1};
@@ -4079,6 +4117,7 @@ function vMerge(){
   o+='</div></div>';
   o+='<div class="card"><p class="muted" style="margin-top:0">Spiele aus der alten Claude-Version (claude.ai-Link) einmalig hierher holen. Danach erscheinen die alten Profile in der Liste oben und lassen sich mit den neuen zusammenführen.</p><button class="btn alt" data-act="migr">📦 Alte Claude-Spiele übernehmen</button>'+(L.migMsg?'<p class="center"><b>'+h(L.migMsg)+'</b></p>':'')+'</div>';
   o+='<div class="card"><p class="muted" style="margin-top:0">Schnellweg: alle Zusammenführungen löschen und die alten Claude-Profile automatisch dem gleichnamigen aktuellen Profil zuordnen.</p><button class="btn alt" data-act="mauto">'+(L.confirm==="mauto"?'Sicher? Nochmal tippen':'🧹 Neu ordnen nach Namen')+'</button>'+(L.autoMsg?'<p>'+L.autoMsg+'</p>':'')+'</div>';
+  if(A&&!B&&PINS[A])o+='<button class="btn alt" data-act="pindel">🔐 PIN dieses Profils löschen (vergessen)</button>';
   if(A&&B)o+='<button class="btn" data-act="mdo">'+(L.confirm==="mdo"?'Sicher? Nochmal tippen':'Zusammenführen')+'</button>';
   const al=Object.keys(ALIAS);
   if(al.length){o+='<div class="card"><div class="eyebrow">Schon zusammengeführt</div><div class="rows">'+al.map(k=>{const f=L1.find(x=>x.u===k),t=L1.find(x=>x.u===ALIAS[k]);return '<div class="row"><span class="who">'+h(f&&f.n||"?")+' (…'+h(k.slice(-4))+') → '+h(t&&t.n||"?")+' (…'+h(ALIAS[k].slice(-4))+')</span><button class="btn alt" style="width:auto;margin:0;padding:8px 12px" data-act="mundo" data-u="'+h(k)+'">Zurück</button></div>';}).join('')+'</div></div>';}
@@ -4562,7 +4601,8 @@ function founderWatch(){
     if(!s.exists&&new URLSearchParams(location.search).get("gruender")===FOUNDER_KEY)DB.doc("config/founder").set({u:ME,at:Date.now()}).catch(()=>{});},()=>{});
 }
 if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js",{scope:"./"}).catch(()=>{});
-const BUILD_ID="1791666209";
+function DK_SWITCH(id,n){try{localStorage.setItem("dk_id",id);if(n)localStorage.setItem("dk_name",n);}catch(e){}location.reload();}
+const BUILD_ID="1791696596";
 function verCheck(){fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(r=>r.json()).then(j=>{if(j&&j.v&&j.v!==BUILD_ID&&!document.getElementById("upd")){const b=document.createElement("button");b.id="upd";b.textContent="✨ Neue Version da. Tippen zum Laden";b.onclick=()=>location.reload();document.body.appendChild(b);}}).catch(()=>{});}
 setInterval(verCheck,60000);document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")verCheck();});setTimeout(verCheck,5000);
 (async function boot(){
@@ -4575,6 +4615,7 @@ setInterval(verCheck,60000);document.addEventListener("visibilitychange",()=>{if
   gRef().onSnapshot(s=>{RG=s.exists?s.data():null;if(SOLO)return;G=RG;gotGame=true;onChange();},()=>{dbState="nodb";renderAll(true);});
   let resSig="",profSig="";
   DB.collection("results").onSnapshot(s=>{const r=s.docs.filter(d=>d.exists).map(d=>d.data()),sig=JSON.stringify(r);if(sig===resSig)return;resSig=sig;RAW.res=r;applyAlias();},()=>{});
+  DB.collection("pins").onSnapshot(s=>{const m={};s.docs.forEach(d=>{if(d.exists&&d.data())m[d.id]=d.data();});PINS=m;renderAll();},()=>{});
   DB.collection("alias").onSnapshot(s=>{const m={};s.docs.forEach(d=>{if(d.exists&&d.data()&&typeof d.data().to==="string")m[d.id]=d.data().to;});const nm2=normAlias(m);if(ME===FOUNDER)nm2.fix.forEach(f=>{meWrite(()=>DB.doc("alias/"+f[0]).delete());meWrite(()=>DB.doc("alias/"+f[1]).set({to:f[2],at:Date.now(),fixed:1}));});if(JSON.stringify(nm2.m)===JSON.stringify(ALIAS))return;ALIAS=nm2.m;applyAlias();},()=>{});
   DB.collection("profiles").onSnapshot(s=>{const m={};s.docs.forEach(d=>{if(d.exists)m[d.id]=d.data();});const sig=JSON.stringify(m);if(sig===profSig)return;profSig=sig;PROFS=m;profVer++;renderAll();},()=>{});
   DB.collection("solo").onSnapshot(s=>{RAW.solo=s.docs.filter(d=>d.exists).map(d=>d.data());applyAlias();},()=>{});
