@@ -727,6 +727,7 @@ html,body{margin:0}[hidden]:not([hidden=until-found i]){display:none!important}
 .teamcard{margin-top:-6px;border-style:dashed}
 .teamcard.on{border-style:solid;border-color:var(--good);background:rgba(74,222,128,.08)}
 .teamcard .infobox{margin-top:8px}
+.mduo{display:grid;grid-template-columns:1fr 1fr;gap:8px}.mduo .btn,.mtri .btn{margin:0;font-size:14px;padding-inline:6px}.mtri{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}.msec{font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:14px 2px 6px}
 </style>
 
 <div id="app"><div id="top"></div><div id="main"></div><div id="status"></div></div>
@@ -3392,21 +3393,22 @@ function vStatus(){
   return out;
 }
 function vMenu(){
-  let b='<button class="btn" data-act="menuclose">Weiter</button><button class="btn alt" data-act="board">Siegerboard</button><button class="btn alt" data-act="avatar">Avatar</button><button class="btn alt" data-act="custom">✍️ Eigene Frage</button>';
-  b+='<button class="btn alt" data-act="guide">📖 Anleitung</button>';
-  if(xmasOn()||ME===FOUNDER)b+='<button class="btn alt" data-act="xspot">🎬 Weihnachtsspot ansehen</button>';
-  if(canSwitch())b+='<button class="btn alt" data-act="pinview">🔐 '+(PINS[ME]?'PIN ändern':'PIN festlegen')+'</button>';
-  if(ME===FOUNDER){const n=REPS.length;b+='<button class="btn alt" data-act="reports">🚩 Gemeldete Fragen'+(n?' ('+n+')':'')+'</button><button class="btn alt" data-act="merge">🔗 Profile zusammenführen</button>';}
-  b+='<div class="mduo"><button class="btn alt" data-act="devcopy">📲 Code kopieren</button><button class="btn alt" data-act="devload">📥 Profil laden</button></div>';
+  const B=(a,t)=>'<button class="btn alt" data-act="'+a+'">'+t+'</button>';
+  let b='<button class="btn" data-act="menuclose">Weiter</button>';
   b+='<div class="mtog"><button class="mtg" data-act="sound"><span>🔊 Sound</span><span class="tsw'+(soundOn?' on':'')+'"><i></i></span></button><button class="mtg" data-act="fxtoggle"><span>✨ Effekte</span><span class="tsw'+(fxOn?' on':'')+'"><i></i></span></button></div>';
-  if(!amHost()&&G&&(G.phase==="lobby"||G.phase==="play"))b+='<button class="btn alt" data-act="takeover">'+(L.confirm==="takeover"?'Sicher? Nochmal tippen':'Spielleitung übernehmen')+'</button>';
   if(!SOLO&&G&&G.phase==="play"&&inGame()&&!amHost()){
     if(hasQuit(ME))b+='<p class="center muted">Du bist ausgestiegen und schaust nur noch zu.</p>';
-    else{b+=isOut(ME)?'<button class="btn alt" data-act="outundo">↩️ Doch weiterspielen</button>':'<button class="btn alt" data-act="outnext">🚪 Nach diesem Spiel aufhören</button>';
-      b+='<button class="btn alt" data-act="quitnow">'+(L.confirm==="quitnow"?'Wirklich sofort raus? Nochmal tippen':'⏹ Sofort aussteigen')+'</button>';}
+    else{b+=isOut(ME)?B("outundo","↩️ Doch weiterspielen"):B("outnext","🚪 Nach diesem Spiel aufhören");
+      b+=B("quitnow",L.confirm==="quitnow"?'Wirklich sofort raus? Nochmal tippen':'⏹ Sofort aussteigen');}
   }
-  if(atEnd()&&!SOLO&&!leftGame())b+='<button class="btn alt" data-act="endgame">'+(amHost()?'Spiel beenden':'Zur Startseite')+'</button>';
-  else if(amHost()&&G.phase==="play")b+='<button class="btn alt" data-act="abort">'+(L.confirm==="abort"?'Wirklich abbrechen? Nochmal tippen':'Spiel abbrechen, neue Lobby')+'</button>';
+  if(!amHost()&&G&&(G.phase==="lobby"||G.phase==="play"))b+=B("takeover",L.confirm==="takeover"?'Sicher? Nochmal tippen':'Spielleitung übernehmen');
+  if(atEnd()&&!SOLO&&!leftGame())b+=B("endgame",amHost()?'Spiel beenden':'Zur Startseite');
+  else if(amHost()&&G.phase==="play")b+=B("abort",L.confirm==="abort"?'Wirklich abbrechen? Nochmal tippen':'Spiel abbrechen, neue Lobby');
+  b+='<div class="mduo">'+B("board","🏆 Siegerboard")+B("avatar","🎨 Avatar")+'</div>';
+  b+='<div class="mduo">'+B("guide","📖 Anleitung")+B("custom","✍️ Eigene Frage")+'</div>';
+  if(canSwitch())b+='<div class="msec">Mein Profil</div><div class="mtri">'+B("pinview","🔐 PIN")+B("devcopy","📲 Code")+B("devload","📥 Laden")+'</div>';
+  if(xmasOn())b+=B("xspot","🎬 Weihnachtsspot ansehen");
+  if(ME===FOUNDER){const n=REPS.length;b+='<div class="msec">Nur für dich</div><div class="mduo">'+B("reports","🚩 Meldungen"+(n?' ('+n+')':''))+B("merge","🔗 Profile")+'</div>'+(xmasOn()?'':B("xspot","🎬 Weihnachtsspot"));}
   return '<div class="overlay"><div class="card"><h3 class="rtitle" style="font-size:26px">Menü</h3><p class="muted">Spielleitung: '+hostName()+'</p>'+b+'</div></div>';
 }
 
@@ -4888,7 +4890,7 @@ function founderWatch(){
 }
 if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js",{scope:"./"}).catch(()=>{});
 function DK_SWITCH(id,n){try{localStorage.setItem("dk_id",id);if(n)localStorage.setItem("dk_name",n);}catch(e){}location.reload();}
-const BUILD_ID="1791749270";
+const BUILD_ID="1791832255";
 function verCheck(){fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(r=>r.json()).then(j=>{if(j&&j.v&&j.v!==BUILD_ID&&!document.getElementById("upd")){const b=document.createElement("button");b.id="upd";b.textContent="✨ Neue Version da. Tippen zum Laden";b.onclick=()=>location.reload();document.body.appendChild(b);}}).catch(()=>{});}
 setInterval(verCheck,60000);document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")verCheck();});setTimeout(verCheck,5000);
 (async function boot(){
