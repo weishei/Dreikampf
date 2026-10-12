@@ -3069,7 +3069,7 @@ function vTop(){
       const extra=(done?' done':'')+(isL?' lead':'')+(sr>=5?' fire2':sr>=3?' fire1':'')+(u===FOUNDER&&isPhx()?' phxchip'+(Date.now()<(badUntil[u]||0)?' ash':''):(Date.now()<(badUntil[u]||0)?' ouch':''));
       const badges=(isL?'<span class="cb crown" aria-label="Führt">'+(xmasGame()?'⭐':'👑')+'</span>':'')+(isLast?'<span class="cb lantern" aria-label="Letzter">'+(xmasGame()?'🧦':'🏮')+'</span>':'')+(sr>=3?'<span class="streak">🔥'+sr+'</span>':'');
       const md=moodOf(u),tag=u===ME?'div':'button',at=u===ME?'':' data-act="tease" data-u="'+h(u)+'" aria-label="'+nm(u)+' sticheln"';
-      out+='<'+tag+' class="chip'+(u===ME?' on':'')+extra+'" data-fxe="'+figFx(u).bad+'" '+cv(u)+at+'>'+badges+avHtml(u,mini?18:nR>=5?26:stack?36:34,{mood:md,full:true})+'<span class="chip-t"><span class="nm">'+(G.teams&&(G.teams[u]===0||G.teams[u]===1)?'<i class="tdot" style="background:'+TEAMN[G.teams[u]][2]+'"></i>':'')+nm(u)+(isOut(u)?' 🚪':'')+(done?' ✓':'')+'</span><span class="scl"><span class="sc">'+fmt(sc[k])+'</span><span class="lv">L'+progOf(u).lvl+(hcOf(u)>=1?' 🎯':'')+(hcOf(u)<1&&!jokerUsed(u)?' 🃏':'')+'</span></span></span>'+(d!==0?'<span class="delta'+(d<0?' neg':'')+'">'+sgn(d)+'</span>':'')+'</'+tag+'>';
+      out+='<'+tag+' class="chip'+(u===ME?' on':'')+extra+'" data-fxe="'+figFx(u).bad+'" '+cv(u)+at+'>'+badges+avHtml(u,mini?18:nR>=5?26:stack?36:34,{mood:md,full:true})+'<span class="chip-t"><span class="nm">'+(G.teams&&(G.teams[u]===0||G.teams[u]===1)?'<i class="tdot" style="background:'+TEAMN[G.teams[u]][2]+'"></i>':'')+nm(u)+(isOut(u)?' 🚪':'')+'</span><span class="scl"><span class="sc">'+fmt(sc[k])+'</span><span class="lv">L'+progOf(u).lvl+(hcOf(u)>=1?' 🎯':'')+(hcOf(u)<1&&!jokerUsed(u)?' 🃏':'')+'</span></span></span>'+(d!==0?'<span class="delta'+(d<0?' neg':'')+'">'+sgn(d)+'</span>':'')+'</'+tag+'>';
       shownScores[key]=sc[k];
     });
     out+='</div>';
@@ -4890,7 +4890,7 @@ function founderWatch(){
 }
 if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js",{scope:"./"}).catch(()=>{});
 function DK_SWITCH(id,n){try{localStorage.setItem("dk_id",id);if(n)localStorage.setItem("dk_name",n);}catch(e){}location.reload();}
-const BUILD_ID="1791832255";
+const BUILD_ID="1791832384";
 function verCheck(){fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(r=>r.json()).then(j=>{if(j&&j.v&&j.v!==BUILD_ID&&!document.getElementById("upd")){const b=document.createElement("button");b.id="upd";b.textContent="✨ Neue Version da. Tippen zum Laden";b.onclick=()=>location.reload();document.body.appendChild(b);}}).catch(()=>{});}
 setInterval(verCheck,60000);document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")verCheck();});setTimeout(verCheck,5000);
 (async function boot(){
