@@ -728,6 +728,7 @@ html,body{margin:0}[hidden]:not([hidden=until-found i]){display:none!important}
 .teamcard.on{border-style:solid;border-color:var(--good);background:rgba(74,222,128,.08)}
 .teamcard .infobox{margin-top:8px}
 .mduo{display:grid;grid-template-columns:1fr 1fr;gap:8px}.mduo .btn,.mtri .btn{margin:0;font-size:14px;padding-inline:6px}.mtri{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}.msec{font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:14px 2px 6px}
+.rxbar{display:flex;justify-content:center;gap:6px;margin:14px 0 4px;flex-wrap:wrap}.rxb{width:46px;height:46px;border-radius:50%;border:2px solid var(--line);background:var(--bg2);font-size:24px;line-height:1;cursor:pointer;touch-action:manipulation}.rxb:active{transform:scale(.9)}.rxfly{position:fixed;bottom:110px;z-index:80;pointer-events:none;display:flex;flex-direction:column;align-items:center;animation:rxup 2.2s ease-out forwards}.rxfly b{font-size:46px;line-height:1}.rxfly small{font-weight:800;font-size:12px;background:rgba(0,0,0,.45);color:#fff;border-radius:8px;padding:1px 6px;margin-top:2px}@keyframes rxup{0%{transform:translateY(20px) scale(.6);opacity:0}15%{transform:translateY(0) scale(1.1);opacity:1}100%{transform:translateY(-260px) scale(1);opacity:0}}
 </style>
 
 <div id="app"><div id="top"></div><div id="main"></div><div id="status"></div></div>
@@ -3152,7 +3153,7 @@ function vMain(){
     if(bd){const ix=body.indexOf('</small></div>');if(body.indexOf('class="verdict')>=0&&ix>=0)body=body.slice(0,ix)+'</small>'+bd+'</div>'+body.slice(ix+'</small></div>'.length);else body='<div class="card tight fade">'+bd+'</div>'+body;}
     if(st.t!=="maj"&&st.t!=="know"&&st.t!=="lun"&&st.t!=="skill"&&st.t!=="bluffw"&&st.t!=="wichtel"&&st.t!=="tuer"){const rk=G.v+"|"+G.idx;body+=L.reported&&L.reported[rk]?'<button class="rpt done" disabled>✓ Gemeldet, danke!</button>':'<button class="rpt" data-act="report">⚑ Stimmt was nicht? Frage melden</button>';}
   }
-  return spect+wbar+errBox()+jokerBar()+body;
+  return spect+wbar+errBox()+jokerBar()+body+rxBar();
 }
 
 function waitOrReveal(){
@@ -3628,6 +3629,7 @@ function act(a,d){
       if(to&&EMOS[d.k]&&P[ME]&&Date.now()-lastTease>3000){lastTease=Date.now();const t=Date.now();meWrite(()=>myRef().update({emo:{to:to,k:d.k,t:t}}));showToast('<span class="toast-e">'+EMOS[d.k][0]+'</span><span>Gesendet an <strong>'+nm(to)+'</strong></span>');}
       renderAll();break;}
     case "menuclose":L.menu=false;renderAll();break;
+    case "rx":{const k=Number(d.k);if(RX[k]&&P[ME]&&Date.now()-lastRxSend>3000){lastRxSend=Date.now();const t=Date.now();lastRx[ME]=t;meWrite(()=>myRef().update({rx:{k:k,t:t}}));floatRx(ME,k);}break;}
     case "devcopy":{const c=ME||"";const done=()=>alert("Dein Profil-Code wurde kopiert:\n\n"+c+"\n\nAuf dem anderen Gerät oder in der Home-Bildschirm-App: Menü → „Profil von anderem Gerät laden“ und einfügen.");try{navigator.clipboard.writeText(c).then(done,()=>prompt("Dein Profil-Code (kopieren):",c));}catch(e){prompt("Dein Profil-Code (kopieren):",c);}}break;
     case "devload":{const c=(prompt("Profil-Code vom anderen Gerät einfügen:")||"").trim();if(!c)break;if(!/^[A-Za-z0-9_-]{10,40}$/.test(c)){alert("Das ist kein gültiger Code.");break;}if(c===ME){alert("Das ist schon dein Profil.");break;}if(confirm("Dieses Gerät übernimmt das andere Profil (Name, Level, Freischaltungen). Weiter?")){try{localStorage.setItem("dk_id",c);localStorage.removeItem("dk_name");}catch(e){}location.reload();}}break;
     case "invite":{const url=location.origin+location.pathname,t=(nameOf(ME)||L.name||"Jemand")+" hat ein Dreikampf-Spiel eröffnet 🔥 Wer ist dabei?";
@@ -4018,7 +4020,11 @@ function nextToast(){
   toastBusy=true;
   try{const d=document.createElement("div");d.className="toast";d.innerHTML=html;box.appendChild(d);setTimeout(()=>{try{d.remove();}catch(e){}nextToast();},2800);}catch(e){toastBusy=false;}
 }
+const RX=["🤯","😂","🙈","🤦","👏","😤"],RXN=["Ach was!","Haha","Peinlich","Facepalm","Respekt","Unfair!"];let lastRx={},lastRxSend=0;
+function rxBar(){if(SOLO||!G||G.phase!=="play"||!G.reveal||!inGame())return '';const st=step();if(!isQ(st))return '';return '<div class="rxbar">'+RX.map((e,i)=>'<button class="rxb" data-act="rx" data-k="'+i+'" aria-label="'+RXN[i]+'">'+e+'</button>').join('')+'</div>';}
+function floatRx(u,k){if(!RX[k])return;const d=document.createElement("div");d.className="rxfly";d.style.left=(8+Math.random()*70)+"%";d.innerHTML='<b>'+RX[k]+'</b><small>'+nm(u)+'</small>';document.body.appendChild(d);setTimeout(()=>d.remove(),2300);}
 function checkEmos(){
+  Object.keys(P).forEach(u=>{const r=P[u]&&P[u].rx,ok=r&&typeof r.t==="number";if(!emoInit){lastRx[u]=ok?r.t:0;return;}if(!ok||r.t<=(lastRx[u]||0))return;lastRx[u]=r.t;if(u!==ME&&Date.now()-r.t<8000)floatRx(u,r.k);});
   Object.keys(P).forEach(u=>{
     const e=P[u]&&P[u].emo;if(!e||typeof e.t!=="number"||!EMOS[e.k]||typeof e.to!=="string")return;
     if(!emoInit){lastEmo[u]=e.t;return;}
@@ -4890,7 +4896,7 @@ function founderWatch(){
 }
 if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js",{scope:"./"}).catch(()=>{});
 function DK_SWITCH(id,n){try{localStorage.setItem("dk_id",id);if(n)localStorage.setItem("dk_name",n);}catch(e){}location.reload();}
-const BUILD_ID="1791832384";
+const BUILD_ID="1791833217";
 function verCheck(){fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(r=>r.json()).then(j=>{if(j&&j.v&&j.v!==BUILD_ID&&!document.getElementById("upd")){const b=document.createElement("button");b.id="upd";b.textContent="✨ Neue Version da. Tippen zum Laden";b.onclick=()=>location.reload();document.body.appendChild(b);}}).catch(()=>{});}
 setInterval(verCheck,60000);document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")verCheck();});setTimeout(verCheck,5000);
 (async function boot(){
