@@ -729,6 +729,8 @@ html,body{margin:0}[hidden]:not([hidden=until-found i]){display:none!important}
 .teamcard .infobox{margin-top:8px}
 .mduo{display:grid;grid-template-columns:1fr 1fr;gap:8px}.mduo .btn,.mtri .btn{margin:0;font-size:14px;padding-inline:6px}.mtri{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}.msec{font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:14px 2px 6px}
 .rxbar{display:flex;justify-content:center;gap:6px;margin:14px 0 4px;flex-wrap:wrap}.rxb{width:46px;height:46px;border-radius:50%;border:2px solid var(--line);background:var(--bg2);font-size:24px;line-height:1;cursor:pointer;touch-action:manipulation}.rxb:active{transform:scale(.9)}.rxfly{position:fixed;bottom:110px;z-index:80;pointer-events:none;display:flex;flex-direction:column;align-items:center;animation:rxup 2.2s ease-out forwards}.rxfly b{font-size:46px;line-height:1}.rxfly small{font-weight:800;font-size:12px;background:rgba(0,0,0,.45);color:#fff;border-radius:8px;padding:1px 6px;margin-top:2px}@keyframes rxup{0%{transform:translateY(20px) scale(.6);opacity:0}15%{transform:translateY(0) scale(1.1);opacity:1}100%{transform:translateY(-260px) scale(1);opacity:0}}
+.swp-card{position:relative;height:190px;margin:4px 0 10px;border-radius:24px;background:var(--bg2);border:2px solid var(--line);display:grid;grid-template-columns:1fr 1fr;align-items:center;touch-action:pan-y;user-select:none;-webkit-user-select:none;cursor:grab;box-shadow:0 14px 30px -14px rgba(0,0,0,.6)}.swp-card span{display:flex;flex-direction:column;align-items:center;gap:6px;padding:0 10px;text-align:center;font-size:24px}.swp-card b{font-size:19px;line-height:1.2}.swo{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-style:normal;font-weight:800;color:var(--muted);font-size:13px}.swp-card.gl{border-color:#4da3ff;background:rgba(77,163,255,.2)}.swp-card.gl .swr,.swp-card.gr .swl{opacity:.25}.swp-card.gr{border-color:#ffb52e;background:rgba(255,181,46,.2)}
+html,body{overflow-x:clip}
 </style>
 
 <div id="app"><div id="top"></div><div id="main"></div><div id="status"></div></div>
@@ -2363,12 +2365,22 @@ function vMaj(st){
   const mine=getAns(ME,G.idx);
   const head='<div class="card fade tight"><div class="eyebrow">Mehrheit '+st.n+' von '+st.of+'</div><p class="qtext">Was wählt die Mehrheit?</p></div>';
   const btn=(j)=>'<button class="opt big'+(mine===j?' mine':'')+'"'+(mine!==null||!inGame()?' disabled':' data-act="maj" data-i="'+j+'"')+'><span class="ot">'+h(st.q.a[j])+'</span></button>';
+  if(!G.reveal&&mine===null&&inGame())return head+'<div class="swp-card" id="swpc"><span class="swl">👈<b>'+h(st.q.a[0])+'</b></span><i class="swo">oder</i><span class="swr"><b>'+h(st.q.a[1])+'</b>👉</span></div><p class="center muted small">Nach links oder rechts wischen, oder eine Seite antippen</p>'+hostRevealLink();
   if(!G.reveal)return head+'<div class="opts duo">'+btn(0)+'<span class="vs">oder</span>'+btn(1)+'</div>'+(mine!==null||!inGame()?waitOrReveal():hostRevealLink());
   const R=roster(),c=[0,1].map(j=>R.filter(u=>getAns(u,G.idx)===j));
   const mx=Math.max(c[0].length,c[1].length);
   const bars='<div class="majbars">'+[0,1].map(j=>'<div class="mb'+(c[j].length===mx&&mx>0?' win':'')+'"><div class="mb-t"><strong>'+h(st.q.a[j])+'</strong><span>'+c[j].length+'</span></div><div class="who-dots">'+c[j].map(u=>'<span class="wd" '+cv(u)+'>'+nm(u)+'</span>').join('')+'</div></div>').join('')+'</div>';
   return myVerdict(st,"Mit der Mehrheit!")+bars+hostBtn("Weiter","next");
 }
+/* Wischen wie bei Tinder (Mehrheit) */
+let SW=null;
+document.addEventListener("pointerdown",e=>{const c=e.target.closest&&e.target.closest("#swpc");if(!c)return;SW={x:e.clientX,dx:0,el:c};try{c.setPointerCapture(e.pointerId);}catch(_){}c.style.transition="none";});
+document.addEventListener("pointermove",e=>{if(!SW)return;const dx=e.clientX-SW.x;SW.dx=dx;SW.el.style.transform="translateX("+dx+"px) rotate("+(dx/18)+"deg)";SW.el.classList.toggle("gl",dx<-30);SW.el.classList.toggle("gr",dx>30);});
+function swEnd(e){if(!SW)return;const dx=SW.dx||0,el=SW.el;SW=null;
+  if(Math.abs(dx)>90){const i=dx<0?0:1;el.style.transition="transform .25s,opacity .25s";el.style.transform="translateX("+(dx<0?-520:520)+"px) rotate("+(dx<0?-25:25)+"deg)";el.style.opacity="0";setTimeout(()=>act("maj",{i:i}),170);}
+  else if(Math.abs(dx)<8&&e.type==="pointerup"){const r=el.getBoundingClientRect();act("maj",{i:e.clientX<r.left+r.width/2?0:1});}
+  else{el.style.transition="transform .2s";el.style.transform="";el.classList.remove("gl","gr");}}
+document.addEventListener("pointerup",swEnd);document.addEventListener("pointercancel",swEnd);
 function vKnow(st){
   const mine=getAns(ME,G.idx),isT=st.who===ME,tn=nm(st.who);
   const head='<div class="card fade tight" '+cv(st.who)+'><div class="eyebrow" style="color:var(--c)">Wie gut kennst du '+tn+'? · '+st.n+' von '+st.of+'</div><p class="qtext">'+(isT?'Frage an dich: ':'')+h(st.q.q)+'</p>'+(isT?'<p class="muted small">Antworte ehrlich! Die anderen raten deine Antwort.</p>':'<p class="muted small">Was antwortet '+tn+'?</p>')+'</div>';
@@ -4896,7 +4908,7 @@ function founderWatch(){
 }
 if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js",{scope:"./"}).catch(()=>{});
 function DK_SWITCH(id,n){try{localStorage.setItem("dk_id",id);if(n)localStorage.setItem("dk_name",n);}catch(e){}location.reload();}
-const BUILD_ID="1791833217";
+const BUILD_ID="1791833309";
 function verCheck(){fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(r=>r.json()).then(j=>{if(j&&j.v&&j.v!==BUILD_ID&&!document.getElementById("upd")){const b=document.createElement("button");b.id="upd";b.textContent="✨ Neue Version da. Tippen zum Laden";b.onclick=()=>location.reload();document.body.appendChild(b);}}).catch(()=>{});}
 setInterval(verCheck,60000);document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")verCheck();});setTimeout(verCheck,5000);
 (async function boot(){
