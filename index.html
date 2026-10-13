@@ -2383,6 +2383,9 @@ function swEnd(e){if(!SW)return;const dx=SW.dx||0,el=SW.el;SW=null;
   else if(Math.abs(dx)<8&&e.type==="pointerup"){const r=el.getBoundingClientRect();act(el.dataset.sact||"maj",{i:e.clientX<r.left+r.width/2?0:1});}
   else{el.style.transition="transform .2s";el.style.transform="";el.classList.remove("gl","gr");}}
 document.addEventListener("pointerup",swEnd);document.addEventListener("pointercancel",swEnd);
+/* Solo: letzte Einstellungen merken */
+function soloPrefs(){if(L.soloPrefsLoaded)return;L.soloPrefsLoaded=true;try{const o=JSON.parse(localStorage.getItem("dk_solo")||"{}");if(o.n)L.soloN=o.n;if(Array.isArray(o.d))L.soloD=o.d;if(o.len&&LENS[o.len])L.soloLen=o.len;}catch(e){}}
+function soloSave(){try{localStorage.setItem("dk_solo",JSON.stringify({n:L.soloN||1,d:L.soloD||[1,1,1],len:L.soloLen||"normal"}));}catch(e){}}
 function vKnow(st){
   const mine=getAns(ME,G.idx),isT=st.who===ME,tn=nm(st.who);
   const head='<div class="card fade tight" '+cv(st.who)+'><div class="eyebrow" style="color:var(--c)">Wie gut kennst du '+tn+'? · '+st.n+' von '+st.of+'</div><p class="qtext">'+(isT?'Frage an dich: ':'')+h(st.q.q)+'</p>'+(isT?'<p class="muted small">Antworte ehrlich! Die anderen raten deine Antwort.</p>':'<p class="muted small">Was antwortet '+tn+'?</p>')+'</div>';
@@ -3601,7 +3604,7 @@ function act(a,d){
     case "pindel":if(ME===FOUNDER&&L.mA){const u=L.mA;delete PINS[u];meWrite(()=>DB.doc("pins/"+u).delete());L.mA=null;renderAll(true);}break;
     case "join":if(G&&G.phase==="lobby"&&lobbyPlayers().length>=MAXP&&!(P[ME]&&P[ME].g===G.v)){renderAll(true);break;}join(G.v);break;
     case "waitjoin":if(G&&G.phase==="play"&&!inGame()){const n=saveName();if(n)meWrite(()=>myRef().set({name:n,g:"",wait:G.v,t:Date.now(),seen:Date.now(),ans:{}}));}break;
-    case "start":if(amHost()){if(lobbyPlayers().length<2){L.view="solo";L.soloTheme=lobbyKI()?"ki":themeOf();renderAll(true);}else startGame();}break;
+    case "start":if(amHost()){if(lobbyPlayers().length<2){soloPrefs();L.view="solo";L.soloTheme=lobbyKI()?"ki":themeOf();L.soloLen=lenOf();L.soloOff=offModes();renderAll(true);}else startGame();}break;
     case "next":hostNext();break;
     case "reveal":if(L.confirm!=="reveal"){L.confirm="reveal";renderAll(true);setTimeout(()=>{if(L.confirm==="reveal"){L.confirm=null;renderAll(true);}},4000);break;}L.confirm=null;hostReveal();break;
     case "rematch":if(amHost())rematch();break;
@@ -3656,10 +3659,10 @@ function act(a,d){
     case "takeover":if(L.confirm==="takeover"){L.confirm=null;L.menu=false;takeOver();}else{L.confirm="takeover";renderAll();}break;
     case "abort":if(L.confirm==="abort"){L.confirm=null;L.menu=false;if(SOLO)soloExit();else toLobby();}else{L.confirm="abort";renderAll();}break;
     case "kick":if(amHost()&&G&&G.phase==="lobby"&&d.u&&d.u!==ME){if(L.confirm!=="kick"+d.u){L.confirm="kick"+d.u;renderAll(true);setTimeout(()=>{if(L.confirm==="kick"+d.u){L.confirm=null;renderAll(true);}},4000);break;}L.confirm=null;const u=d.u,v=G.v;if(P[u])P[u]=Object.assign({},P[u],{g:""});gWrite(()=>DB.doc("players/"+u).update({g:"",kicked:v}));renderAll(true);}break;
-    case "solo":L.view="solo";renderAll(true);break;
-    case "solon":L.soloN=Math.max(1,Math.min(3,Number(d.n)||1));renderAll(true);break;
-    case "solod":{const a=(L.soloD||[1,1,1]).slice();a[Number(d.k)]=Number(d.v);L.soloD=a;renderAll(true);}break;
-    case "sololen":L.soloLen=d.l;renderAll(true);break;
+    case "solo":soloPrefs();L.view="solo";renderAll(true);break;
+    case "solon":L.soloN=Math.max(1,Math.min(3,Number(d.n)||1));soloSave();renderAll(true);break;
+    case "solod":{const a=(L.soloD||[1,1,1]).slice();a[Number(d.k)]=Number(d.v);L.soloD=a;soloSave();renderAll(true);}break;
+    case "sololen":L.soloLen=d.l;soloSave();renderAll(true);break;
     case "solostart":soloStart();break;
     case "merge":if(ME===FOUNDER){L.view="merge";L.mA=null;L.mB=null;L.menu=false;renderAll(true);window.scrollTo(0,0);}break;
     case "mpick":if(ME===FOUNDER&&d.u){if(L.mA===d.u)L.mA=null;else if(L.mB===d.u)L.mB=null;else if(!L.mA)L.mA=d.u;else L.mB=d.u;renderAll(true);}break;
@@ -4628,7 +4631,7 @@ function soloStart(){
   soloBots=D.map(d=>BOTS[d][cnt[d]++].id);
   SOLO=true;LDB=makeLDB();soloSch={};
   const R=[ME].concat(soloBots),v=rid(),base=JSON.parse(JSON.stringify((RG&&RG.used)||{}));
-  const used=Object.assign(base,{off:[],len:LENS[L.soloLen]?L.soloLen:"normal",theme:THEMES[L.soloTheme]?L.soloTheme:"mix",teams:false});
+  const used=Object.assign(base,{off:Array.isArray(L.soloOff)?L.soloOff.slice():[],len:LENS[L.soloLen]?L.soloLen:"normal",theme:THEMES[L.soloTheme]?L.soloTheme:"mix",teams:false});
   const ki=!!(L.soloTheme==="ki"&&ME===FOUNDER&&KI_MC.length);
   const steps=ki?kiSteps(used):buildSteps(used,R);
   const t=Date.now();
@@ -4913,7 +4916,7 @@ function founderWatch(){
 }
 if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js",{scope:"./"}).catch(()=>{});
 function DK_SWITCH(id,n){try{localStorage.setItem("dk_id",id);if(n)localStorage.setItem("dk_name",n);}catch(e){}location.reload();}
-const BUILD_ID="1791834499";
+const BUILD_ID="1791881032";
 function verCheck(){fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(r=>r.json()).then(j=>{if(j&&j.v&&j.v!==BUILD_ID&&!document.getElementById("upd")){const b=document.createElement("button");b.id="upd";b.textContent="✨ Neue Version da. Tippen zum Laden";b.onclick=()=>location.reload();document.body.appendChild(b);}}).catch(()=>{});}
 setInterval(verCheck,60000);document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")verCheck();});setTimeout(verCheck,5000);
 (async function boot(){
