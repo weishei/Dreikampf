@@ -2029,6 +2029,8 @@ const MODES={
  hl:{t:"Mehr oder weniger",r:"Zwei Dinge, eine Frage: Was ist höher, länger oder älter? Einfach antippen. Richtig gibt 100 Punkte.",n:"5 Duelle"},
  bluff:{t:"Bluff-Runde",r:"Zu einer kuriosen Frage denkt sich jeder eine falsche, aber glaubwürdige Antwort aus. Dann sehen alle die echte Antwort zwischen euren Bluffs. Die echte finden: 200 Punkte. Für jeden, der auf deinen Bluff reinfällt: 100 Punkte.",n:"2 Fragen"},
  iq:{t:"Köpfchen-Runde",r:"Hier hilft kein Wissen, nur Nachdenken: Zahlenreihen, Analogien und Denkrätsel. Jeder hat immer die vollen 2 Minuten. Richtig gibt 100 Punkte.",n:"5 Rätsel"},
+ myth:{t:"Mythos oder Fakt?",r:"Eine Behauptung, du entscheidest: nach links wischen für Mythos, nach rechts für Fakt. Richtig gibt 100 Punkte.",n:"5 Aussagen"},
+ bwis:{t:"Baby-Wissen",r:"Knifflige Wissensfragen rund ums Baby. Richtig gibt 100 Punkte.",n:"4 Fragen"},
  fin:{t:"Finale: Alles oder nichts",r:"Jeder setzt geheim Punkte auf die Kategorie, dann kommt die Frage. Richtig: Einsatz dazu. Falsch: Einsatz weg. Unter 100 Punkten darf man trotzdem bis 100 setzen.",n:"1 Frage"}
 };
 const POOL_MODES=["size","est","time","pct","match","odd","who","hl","bluff","iq"];
@@ -2043,7 +2045,7 @@ function offModes(){
 const MIN3={lun:1,maj:1},SOLO_NO={bluff:1,know:1,maj:1,lun:1};
 const MODE_ICON={size:"📏",est:"🔢",time:"⏳",pct:"🎚️",match:"🔗",odd:"🙃",who:"🕵️",hl:"⚖️",bluff:"🤥",iq:"🧩",maj:"🗳️",know:"🤝",lun:"🔟"};
 const MODE_SHORT={size:"Größenwahn",est:"Schätzen",time:"Zeitstrahl",pct:"Prozent",match:"Zuordnen",odd:"Außenseiter",who:"Wer bin ich?",hl:"Mehr/Weniger",bluff:"Bluff",iq:"Köpfchen",maj:"Mehrheit",know:"Kennst du …?",lun:"Kleinste Zahl"};
-function flowHtml(LN){return '<div class="flow">'+[["❓",LN.mc+" Fragen"],["🎲",LN.m+"× Überraschung"],["🎯","Geschick"],["🏆","Finale"]].map(x=>'<span><i>'+x[0]+'</i>'+x[1]+'</span>').join('')+'</div>';}
+function flowHtml(LN,th){th=th||(typeof themeOf==="function"&&G?themeOf():"");const sp=th==="iq"||th==="baby";return '<div class="flow">'+(sp?[["❓",LN.mc+" Fragen"],[th==="iq"?"🧩":"👶",LN.m+"× Themenrunde"],["🏆","Finale"]]:[["❓",LN.mc+" Fragen"],["🎲",LN.m+"× Überraschung"],["🎯","Geschick"],["🏆","Finale"]]).map(x=>'<span><i>'+x[0]+'</i>'+x[1]+'</span>').join('')+'</div>';}
 function lobbyShow(){
   const ln=lenOf(),LN=LENS[ln],host=amHost(),off=offModes(),on=POOL_MODES.length-off.length;
   const rows=[["Alle gegen alle",LN.mc+" Fragen","1"]];
@@ -2241,6 +2243,7 @@ function buildSteps(used,R){
     const c=av[Math.floor(Math.random()*av.length)];uc.push(c.id);used.cust=uc.slice(-200);
     mc[mc.length-1]={q:c.q,a:c.a.slice(),by:c.u,byN:c.name||""};
   }
+  if(isSP)return spSteps(used,LN,NR,mc,fin,isIQ);
   const st=[used.theme&&used.theme!=="mix"?{t:"intro",r:0,m:"mc",of:NR,theme:used.theme}:{t:"intro",r:0,m:"mc",of:NR}];
   mc.forEach((q,i)=>st.push(q.myth?{t:"mc",myth:1,q:q,opts:["Mythos","Fakt"],n:i+1,of:LN.mc}:isIQ?{t:"mc",iq:1,q:q,opts:shuffle(q.a),n:i+1,of:LN.mc}:{t:"mc",q:q,opts:shuffle(q.a),n:i+1,of:LN.mc}));
   st.push({t:"stand",r:0});
@@ -2383,6 +2386,22 @@ function swEnd(e){if(!SW)return;const dx=SW.dx||0,el=SW.el;SW=null;
   else if(Math.abs(dx)<8&&e.type==="pointerup"){const r=el.getBoundingClientRect();act(el.dataset.sact||"maj",{i:e.clientX<r.left+r.width/2?0:1});}
   else{el.style.transition="transform .2s";el.style.transform="";el.classList.remove("gl","gr");}}
 document.addEventListener("pointerup",swEnd);document.addEventListener("pointercancel",swEnd);
+/* Themen-Spiele (Logik & IQ, Baby & Eltern): nur Inhalte aus dem Thema, keine anderen Minispiele */
+function spSteps(used,LN,NR,mc,fin,isIQ){
+  const th=used.theme,st=[{t:"intro",r:0,m:"mc",of:NR,theme:th,sp:1}];
+  const myS=(x,i,of)=>({t:"mc",myth:1,q:{q:x.s,a:x.a?["Fakt","Mythos"]:["Mythos","Fakt"],f:x.f},opts:["Mythos","Fakt"],n:i+1,of:of});
+  mc.forEach((q,i)=>st.push(q.myth?{t:"mc",myth:1,q:q,opts:["Mythos","Fakt"],n:i+1,of:LN.mc}:isIQ?{t:"mc",iq:1,q:q,opts:shuffle(q.a),n:i+1,of:LN.mc}:{t:"mc",q:q,opts:shuffle(q.a),n:i+1,of:LN.mc}));
+  st.push({t:"stand",r:0});
+  const cyc=["myth","est","bwis"];
+  for(let k=0;k<LN.m;k++){const m=isIQ?"iq":cyc[k%3];let ms=[];
+    if(m==="iq")ms=pick(used,IQ,"iq",5).map((q,i)=>({t:"mc",iq:1,q:q,opts:shuffle(q.a),n:i+1,of:5}));
+    else if(m==="myth")ms=pick(used,BABY_MYTH,"bmy",5).map((x,i)=>myS(x,i,5));
+    else if(m==="est")ms=pick(used,BABY_EST,"best",4).map(q=>({t:"est",q:q}));
+    else ms=pick(used,BABY,"baby",4).map((q,i)=>({t:"mc",q:q,opts:shuffle(q.a),n:i+1,of:4}));
+    st.push({t:"intro",r:k+1,m:m,of:NR,sp:1});ms.forEach(x=>st.push(x));st.push({t:"stand",r:k+1});}
+  st.push({t:"intro",r:NR-1,m:"fin",of:NR});st.push({t:"fin",q:fin,opts:shuffle(fin.a)});st.push({t:"end"});
+  return st;
+}
 /* Solo: letzte Einstellungen merken */
 function soloPrefs(){if(L.soloPrefsLoaded)return;L.soloPrefsLoaded=true;try{const o=JSON.parse(localStorage.getItem("dk_solo")||"{}");if(o.n)L.soloN=o.n;if(Array.isArray(o.d))L.soloD=o.d;if(o.len&&LENS[o.len])L.soloLen=o.len;}catch(e){}}
 function soloSave(){try{localStorage.setItem("dk_solo",JSON.stringify({n:L.soloN||1,d:L.soloD||[1,1,1],len:L.soloLen||"normal"}));}catch(e){}}
@@ -3181,7 +3200,7 @@ function hostRevealLink(){return amHost()?revBtn('Jetzt auflösen'):'';}
 
 function vIntro(st){
   const m=modeOf(st),r=MODES[m];
-  return '<div class="marquee fade"><div class="mq-in"><div class="eyebrow">Runde '+(st.r+1)+' von '+(st.of||4)+(m!=="mc"&&m!=="fin"&&m!=="ki"?' · Überraschung!':'')+'</div><h2 class="rtitle">'+h(m==="fin"&&xmasGame()?"Bescherung: Alles oder nichts":r.t)+'</h2></div></div>'+
+  return '<div class="marquee fade"><div class="mq-in"><div class="eyebrow">Runde '+(st.r+1)+' von '+(st.of||4)+(m!=="mc"&&m!=="fin"&&m!=="ki"&&!st.sp?' · Überraschung!':'')+'</div><h2 class="rtitle">'+h(m==="fin"&&xmasGame()?"Bescherung: Alles oder nichts":r.t)+'</h2></div></div>'+
     (st.x2?'<div class="x2b">×2 · Diese Runde zählt doppelt</div>':'')+(st.theme&&THEMES[st.theme]?'<div class="x2b" style="background:var(--p1)">Themenabend: '+h(THEMES[st.theme][0])+'</div>':'')+
     '<div class="card fade"><p>'+h(r.r)+'</p></div>'+(m==="fin"?finCatCard():'')+(st.r===0?balanceCard():'')+hostBtn("Los geht’s","next");
 }
@@ -4916,7 +4935,7 @@ function founderWatch(){
 }
 if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js",{scope:"./"}).catch(()=>{});
 function DK_SWITCH(id,n){try{localStorage.setItem("dk_id",id);if(n)localStorage.setItem("dk_name",n);}catch(e){}location.reload();}
-const BUILD_ID="1791881032";
+const BUILD_ID="1791881996";
 function verCheck(){fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(r=>r.json()).then(j=>{if(j&&j.v&&j.v!==BUILD_ID&&!document.getElementById("upd")){const b=document.createElement("button");b.id="upd";b.textContent="✨ Neue Version da. Tippen zum Laden";b.onclick=()=>location.reload();document.body.appendChild(b);}}).catch(()=>{});}
 setInterval(verCheck,60000);document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")verCheck();});setTimeout(verCheck,5000);
 (async function boot(){
