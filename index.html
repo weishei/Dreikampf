@@ -3093,7 +3093,7 @@ function vTop(){
     timer='<div class="qtimer"><div class="tbar"><div class="tfill'+(left<=Q_LAST?' hurry':'')+'" id="qtfill" style="width:'+Math.max(0,Math.min(100,left/Q_TIME*100))+'%"></div></div><b id="qtnum">'+(has?'':'2:00')+'</b></div>';
   }
   if(timer&&st0&&st0.x2)timer='<span class="x2s">×2</span>'+timer;
-  let out=(G&&dbState==="ok")?'<div class="top">'+timer+'<button class="iconbtn" data-act="menu">Menü</button></div>':'';
+  let out=((G||ME)&&dbState==="ok")?'<div class="top">'+timer+'<button class="iconbtn" data-act="menu">Menü</button></div>':'';
   if(showScores){
     const sc=curScores(),st=step();
     const nR=R.length,mini=nR>=7,cols=nR<=6?nR:Math.ceil(nR/2),stack=nR>=4&&!mini;
@@ -3424,7 +3424,8 @@ function lobbyPlayersCard(){
   return out;
 }
 function vStatus(){
-  if(!G||dbState!=="ok")return '';
+  if(dbState!=="ok")return '';
+  if(!G)return L.menu?vMenu():'';
   let out='';
   if(L.menu)out+=vMenu();
   if(L.tease)out+=vTease();
@@ -3447,7 +3448,7 @@ function vMenu(){
   if(canSwitch())b+='<div class="msec">Mein Profil</div><div class="mtri">'+B("pinview","🔐 PIN")+B("devcopy","📲 Code")+B("devload","📥 Laden")+'</div>';
   if(xmasOn())b+=B("xspot","🎬 Weihnachtsspot ansehen");
   if(ME===FOUNDER){const n=REPS.length;b+='<div class="msec">Nur für dich</div><div class="mduo">'+B("reports","🚩 Meldungen"+(n?' ('+n+')':''))+B("merge","🔗 Profile")+'</div>'+(xmasOn()?'':B("xspot","🎬 Weihnachtsspot"));}
-  return '<div class="overlay"><div class="card"><h3 class="rtitle" style="font-size:26px">Menü</h3><p class="muted">Spielleitung: '+hostName()+'</p>'+b+'</div></div>';
+  return '<div class="overlay"><div class="card"><h3 class="rtitle" style="font-size:26px">Menü</h3>'+(G&&G.host?'<p class="muted">Spielleitung: '+hostName()+'</p>':'')+''+b+'</div></div>';
 }
 
 /* ---------- Rendern ---------- */
@@ -3894,9 +3895,6 @@ function vHome(){
   let o='<div class="card menu fade">';
   o+=row("solo","🤖","Solo gegen Computer","Leicht, mittel oder Profi",'<span class="chev">›</span>');
   o+=row("board","🏆","Liga & Siegerboard",monthName(monthKey()).split(" ")[0]+": "+(pi>=0?"Platz "+(pi+1)+" · "+L2[pi].pts+" Pkt":"noch keine Punkte"),'<span class="chev">›</span>');
-  o+=row("custom","✍️","Eigene Frage einreichen",nc?nc+" von dir im Topf":"Insider über eure Gruppe",'<span class="chev">›</span>');
-  o+=row("guide","📖","Anleitung","Regeln, Punkte, Freischaltungen",'<span class="chev">›</span>');
-  if(canSwitch())o+=row("pinview","🔐","Profil auf anderem Gerät","PIN festlegen, Code kopieren oder laden",'<span class="chev">›</span>');
   return o+'</div>';
 }
 function unlockHint(i){
@@ -4934,7 +4932,7 @@ function founderWatch(){
 }
 if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js",{scope:"./"}).catch(()=>{});
 function DK_SWITCH(id,n){try{localStorage.setItem("dk_id",id);if(n)localStorage.setItem("dk_name",n);}catch(e){}location.reload();}
-const BUILD_ID="1792007000";
+const BUILD_ID="1792007308";
 function verCheck(){fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(r=>r.json()).then(j=>{if(j&&j.v&&j.v!==BUILD_ID&&!document.getElementById("upd")){const b=document.createElement("button");b.id="upd";b.textContent="✨ Neue Version da. Tippen zum Laden";b.onclick=()=>location.reload();document.body.appendChild(b);}}).catch(()=>{});}
 setInterval(verCheck,60000);document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")verCheck();});setTimeout(verCheck,5000);
 (async function boot(){
