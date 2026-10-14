@@ -731,6 +731,7 @@ html,body{margin:0}[hidden]:not([hidden=until-found i]){display:none!important}
 .rxbar{display:flex;justify-content:center;gap:6px;margin:14px 0 4px;flex-wrap:wrap}.rxb{width:46px;height:46px;border-radius:50%;border:2px solid var(--line);background:var(--bg2);font-size:24px;line-height:1;cursor:pointer;touch-action:manipulation}.rxb:active{transform:scale(.9)}.rxfly{position:fixed;bottom:110px;z-index:80;pointer-events:none;display:flex;flex-direction:column;align-items:center;animation:rxup 2.2s ease-out forwards}.rxfly b{font-size:46px;line-height:1}.rxfly small{font-weight:800;font-size:12px;background:rgba(0,0,0,.45);color:#fff;border-radius:8px;padding:1px 6px;margin-top:2px}@keyframes rxup{0%{transform:translateY(20px) scale(.6);opacity:0}15%{transform:translateY(0) scale(1.1);opacity:1}100%{transform:translateY(-260px) scale(1);opacity:0}}
 .swp-card{position:relative;height:190px;margin:4px 0 10px;border-radius:24px;background:var(--bg2);border:2px solid var(--line);display:grid;grid-template-columns:1fr 1fr;align-items:center;touch-action:pan-y;user-select:none;-webkit-user-select:none;cursor:grab;box-shadow:0 14px 30px -14px rgba(0,0,0,.6)}.swp-card span{display:flex;flex-direction:column;align-items:center;gap:6px;padding:0 10px;text-align:center;font-size:24px}.swp-card b{font-size:19px;line-height:1.2}.swo{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-style:normal;font-weight:800;color:var(--muted);font-size:13px}.swp-card.gl{border-color:#4da3ff;background:rgba(77,163,255,.2)}.swp-card.gl .swr,.swp-card.gr .swl{opacity:.25}.swp-card.gr{border-color:#ffb52e;background:rgba(255,181,46,.2)}
 html,body{overflow-x:clip}
+.mtog.rctl{grid-template-columns:1.25fr 1fr}
 </style>
 
 <div id="app"><div id="top"></div><div id="main"></div><div id="status"></div></div>
@@ -2986,7 +2987,46 @@ function onWriteErr(e){
 function meWrite(fn){meQ=meQ.then(fn).then(()=>{if(L.err){L.err="";renderAll(true);}}).catch(onWriteErr);return meQ;}
 function gWrite(fn){gQ=gQ.then(fn).then(()=>{if(L.err){L.err="";renderAll(true);}}).catch(onWriteErr);return gQ;}
 function myRef(){return (SOLO?LDB:DB).doc("players/"+ME);}
-function gRef(){return (SOLO?LDB:DB).doc("game/state");}
+/* ===== SPIELRÄUME ===== */
+let ROOM=null,ROOMS={},roomUnsub=null,META_USED=null;
+const ROOM_NAMES=["🔥 Phönix-Arena","🥨 Brezn-Stüberl","🦁 Löwengrube","🧠 Denkerstube","🎲 Glückskeller","🏔️ Gipfelrunde","🍻 Biergarten-Duell","🌶️ Feuerprobe","🦉 Eulennest","🚀 Raketenstart","🎯 Volltreffer-Bar","🐉 Drachenhöhle","🍀 Glücksklee-Ecke","⚡ Blitzrunde","🎪 Zirkuszelt","🏰 Ritterburg"];
+function roomCode(){const A="ABCDEFGHJKMNPQRSTUVWXYZ23456789";let c;do{c="";for(let i=0;i<4;i++)c+=A[Math.floor(Math.random()*A.length)];}while(ROOMS[c]);return c;}
+function roomName(){const used=Object.values(ROOMS).filter(roomLive).map(r=>r.name);const free=ROOM_NAMES.filter(n=>used.indexOf(n)<0);const pool=free.length?free:ROOM_NAMES;return pool[Math.floor(Math.random()*pool.length)];}
+function roomLive(r){return !!(r&&(r.phase==="lobby"||r.phase==="play")&&Date.now()-(r.at||0)<6*36e5);}
+function gRef(){
+  if(SOLO)return LDB.doc("game/state");
+  const r=DB.doc("rooms/"+(ROOM||"_none"));
+  return {onSnapshot:(a,b)=>r.onSnapshot(a,b),
+    update:d=>r.update(Object.assign({},d,{at:Date.now()})),
+    set:d=>r.set(Object.assign({code:ROOM,name:(G&&G.name)||L.newRoomName||ROOM_NAMES[0],open:G?G.open!==false:true},d,{at:Date.now()}))};
+}
+function subRoom(){
+  if(roomUnsub){try{roomUnsub();}catch(e){}roomUnsub=null;}
+  if(!ROOM){RG=null;if(!SOLO)G=null;gotGame=true;onChange();renderAll(true);return;}
+  gotGame=false;
+  const my=ROOM;
+  roomUnsub=gRef().onSnapshot(s=>{if(my!==ROOM)return;RG=s.exists?saneGame(cln(s.data())):null;if(SOLO)return;G=RG;gotGame=true;onChange();},()=>{dbState="nodb";renderAll(true);});
+}
+function setRoomUrl(){try{const u=new URL(location.href);if(ROOM)u.searchParams.set("r",ROOM);else u.searchParams.delete("r");history.replaceState(null,"",u.pathname+(u.search||"")+u.hash);}catch(e){}}
+function enterRoom(code){if(!code||code===ROOM){renderAll(true);return;}ROOM=code;try{localStorage.setItem("dk_room",code);}catch(e){}setRoomUrl();L.view=null;L.leftV=null;G=null;subRoom();window.scrollTo(0,0);}
+function leaveRoom(){
+  if(G&&G.phase==="play"&&inGame()&&!atEnd()&&!SOLO)meFlag({out:G.v,quit:G.v});
+  if(G&&P[ME]&&(P[ME].g===G.v||P[ME].wait===G.v)&&!(G.phase==="play"&&inGame()))meWrite(()=>myRef().update({g:"",wait:""}));
+  ROOM=null;try{localStorage.removeItem("dk_room");}catch(e){}setRoomUrl();L.view=null;L.menu=false;G=null;subRoom();window.scrollTo(0,0);
+}
+function sameRoom(u){if(!G||!P[u])return false;return P[u].g===G.v||roster().indexOf(u)>=0||P[u].wait===G.v;}
+function roomCount(r){if(!r)return 0;if(r.phase==="play")return Array.isArray(r.roster)?r.roster.length:0;return Object.keys(P).filter(u=>P[u]&&P[u].g===r.v&&isActive(u)).length;}
+function roomCtl(){if(SOLO||!G||!ROOM)return '';return '<div class="mtog rctl" style="margin-top:8px"><button class="mtg" data-act="roomopen"><span>👀 Zuschauen</span><span class="tsw'+(G.open!==false?' on':'')+'"><i></i></span></button><button class="mtg" data-act="roomname" style="justify-content:center"><span>✏️ Umbenennen</span></button></div>';}
+function roomsSig(){return Object.values(ROOMS).filter(roomLive).map(r=>r.code+r.phase+r.name+(r.open!==false)+roomCount(r)+(r.host||"")).join(",");}
+function vRooms(){
+  const list=Object.values(ROOMS).filter(roomLive).filter(r=>r.code!==ROOM||!G||(G.phase!=="lobby"&&G.phase!=="play")).sort((a,b)=>(b.at||0)-(a.at||0));
+  if(!list.length)return '';
+  return '<div class="card"><div class="eyebrow">Offene Räume</div><div class="rows">'+list.map(r=>{const n=roomCount(r),host=r.host?nm(r.host):"?",pl=r.phase==="play";
+    return '<button class="row roomrow" data-act="roomjoin" data-r="'+h(r.code)+'"><span class="who">'+h(r.name||r.code)+'<br><span class="muted" style="font-weight:600;font-size:13px">'+host+' leitet · '+n+(n===1?' Spieler':' Spieler')+' · '+(pl?(r.open===false?'Spiel läuft 🔒':'Spiel läuft 👀'):'Lobby offen')+'</span></span><span class="pts">'+(pl?(r.open===false?'Anmelden':'Ansehen'):'Beitreten')+' ›</span></button>';}).join('')+'</div></div>';
+}
+function cleanRooms(){const now=Date.now();Object.values(ROOMS).forEach(r=>{if(r&&r.code&&now-(r.at||0)>24*36e5&&r.code!==ROOM&&!cleanRooms.d[r.code]){cleanRooms.d[r.code]=1;meWrite(()=>DB.doc("rooms/"+r.code).delete());}});}
+cleanRooms.d={};
+function saveMetaUsed(u){if(SOLO||!u)return;const x={};Object.keys(u).forEach(k=>{if(Array.isArray(u[k])&&k!=="off"&&k!=="lastModes")x[k]=u[k];});META_USED=x;meWrite(()=>DB.doc("meta/used").set({used:x,at:Date.now()}));}
 
 function saveName(){
   const n=(L.name||"").trim().slice(0,14);
@@ -3010,8 +3050,11 @@ function answer(val){
 }
 function newLobby(){
   const n=saveName();if(!n)return;
-  const v=rid(),used=(G&&G.used)||{mc:[],size:[],est:[],fin:[]};
-  gWrite(()=>gRef().set({v:v,phase:"lobby",host:ME,roster:[],steps:[],idx:0,reveal:false,used:used}));
+  const v=rid(),used=JSON.parse(JSON.stringify(META_USED||(G&&G.used)||{mc:[],size:[],est:[],fin:[]}));
+  const prev=G;ROOM=roomCode();L.newRoomName=roomName();G=null;try{localStorage.setItem("dk_room",ROOM);}catch(e){}setRoomUrl();
+  if(prev&&prev.used&&prev.used.len){used.len=prev.used.len;used.theme=prev.used.theme;used.off=prev.used.off;used.teams=prev.used.teams;}
+  gWrite(()=>gRef().set({v:v,phase:"lobby",host:ME,roster:[],steps:[],idx:0,reveal:false,used:used,open:true,name:L.newRoomName}));
+  subRoom();
   meWrite(()=>myRef().set({name:n,g:v,t:Date.now(),seen:Date.now(),ans:{}}));
 }
 function pick(used,pool,key,n){
@@ -3025,12 +3068,12 @@ function startGame(){
   const R=lobbyPlayers();if(R.length<2)return;
   const used=JSON.parse(JSON.stringify(G.used||{}));used.off=offModes();used.len=lenOf();used.theme=themeOf();used.teams=teamsOn();
   const steps=buildSteps(used,R),hc=computeHC(R),tm=(used.teams&&R.length>=4)?makeTeams(R):null;
-  gWrite(()=>gRef().update({phase:"play",roster:R,steps:steps,idx:0,reveal:false,used:used,hc:hc,teams:tm}));
+  gWrite(()=>gRef().update({phase:"play",roster:R,steps:steps,idx:0,reveal:false,used:used,hc:hc,teams:tm}));saveMetaUsed(used);
 }
 function rematch(){
   const R0=roster().filter(u=>!isOut(u)).concat(waiters()).slice(0,MAXP);if(R0.length<2&&!SOLO){toLobby();return;}
   const R=R0,used=JSON.parse(JSON.stringify(G.used||{})),steps=buildSteps(used,R),v=rid(),hc=computeHC(R),tm=(used.teams&&R.length>=4)?makeTeams(R):null;
-  gWrite(()=>gRef().set({v:v,phase:"play",host:ME,roster:R,steps:steps,idx:0,reveal:false,used:used,hc:hc,teams:tm}));
+  gWrite(()=>gRef().set({v:v,phase:"play",host:ME,roster:R,steps:steps,idx:0,reveal:false,used:used,hc:hc,teams:tm}));saveMetaUsed(used);
 }
 function toLobby(){
   const v=rid();
@@ -3086,7 +3129,7 @@ const sfx={good:()=>tone([523,659,784],0.16,"triangle",0.09),bad:()=>tone([311,2
 
 /* ---------- Views ---------- */
 function vTop(){
-  const R=roster(),showScores=G&&G.phase==="play"&&R.length&&!leftGame();
+  const R=roster(),showScores=G&&G.phase==="play"&&R.length&&!leftGame()&&(inGame()||G.open!==false||SOLO);
   const st0=step();let timer='';
   if(showScores&&isQ(st0)&&!G.reveal&&st0.t!=="tuer"){
     const MW=myWindow(),has=MW.has,left=MW.left;
@@ -3139,16 +3182,16 @@ function vMain(){
   if(dbState==="nodb")return '<div class="marquee"><div class="mq-in"><div class="logo">DREI<br>KAMPF</div></div></div><div class="card"><p>Keine Verbindung zum Spielstand. Prüf dein Internet und lade die Seite neu.</p></div>';
   if(!G||(G.phase!=="lobby"&&G.phase!=="play")||leftGame()){
     return '<div class="marquee fade"><div class="mq-in"><div class="logo one">DREIKAMPF</div><p class="tag small">Jeder am eigenen Handy</p></div></div>'+
-      vMyCard(true)+errBox()+pinSetCard()+
-      '<button class="btn" data-act="newlobby">Neues Spiel eröffnen</button><p class="center muted small" style="margin-top:-4px">Die anderen öffnen denselben Link und treten bei.</p>'+vHome();
+      vMyCard(true)+errBox()+pinSetCard()+vRooms()+
+      '<button class="btn" data-act="newlobby">Neues Spiel eröffnen</button><p class="center muted small" style="margin-top:-4px">Du bekommst einen eigenen Raum. Die anderen treten über die Liste oder deinen Einladungslink bei.</p>'+vHome();
   }
   if(G.phase==="lobby"){
     const joined=P[ME]&&P[ME].g===G.v;
-    let out='<div class="marquee fade"><div class="mq-in"><div class="logo one">DREIKAMPF</div><p class="tag small">Lobby · '+hostName()+' leitet das Spiel</p></div></div>';
+    let out='<div class="marquee fade"><div class="mq-in"><div class="logo one">DREIKAMPF</div><p class="tag small">'+h(G.name||"Lobby")+' · '+hostName()+' leitet</p></div></div>';
     if(!joined){
       out+=(P[ME]&&P[ME].kicked===G.v?'<div class="msg">'+h(hostName())+' hat dich aus der Lobby genommen. Du kannst wieder beitreten.</div>':'')+vMyCard(true)+errBox()+(lobbyPlayers().length>=MAXP?'<div class="msg">Die Lobby ist voll ('+MAXP+' Leute). Du kannst zuschauen und in der nächsten Runde mitspielen.</div>':'<button class="btn" data-act="join">Mitspielen</button><p class="center muted small" style="margin-top:-4px">Du kannst dich auch nur umschauen, ohne beizutreten.</p>');
     }else if(amHost()){
-      out+=errBox()+'<div class="strow"><button class="btn" id="startbtn" data-act="start">Spiel starten</button><button class="btn alt invb" data-act="invite" aria-label="Alle einladen">📣<small>Einladen</small></button></div>'+teamRow();
+      out+=errBox()+'<div class="strow"><button class="btn" id="startbtn" data-act="start">Spiel starten</button><button class="btn alt invb" data-act="invite" aria-label="Alle einladen">📣<small>Einladen</small></button></div>'+teamRow()+roomCtl();
     }else{
       out+=errBox()+waitNote('Du bist dabei. Warten, bis '+hostName()+' startet …')+'<button class="linkbtn" style="display:block;margin:0 auto" data-act="leave">Doch nicht mitspielen</button>';
     }
@@ -3157,6 +3200,7 @@ function vMain(){
   }
   const st=step();if(!st)return '';
   const spect=!inGame()?(amWaiting()?'<div class="waitbar">✓ Du bist vorgemerkt. Bei der Revanche oder in der nächsten Lobby bist du automatisch dabei.</div>':'<p class="center muted">Du schaust zu. Das Spiel läuft schon.</p>'+(L.name?'':vMyCard(true))+'<button class="btn" data-act="waitjoin">🙋 Beim nächsten Spiel mitmachen</button>'):'';
+  if(!inGame()&&!SOLO&&G.open===false)return '<div class="card center"><p class="qtext">🔒 Zuschauen ist in diesem Raum aus</p><p class="muted">'+h(G.name||"")+' · '+roster().length+' Spieler spielen gerade</p></div>'+(amWaiting()?'<div class="waitbar">✓ Du bist vorgemerkt. Bei der Revanche oder in der nächsten Lobby bist du automatisch dabei.</div>':(L.name?'':vMyCard(true))+'<button class="btn" data-act="waitjoin">🙋 Beim nächsten Spiel mitmachen</button>')+'<button class="btn alt" data-act="roomleave">🏠 Andere Räume</button>';
   const wl=inGame()?waiters():[];
   const wbar=wl.length?'<div class="waitbar">🙋 '+wl.map(u=>h(nameOf(u))).join(', ')+(wl.length>1?' warten':' wartet')+' aufs nächste Spiel</div>':'';
   let body='';
@@ -3443,6 +3487,7 @@ function vMenu(){
   if(!amHost()&&G&&(G.phase==="lobby"||G.phase==="play"))b+=B("takeover",L.confirm==="takeover"?'Sicher? Nochmal tippen':'Spielleitung übernehmen');
   if(atEnd()&&!SOLO&&!leftGame())b+=B("endgame",amHost()?'Spiel beenden':'Zur Startseite');
   else if(amHost()&&G.phase==="play")b+=B("abort",L.confirm==="abort"?'Wirklich abbrechen? Nochmal tippen':'Spiel abbrechen, neue Lobby');
+  if(ROOM&&!SOLO&&G)b+=B("roomleave",(G.phase==="play"&&inGame()&&!atEnd())?'🏠 Raum verlassen (Spiel läuft weiter)':'🏠 Andere Räume / Raum verlassen');
   b+='<div class="mduo">'+B("board","🏆 Siegerboard")+B("avatar","🎨 Avatar")+'</div>';
   b+='<div class="mduo">'+B("guide","📖 Anleitung")+B("custom","✍️ Eigene Frage")+'</div>';
   if(canSwitch())b+='<div class="msec">Mein Profil</div><div class="mtri">'+B("pinview","🔐 PIN")+B("devcopy","📲 Code")+B("devload","📥 Laden")+'</div>';
@@ -3452,7 +3497,7 @@ function vMenu(){
 }
 
 /* ---------- Rendern ---------- */
-function viewKey(){return viewKey0()+"|p"+(L.pinMsg||"")+!!(PINS&&PINS[ME])+(L.pinAsk?1:0);}
+function viewKey(){return viewKey0()+"|R"+roomsSig()+"|p"+(L.pinMsg||"")+!!(PINS&&PINS[ME])+(L.pinAsk?1:0);}
 function viewKey0(){if(L.view==="guide")return "guide"+(SAMPLE?1:0);if(L.view==="reports")return "rep"+repSig+(L.confirm||"");if(L.pinAsk)return "pinask"+L.pinErr+!!PINS[L.pinAsk.u];if(L.view==="pin")return "pin"+L.pinMsg+!!PINS[ME];if(L.view==="merge")return "mg"+L.mA+L.mB+(L.migMsg||"")+(L.autoMsg||"")+JSON.stringify(ALIAS)+RAW.res.length+(L.confirm||"");return (L.view==="solo"?JSON.stringify([L.soloN,L.soloD,L.soloLen,L.soloTheme,FOUNDER]):"")+(SOLO?"S":"")+(L.view?L.view+"|"+L.pu+"|"+(L.view==="avatar"?L.edTab:"")+"|"+profVer:"")+"|"+progVer;}
 function mainKey(){
   if(dbState!=="ok")return dbState;
@@ -3623,7 +3668,11 @@ function act(a,d){
     case "pinview":L.view="pin";L.pinMsg="";L.menu=false;renderAll(true);window.scrollTo(0,0);break;
     case "pindel":if(ME===FOUNDER&&L.mA){const u=L.mA;delete PINS[u];meWrite(()=>DB.doc("pins/"+u).delete());L.mA=null;renderAll(true);}break;
     case "join":if(G&&G.phase==="lobby"&&lobbyPlayers().length>=MAXP&&!(P[ME]&&P[ME].g===G.v)){renderAll(true);break;}join(G.v);break;
-    case "waitjoin":if(G&&G.phase==="play"&&!inGame()){const n=saveName();if(n)meWrite(()=>myRef().set({name:n,g:"",wait:G.v,t:Date.now(),seen:Date.now(),ans:{}}));}break;
+    case "waitjoin":if(G&&G.phase==="play"&&!inGame()){const n=saveName();if(n)meWrite(()=>myRef().set({name:n,g:"",wait:G.v,waitRoom:ROOM||"",t:Date.now(),seen:Date.now(),ans:{}}));}break;
+    case "roomjoin":if(d.r)enterRoom(String(d.r));break;
+    case "roomleave":leaveRoom();break;
+    case "roomopen":if(amHost()&&G&&ROOM){const x=G.open===false;G.open=x;gWrite(()=>gRef().update({open:x}));renderAll(true);}break;
+    case "roomname":if(amHost()&&G&&ROOM){const n=(prompt("Neuer Name für den Raum:",G.name||"")||"").trim().slice(0,22);if(n){G.name=n;gWrite(()=>gRef().update({name:n}));renderAll(true);}}break;
     case "start":if(amHost()){if(lobbyPlayers().length<2){soloPrefs();L.view="solo";L.soloTheme=lobbyKI()?"ki":themeOf();L.soloLen=lenOf();L.soloOff=offModes();renderAll(true);}else startGame();}break;
     case "next":hostNext();break;
     case "reveal":if(L.confirm!=="reveal"){L.confirm="reveal";renderAll(true);setTimeout(()=>{if(L.confirm==="reveal"){L.confirm=null;renderAll(true);}},4000);break;}L.confirm=null;hostReveal();break;
@@ -3670,7 +3719,7 @@ function act(a,d){
     case "rx":{const k=Number(d.k);if(RX[k]&&P[ME]&&Date.now()-lastRxSend>3000){lastRxSend=Date.now();const t=Date.now();lastRx[ME]=t;meWrite(()=>myRef().update({rx:{k:k,t:t}}));floatRx(ME,k);}break;}
     case "devcopy":{const c=ME||"";const done=()=>alert("Dein Profil-Code wurde kopiert:\n\n"+c+"\n\nAuf dem anderen Gerät oder in der Home-Bildschirm-App: Menü → „Profil von anderem Gerät laden“ und einfügen.");try{navigator.clipboard.writeText(c).then(done,()=>prompt("Dein Profil-Code (kopieren):",c));}catch(e){prompt("Dein Profil-Code (kopieren):",c);}}break;
     case "devload":{const c=(prompt("Profil-Code vom anderen Gerät einfügen:")||"").trim();if(!c)break;if(!/^[A-Za-z0-9_-]{10,40}$/.test(c)){alert("Das ist kein gültiger Code.");break;}if(c===ME){alert("Das ist schon dein Profil.");break;}if(confirm("Dieses Gerät übernimmt das andere Profil (Name, Level, Freischaltungen). Weiter?")){try{localStorage.setItem("dk_id",c);localStorage.removeItem("dk_name");}catch(e){}location.reload();}}break;
-    case "invite":{const url=location.origin+location.pathname,t=(nameOf(ME)||L.name||"Jemand")+" hat ein Dreikampf-Spiel eröffnet 🔥 Wer ist dabei?";
+    case "invite":{const url=location.origin+location.pathname+(ROOM?"?r="+ROOM:""),t=(nameOf(ME)||L.name||"Jemand")+" hat ein Dreikampf-Spiel eröffnet 🔥 Wer ist dabei?";
       if(navigator.share)navigator.share({title:"Dreikampf",text:t,url:url}).catch(()=>{});else window.open("https://wa.me/?text="+encodeURIComponent(t+" "+url),"_blank");}break;
     case "sound":soundOn=!soundOn;try{localStorage.setItem("dk_snd",soundOn?"1":"0");}catch(e){}
       if(!soundOn&&silentEl){try{silentEl.pause();}catch(e){}silentEl=null;}
@@ -4058,13 +4107,13 @@ const RX=["🤯","😂","🙈","🤦","👏","😤"],RXN=["Ach was!","Haha","Pei
 function rxBar(){if(SOLO||!G||G.phase!=="play"||!G.reveal||!inGame())return '';const st=step();if(!isQ(st))return '';return '<div class="rxbar">'+RX.map((e,i)=>'<button class="rxb" data-act="rx" data-k="'+i+'" aria-label="'+RXN[i]+'">'+e+'</button>').join('')+'</div>';}
 function floatRx(u,k){if(!RX[k])return;const d=document.createElement("div");d.className="rxfly";d.style.left=(8+Math.random()*70)+"%";d.innerHTML='<b>'+RX[k]+'</b><small>'+nm(u)+'</small>';document.body.appendChild(d);setTimeout(()=>d.remove(),2300);}
 function checkEmos(){
-  Object.keys(P).forEach(u=>{const r=P[u]&&P[u].rx,ok=r&&typeof r.t==="number";if(!emoInit){lastRx[u]=ok?r.t:0;return;}if(!ok||r.t<=(lastRx[u]||0))return;lastRx[u]=r.t;if(u!==ME&&Date.now()-r.t<8000)floatRx(u,r.k);});
+  Object.keys(P).forEach(u=>{const r=P[u]&&P[u].rx,ok=r&&typeof r.t==="number";if(!emoInit){lastRx[u]=ok?r.t:0;return;}if(!ok||r.t<=(lastRx[u]||0))return;lastRx[u]=r.t;if(u!==ME&&Date.now()-r.t<8000&&sameRoom(u))floatRx(u,r.k);});
   Object.keys(P).forEach(u=>{
     const e=P[u]&&P[u].emo;if(!e||typeof e.t!=="number"||!EMOS[e.k]||typeof e.to!=="string")return;
     if(!emoInit){lastEmo[u]=e.t;return;}
     if(e.t<=(lastEmo[u]||0))return;
     lastEmo[u]=e.t;
-    if(u===ME)return;
+    if(u===ME||!sameRoom(u))return;
     const E=EMOS[e.k];
     showToast('<span class="toast-e">'+E[0]+'</span>'+avHtml(u,34)+'<span><strong>'+nm(u)+'</strong> '+E[1]+' '+(e.to===ME?'<strong>dich</strong>':'<strong>'+nm(e.to)+'</strong>')+'</span>');
     if(e.to===ME)sfx.pop();
@@ -4344,7 +4393,7 @@ let prevReveal=null;
 function onChange(){
   if(!gotGame||!gotPlayers)return;
   dbState="ok";
-  if(!SOLO&&G&&G.phase==="lobby"&&P[ME]&&P[ME].wait&&P[ME].g!==G.v&&autoJ!==G.v){autoJ=G.v;const n=P[ME].name||L.name||"Mitspieler";meWrite(()=>myRef().set({name:n,g:G.v,t:Date.now(),seen:Date.now(),ans:{}}));}
+  if(!SOLO&&G&&G.phase==="lobby"&&P[ME]&&P[ME].wait&&(!P[ME].waitRoom||P[ME].waitRoom===ROOM)&&P[ME].g!==G.v&&autoJ!==G.v){autoJ=G.v;const n=P[ME].name||L.name||"Mitspieler";meWrite(()=>myRef().set({name:n,g:G.v,t:Date.now(),seen:Date.now(),ans:{}}));}
   // Ton beim Auflösen
   const rk=G?G.v+"|"+G.idx+"|"+G.reveal:null;
   try{
@@ -4371,7 +4420,7 @@ function onChange(){
 /* ========== EXTRAS 2 (Okt 2026): Rückblick, Tagesfrage, Liga, Gruppenfragen, Thema, Teams ========== */
 let DAILY=[],CUST=[],dataVer=0;
 /* Profile zusammenführen: alias/{alteID} = {to: neueID} */
-let ALIAS={};const RAW={res:[],solo:[],daily:[]};
+let ALIAS={};const RAW={res:[],solo:[],daily:[]};let metaSeed=0;
 /* IDs aus der alten Claude-Version: dürfen nie Ziel einer Zusammenführung sein */
 const OLD_IDS={"u_EMgLvSz1hRqJQM0ytCb53g":1,"u_euBiqTJ8dLELwOj2JCSRbg":1,"u_KFXWq2b8mgel27rQ_eHd3Q":1,"u_RFXGOGVdhxx8bTCwl74eLQ":1,"u_WnOQTgXOQ16GfQJUzBNOfQ":1};
 function isOld(u){return !!OLD_IDS[u]&&u!==ME&&!(P[u]&&P[u].seen&&Date.now()-P[u].seen<864e5*3);}
@@ -4646,7 +4695,7 @@ function soloStart(){
   const name=(L.name||"").trim()||(RP[ME]&&RP[ME].name)||nameOf(ME)||"Du";
   soloBots=D.map(d=>BOTS[d][cnt[d]++].id);
   SOLO=true;LDB=makeLDB();soloSch={};
-  const R=[ME].concat(soloBots),v=rid(),base=JSON.parse(JSON.stringify((RG&&RG.used)||{}));
+  const R=[ME].concat(soloBots),v=rid(),base=JSON.parse(JSON.stringify(META_USED||(RG&&RG.used)||{}));
   const used=Object.assign(base,{off:Array.isArray(L.soloOff)?L.soloOff.slice():[],len:LENS[L.soloLen]?L.soloLen:"normal",theme:THEMES[L.soloTheme]?L.soloTheme:"mix",teams:false});
   const ki=!!(L.soloTheme==="ki"&&ME===FOUNDER&&KI_MC.length);
   const steps=ki?kiSteps(used):buildSteps(used,R);
@@ -4669,11 +4718,7 @@ function soloExit(){
 function soloFinish(sum){
   const doc=Object.assign({},sum,{solo:1,diff:soloDiff(),u:ME});
   meWrite(()=>DB.doc("solo/"+sum.v).set(doc));
-  if(RG&&RG.phase!=="play"&&G&&G.used){
-    const nu=Object.assign({},RG.used||{});
-    Object.keys(G.used).forEach(k=>{if(Array.isArray(G.used[k])&&k!=="off"&&k!=="lastModes")nu[k]=G.used[k];});
-    meWrite(()=>DB.doc("game/state").update({used:nu}));
-  }
+  if(G&&G.used){const nu=Object.assign({},META_USED||{});Object.keys(G.used).forEach(k=>{if(Array.isArray(G.used[k])&&k!=="off"&&k!=="lastModes")nu[k]=G.used[k];});META_USED=nu;meWrite(()=>DB.doc("meta/used").set({used:nu,at:Date.now()}));}
 }
 /* KI-Prüfungstraining (nur Gründer, nur solo): eigener Fragenpool, kommt sonst nirgends vor */
 const BABY=[{"q":"Wie viele Neugeborene haben einen „Storchenbiss“, also einen roten Fleck etwa im Nacken?","a":["40 bis 50 Prozent","5 bis 10 Prozent","1 bis 2 Prozent","15 bis 20 Prozent"],"f":"Er ist eine harmlose Gefäßveränderung und bildet sich meist von selbst zurück.","d":3},{"q":"Ein Loch zwischen den Herzvorhöfen schließt sich nach der Geburt. Bei wie vielen Menschen bleibt es offen?","a":["Bei etwa jedem Vierten","Bei etwa jedem Hundertsten","Bei etwa jedem Zwanzigsten","Bei etwa jedem Tausendsten"],"f":"Das „Foramen ovale“ leitet vor der Geburt Blut an der noch nicht belüfteten Lunge vorbei. Es schließt sich meist in den ersten Tagen oder Wochen.","d":3},{"q":"Wie lange sollte man laut WHO mit dem ersten Bad eines gesunden Neugeborenen mindestens warten?","a":["24 Stunden","1 Stunde","7 Tage","4 Wochen"],"f":"Laut WHO soll das erste Bad bis 24 Stunden nach der Geburt warten. Geht das nicht, dann mindestens 6 Stunden.","d":3},{"q":"Woher hat der „Milchschorf“ bei Babys seinen Namen?","a":["Er sieht aus wie angebrannte Milch","Er entsteht durch zu viel Milch","Er tritt nur bei Stillkindern auf","Er löst sich am besten mit Milch"],"f":"Mit Milch selbst hat er nichts zu tun, der Name beschreibt nur das Aussehen.","d":2},{"q":"Was unterscheidet Kopfgneis vom Milchschorf?","a":["Milchschorf gilt als frühe Neurodermitis, Kopfgneis ist meist harmlos","Kopfgneis gilt als frühe Neurodermitis, Milchschorf ist meist harmlos","Beides ist dasselbe, nur anders benannt","Beides entsteht durch Kuhmilch"],"f":"Kopfgneis zeigt gelbliche, fettige Schüppchen und verschwindet meist in den ersten Monaten. Milchschorf ist eine frühe Form der Neurodermitis und juckt oft stark.","d":3},{"q":"Was macht die große Zehe eines Babys, wenn man ihm fest über die Fußsohle streicht?","a":["Sie streckt sich nach oben","Sie krümmt sich nach unten","Sie bleibt völlig ruhig","Sie zuckt zur Seite"],"f":"Bei Babys ist das ein normaler Reflex, der meist bis etwa zum 2. Geburtstag verschwindet. Bei Erwachsenen gilt er als Hinweis auf eine Nervenschädigung.","d":3},{"q":"Wie viele Neugeborene haben eine der Krankheiten, nach denen das Neugeborenen-Screening sucht?","a":["Etwa 1 von 1.000","Etwa 1 von 100.000","Etwa 1 von 10","Etwa 1 von 50"],"f":"Klingt selten, betrifft in Deutschland aber jedes Jahr Hunderte Babys. Früh erkannt, lassen sich viele dieser Krankheiten behandeln.","d":3},{"q":"Wann wird das Blut für das Neugeborenen-Screening abgenommen?","a":["36 bis 72 Stunden nach der Geburt","In der ersten Stunde nach der Geburt","Bei der U3 in der 4. Lebenswoche","Bei der U4 im 3. Lebensmonat"],"f":"Also am 2. bis 3. Lebenstag, oft zusammen mit der U2. Wenige Tropfen aus Ferse oder Vene reichen.","d":2},{"q":"Welche Blutgefäße verlaufen in einer normalen Nabelschnur?","a":["Zwei Arterien und eine Vene","Eine Arterie und zwei Venen","Eine Arterie und eine Vene","Zwei Arterien und zwei Venen"],"f":"Ursprünglich sind es vier Gefäße. Eine Vene bildet sich aber schon früh in der Embryonalzeit zurück.","d":3},{"q":"Bis zu welchem Alter hören Schreiphasen durch Koliken meist von selbst auf?","a":["Mit etwa 3 bis 4 Monaten","Mit etwa 3 bis 4 Wochen","Mit etwa 9 bis 10 Monaten","Mit etwa 18 bis 24 Monaten"],"f":"Daher stammt der volkstümliche Name „Dreimonatskoliken“.","d":2},{"q":"Wie oft atmet ein Neugeborenes in Ruhe pro Minute?","a":["Etwa 30 bis 60 Mal","Etwa 10 bis 15 Mal","Etwa 80 bis 100 Mal","Etwa 15 bis 25 Mal"],"f":"Erwachsene kommen mit etwa 12 bis 20 Atemzügen pro Minute aus.","d":2},{"q":"Welche Fontanelle schließt sich beim Baby als letzte?","a":["Die große über der Stirn","Die kleine am Hinterkopf","Die seitliche an der Schläfe","Alle schließen sich gleichzeitig"],"f":"Bei den meisten Kindern zwischen dem 9. und 18. Lebensmonat.","d":2},{"q":"Wie viele Zweijährige gelten als „Late Talker“, also als späte Sprecher?","a":["Etwa 15 Prozent","Etwa 1 Prozent","Etwa 40 Prozent","Etwa 60 Prozent"],"f":"Gemessen wird das am aktiven Wortschatz und daran, ob das Kind schon Wörter kombiniert. Bei Unsicherheit hilft die Kinderarztpraxis.","d":3},{"q":"Wie groß ist der Kopf eines Ungeborenen zeitweise im Verhältnis zur Körperlänge?","a":["Etwa die Hälfte","Etwa ein Zehntel","Etwa ein Achtel","Etwa ein Sechstel"],"f":"Danach wächst der Körper deutlich schneller als der Kopf.","d":3},{"q":"Welches Öl empfiehlt das Netzwerk „Gesund ins Leben“ für den Gemüse-Kartoffel-Brei?","a":["Rapsöl","Kokosöl","Palmöl","Sesamöl"],"f":"Ein Esslöffel Rapsöl kommt in den Brei. Kalt gepresst oder raffiniert, beides ist geeignet.","d":3},{"q":"Was empfehlen Fachleute zu glutenhaltigem Getreide in der Beikost?","a":["Nicht meiden","Bis zum 1. Geburtstag meiden","Erst ab 3 Jahren geben","Nur als Fertigbrei geben"],"f":"Auf glutenhaltiges Getreide in der Beikost sollte nicht verzichtet werden. Ach was: Hirse ist von Natur aus glutenfrei.","d":3},{"q":"Warum gehört Brei nicht als Trinkbrei in die Flasche?","a":["Löffeln fördert die Entwicklung","Brei verliert dort Vitamine","Eisen wird schlechter genutzt","Getreide quillt im Magen auf"],"f":"Zudem steigt die Kariesgefahr und Trinkbrei kann mit Säuglingsmilch verwechselt werden.","d":3},{"q":"Schlafsacklänge: Körpergröße minus Kopflänge, plus wie viel Reserve?","a":["Etwa 10 bis 15 cm","Etwa 3 bis 5 cm","Etwa 25 bis 30 cm","Etwa 40 bis 50 cm"],"f":"Zu lang oder zu weit ist ungünstig, denn darin kann sich das Baby verheddern.","d":3},{"q":"Wo prüft man am besten, ob dem Baby im Schlaf zu warm ist?","a":["Zwischen den Schulterblättern","An den Händen","An den Füßen","An den Wangen"],"f":"Schwitzt es dort, ein Kleidungsstück ausziehen, auch wenn es schläft.","d":3},{"q":"Um wie viel heizt sich ein Auto in praller Sonne in 30 Minuten im Schnitt auf?","a":["Um etwa 16 °C","Um etwa 6 °C","Um etwa 30 °C","Um etwa 45 °C"],"f":"Nach einer Stunde sind es rund 26 °C mehr als draußen. Kinder nie allein im Auto lassen, auch nicht kurz.","d":3},{"q":"In welcher Höhe sollten Medikamente mindestens verschlossen aufbewahrt werden?","a":["Mindestens 1,60 m","Mindestens 80 cm","Mindestens 1,10 m","Mindestens 2 m"],"f":"Putzmittel gehören in Oberschränke. Vergiftungen entstehen oft durch falsch aufbewahrte Haushaltsmittel.","d":3},{"q":"Wie warm sollte Badewasser fürs Baby sein?","a":["36 bis 37 °C","32 bis 33 °C","29 bis 30 °C","39 bis 40 °C"],"f":"Mit Badethermometer und Unterarm prüfen. Kein heißes Wasser nachlaufen lassen, solange das Baby drin ist.","d":3},{"q":"In welchem Zeitraum findet die Vorsorgeuntersuchung U5 statt?","a":["6. bis 7. Lebensmonat","3. bis 4. Lebensmonat","10. bis 12. Lebensmonat","21. bis 24. Lebensmonat"],"f":"Dabei geht es u. a. um Entwicklung, Augen, Ernährung und Unfallverhütung.","d":3},{"q":"Ab welcher Temperatur sprechen Kinderärzte (BVKJ) bei Kindern von Fieber?","a":["Ab 38,5 °C","Ab 37,0 °C","Ab 39,5 °C","Ab 40,5 °C"],"f":"So steht es in der Fieber-Leitlinie für Eltern. Bei Babys unter 3 Monaten gilt schon eine Temperatur ab 38,0 °C als Fieber.","d":3},{"q":"Was gilt für Fluoridtabletten zusammen mit fluoridhaltiger Zahnpasta?","a":["Nicht kombinieren","Beides kombinieren","Bis 1 Jahr kombinieren","Ab 2 Jahren kombinieren"],"f":"Eltern wählen einen Weg. Am besten mit Kinderarzt- oder Zahnarztpraxis absprechen.","d":3},{"q":"Welche Zähne kommen beim Baby meist zuerst?","a":["Untere mittlere Schneidezähne","Obere Eckzähne","Hintere Backenzähne","Obere seitliche Schneidezähne"],"f":"Die ersten Zähne zeigen sich meist mit 6 bis 8 Monaten. Mit etwa 2,5 Jahren ist das Milchgebiss komplett.","d":3},{"q":"In welchem Alter empfiehlt die STIKO regulär die 1. Masern-Mumps-Röteln-Impfung?","a":["Mit 11 Monaten","Mit 6 Monaten","Mit 15 Monaten","Mit 2 Jahren"],"f":"Die zweite folgt mit 15 Monaten. Vor einem Kitastart ist die erste schon ab 9 Monaten möglich.","d":3},{"q":"Bis wann wird Babys Vitamin D empfohlen?","a":["Bis zum 2. erlebten Frühsommer","Bis zum 1. erlebten Frühsommer","Bis zum 2. Geburtstag","Bis zum 6. Lebensmonat"],"f":"Je nach Geburtszeitpunkt also etwa in den ersten 12 bis 18 Monaten.","d":3},{"q":"Welche Drehung gelingt vielen Babys zuerst?","a":["Vom Bauch auf den Rücken","Vom Rücken auf den Bauch","Aus dem Sitz in die Bauchlage","Vom Vierfüßler in den Sitz"],"f":"Meist geht es erst zur Seite, dann vom Bauch auf den Rücken und zuletzt vom Rücken auf den Bauch.","d":3},{"q":"Wie viele Knochen hat ein Neugeborenes ungefähr? (Erwachsene: 206)","a":["Etwa 270 bis 300","Genau 206, wie Erwachsene","Etwa 150 bis 180","Etwa 220 bis 240"],"f":"Ach was: Viele Knochen wachsen erst im Laufe der Kindheit zusammen. Darum sind es später weniger.","d":3},{"q":"Woraus bestehen die Kniescheiben eines Babys bei der Geburt noch?","a":["Aus Knorpel","Aus festem Knochen","Aus Muskelgewebe","Aus reinem Fett"],"f":"Die Verknöcherung beginnt erst im Kindesalter und ist sogar erst in der Jugend abgeschlossen.","d":3},{"q":"Welcher Greifreflex bleibt bei Babys länger erhalten, oft bis 9 bis 12 Monate?","a":["Der an den Fußsohlen","Der an den Händen","Beide etwa gleich lang","Keiner, beide sind früh weg"],"f":"Streicht man über die Fußsohle, krallen sich die Zehen ein. Dieser Reflex hält deutlich länger als der der Hand.","d":3},{"q":"Streichelt man Neugeborenen die Wange, drehen sie den Kopf dorthin. Wozu dient das?","a":["Zum Finden der Brust","Zum Schutz des Gesichts","Zum Training des Nackens","Zum Ausrichten der Augen"],"f":"Der Suchreflex hilft beim Finden der Nahrungsquelle. Er verschwindet meist mit etwa 4 Monaten.","d":3},{"q":"Wann ist die erste zahnärztliche Früherkennungsuntersuchung für Babys vorgesehen?","a":["Im 6. bis 9. Lebensmonat","Im 10. bis 20. Lebensmonat","Im 21. bis 33. Lebensmonat","Ab dem 3. Geburtstag"],"f":"Ein guter Start: Weitere Termine folgen bis ins Kindergartenalter. Babys können auch schon zu den Zahnarztbesuchen der Eltern mitkommen.","d":3}];
@@ -4766,6 +4811,7 @@ function gSec(){
   add("Start","So funktioniert Dreikampf","Jeder spielt am eigenen Handy. Wissen, Bauchgefühl und Geschick bringen Punkte. Wer nach dem Finale vorne liegt, gewinnt. Die Spielleitung (wer das Spiel eröffnet) tippt sich durch die Runden.","regeln ueberblick");
   add("Start","Spiel eröffnen und Leute einladen","Namen eingeben, „Neues Spiel eröffnen“ tippen. Mit „📣 Einladen“ schickst du den Link per WhatsApp oder Nachricht. Die anderen öffnen den Link und tippen „Mitspielen“. Gestartet wird ab 2 Leuten, maximal "+MAXP+". Allein steht auf dem Knopf „🤖 Solo spielen“.","lobby link");
   add("Lobby","Spiellänge","Kurz (ca. 8 Min.), Normal (ca. 15 Min.) oder Lang (ca. 25 Min.). Darunter siehst du den Ablauf: Fragen, Überraschungsrunden, Geschicklichkeitsspiel und Finale.","dauer runden");
+  add("Lobby","Spielräume","Jedes Spiel läuft in einem eigenen Raum mit Namen, z. B. „🔥 Phönix-Arena“. Mehrere Gruppen können gleichzeitig spielen. Auf der Startseite stehen alle offenen Räume: Lobby beitreten, laufendes Spiel ansehen oder fürs nächste Spiel anmelden. Die Spielleitung kann den Raum umbenennen und „Zuschauen erlaubt“ ausschalten. Mitspielen anmelden geht immer. Den Raum wechselst du im Menü über „Andere Räume“. Liga, Level und Siegerboard zählen über alle Räume.","raum räume parallel gleichzeitig zuschauen umbenennen");
   add("Lobby","Thema für Runde 1 und Finale","Am Drehrad wählt die Spielleitung ein Thema, z. B. Bayern, Sport, Sportlerinnen, Logik & IQ oder Gemischt. Es gilt für die Fragen in Runde 1 und das Finale. Bei „Logik & IQ“ sind Runde 1 und Finale reine Denkrätsel ohne Wissen. „Baby & Eltern“ ist ein Extra-Thema für Eltern kleiner Kinder (Entwicklung, Schlaf, Essen, Sicherheit): Die Fragen kommen nur, wenn man dieses Thema wählt.","kategorie themen");
   add("Lobby","Überraschungsrunden auswählen","Die Spielleitung kann einzelne Spielarten abwählen. Mindestens 2 bleiben an. „Kleinste Zahl“ und „Mehrheit“ kommen erst ab 3 Leuten.","spielarten modi");
   add("Lobby","Team-Modus","Ab 4 Leuten: zwei Teams (🔴 Rot und 🔵 Blau), fair nach Level gemischt. Die Punkte im Team werden zusammengezählt, ein kleineres Team wird hochgerechnet. Für Level, Abzeichen und Liga zählt weiter deine eigene Platzierung. Unter 4 Leuten spielt jeder für sich, auch wenn der Schalter an ist.","teams rot blau");
@@ -4932,7 +4978,7 @@ function founderWatch(){
 }
 if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js",{scope:"./"}).catch(()=>{});
 function DK_SWITCH(id,n){try{localStorage.setItem("dk_id",id);if(n)localStorage.setItem("dk_name",n);}catch(e){}location.reload();}
-const BUILD_ID="1792007308";
+const BUILD_ID="1792008579";
 function verCheck(){fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(r=>r.json()).then(j=>{if(j&&j.v&&j.v!==BUILD_ID&&!document.getElementById("upd")){const b=document.createElement("button");b.id="upd";b.textContent="✨ Neue Version da. Tippen zum Laden";b.onclick=()=>location.reload();document.body.appendChild(b);}}).catch(()=>{});}
 setInterval(verCheck,60000);document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")verCheck();});setTimeout(verCheck,5000);
 (async function boot(){
@@ -4943,7 +4989,11 @@ setInterval(verCheck,60000);document.addEventListener("visibilitychange",()=>{if
   if(user){try{ME=await user.id();}catch(e){ME=null;}}
   if(!DB||!ME){dbState="nodb";renderAll(true);return;}
   founderWatch();
-  gRef().onSnapshot(s=>{RG=s.exists?saneGame(cln(s.data())):null;if(SOLO)return;G=RG;gotGame=true;onChange();},()=>{dbState="nodb";renderAll(true);});
+  try{const q=new URLSearchParams(location.search).get("r");ROOM=q?q.toUpperCase().replace(/[^A-Z0-9]/g,"").slice(0,6):(localStorage.getItem("dk_room")||null);}catch(e){ROOM=null;}
+  if(ROOM){try{localStorage.setItem("dk_room",ROOM);}catch(e){}}setRoomUrl();
+  subRoom();
+  DB.collection("rooms").onSnapshot(s=>{const m={};s.docs.forEach(d=>{if(d.exists){const x=d.data();if(x)m[d.id]=Object.assign({code:d.id},x);}});ROOMS=m;cleanRooms();renderAll();},()=>{});
+  DB.doc("meta/used").onSnapshot(s=>{const x=s.exists?s.data():null;if(x&&x.used)META_USED=x.used;else if(!META_USED&&!metaSeed){metaSeed=1;const un=DB.doc("game/state").onSnapshot(o=>{try{un&&un();}catch(e){}const g=o.exists?o.data():null;if(g&&g.used&&!META_USED)saveMetaUsed(g.used);});}},()=>{});
   let resSig="",profSig="";
   DB.collection("results").onSnapshot(s=>{const r=s.docs.filter(d=>d.exists).map(d=>d.data()),sig=JSON.stringify(r);if(sig===resSig)return;resSig=sig;RAW.res=r;applyAlias();},()=>{});
   DB.collection("pins").onSnapshot(s=>{const m={};s.docs.forEach(d=>{if(d.exists&&d.data())m[d.id]=d.data();});PINS=m;renderAll();},()=>{});
