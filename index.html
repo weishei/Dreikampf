@@ -3124,7 +3124,7 @@ function hostBtn(label,act){return amHost()?'<button class="btn stick" data-act=
 
 function vMain(){
   if(L.pinAsk&&dbState==="ok")return vPinAsk();
-  if(L.view==="pin"&&dbState==="ok"&&ME)return pinSetCard(true)+'<button class="btn alt" data-act="boardclose">Zurück</button>';
+  if(L.view==="pin"&&dbState==="ok"&&ME)return pinSetCard(true)+'<div class="card"><div class="eyebrow">📲 Mit Code statt PIN</div><div class="mduo" style="margin-top:8px"><button class="btn alt" data-act="devcopy">📲 Code kopieren</button><button class="btn alt" data-act="devload">📥 Profil laden</button></div></div><button class="btn alt" data-act="boardclose">Zurück</button>';
   if(L.view&&dbState==="ok"&&ME){
     if(L.view==="board")return vBoard();
     if(L.view==="custom")return vCustom();
@@ -3892,12 +3892,11 @@ function vHome(){
   const L2=leagueOf(monthKey()),pi=L2.findIndex(a=>a.u===ME),nc=CUST.filter(c=>c.u===ME&&!c.del).length;
   const row=(act,ic,t,sub,right)=>'<button class="mrow" data-act="'+act+'"><span class="mic">'+ic+'</span><span class="mt">'+t+(sub?'<small>'+sub+'</small>':'')+'</span>'+right+'</button>';
   let o='<div class="card menu fade">';
-  o+=row("board","🏆","Liga & Siegerboard",monthName(monthKey()).split(" ")[0]+": "+(pi>=0?"Platz "+(pi+1)+" · "+L2[pi].pts+" Pkt":"noch keine Punkte"),'<span class="chev">›</span>');
-  o+=row("guide","📖","Anleitung","Regeln, Punkte, Freischaltungen",'<span class="chev">›</span>');
   o+=row("solo","🤖","Solo gegen Computer","Leicht, mittel oder Profi",'<span class="chev">›</span>');
+  o+=row("board","🏆","Liga & Siegerboard",monthName(monthKey()).split(" ")[0]+": "+(pi>=0?"Platz "+(pi+1)+" · "+L2[pi].pts+" Pkt":"noch keine Punkte"),'<span class="chev">›</span>');
   o+=row("custom","✍️","Eigene Frage einreichen",nc?nc+" von dir im Topf":"Insider über eure Gruppe",'<span class="chev">›</span>');
-  o+=row("devcopy","📲","Profil mitnehmen","Code kopieren für anderes Gerät oder Home-Bildschirm",'<span class="chev">›</span>');
-  o+=row("devload","📥","Profil laden","Code von einem anderen Gerät einfügen",'<span class="chev">›</span>');
+  o+=row("guide","📖","Anleitung","Regeln, Punkte, Freischaltungen",'<span class="chev">›</span>');
+  if(canSwitch())o+=row("pinview","🔐","Profil auf anderem Gerät","PIN festlegen, Code kopieren oder laden",'<span class="chev">›</span>');
   return o+'</div>';
 }
 function unlockHint(i){
@@ -4935,7 +4934,7 @@ function founderWatch(){
 }
 if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js",{scope:"./"}).catch(()=>{});
 function DK_SWITCH(id,n){try{localStorage.setItem("dk_id",id);if(n)localStorage.setItem("dk_name",n);}catch(e){}location.reload();}
-const BUILD_ID="1792006942";
+const BUILD_ID="1792007000";
 function verCheck(){fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(r=>r.json()).then(j=>{if(j&&j.v&&j.v!==BUILD_ID&&!document.getElementById("upd")){const b=document.createElement("button");b.id="upd";b.textContent="✨ Neue Version da. Tippen zum Laden";b.onclick=()=>location.reload();document.body.appendChild(b);}}).catch(()=>{});}
 setInterval(verCheck,60000);document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")verCheck();});setTimeout(verCheck,5000);
 (async function boot(){
