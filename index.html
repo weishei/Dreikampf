@@ -732,6 +732,15 @@ html,body{margin:0}[hidden]:not([hidden=until-found i]){display:none!important}
 .swp-card{position:relative;height:190px;margin:4px 0 10px;border-radius:24px;background:var(--bg2);border:2px solid var(--line);display:grid;grid-template-columns:1fr 1fr;align-items:center;touch-action:pan-y;user-select:none;-webkit-user-select:none;cursor:grab;box-shadow:0 14px 30px -14px rgba(0,0,0,.6)}.swp-card span{display:flex;flex-direction:column;align-items:center;gap:6px;padding:0 10px;text-align:center;font-size:24px}.swp-card b{font-size:19px;line-height:1.2}.swo{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-style:normal;font-weight:800;color:var(--muted);font-size:13px}.swp-card.gl{border-color:#4da3ff;background:rgba(77,163,255,.2)}.swp-card.gl .swr,.swp-card.gr .swl{opacity:.25}.swp-card.gr{border-color:#ffb52e;background:rgba(255,181,46,.2)}
 html,body{overflow-x:clip}
 .mtog.rctl{grid-template-columns:1.25fr 1fr}
+.rtop{display:flex;justify-content:flex-start;margin:-4px 0 -6px}
+.rback{padding:6px 2px;font-weight:700;text-decoration:none}.rback.warn{color:var(--p2);text-decoration:underline}
+.rnm{font-family:var(--display);font-weight:700;font-size:22px;margin:6px 0 0;display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap}
+.rpen{background:none;border:0;font-size:18px;padding:4px;cursor:pointer;opacity:.85}
+.rmeta{font-weight:600;font-size:13px}
+.rchip{display:inline-block;margin-top:5px;font-size:12px;font-weight:800;border-radius:999px;padding:2px 9px}
+.rchip.wait{background:rgba(74,222,128,.16);color:var(--good)}.rchip.play{background:rgba(255,201,60,.16);color:var(--p2)}.rchip.lock{background:rgba(255,90,120,.16);color:var(--bad)}
+.ract{font-size:13px;font-weight:800;border-radius:999px;padding:7px 12px;background:var(--p2);color:var(--ink);white-space:nowrap;align-self:center}.ract.alt{background:transparent;color:var(--fg);border:1.5px solid var(--line)}
+.rpick{display:flex;flex-direction:column;gap:8px;padding:4px 0 6px}
 </style>
 
 <div id="app"><div id="top"></div><div id="main"></div><div id="status"></div></div>
@@ -2052,15 +2061,15 @@ function lobbyShow(){
   const rows=[["Alle gegen alle",LN.mc+" Fragen","1"]];
   for(let k=0;k<LN.m;k++)rows.push(["Überraschungsrunde","zufällig gezogen",String(k+2)]);
   rows.push(["Geschicklichkeitsspiel","1 Spiel","🎯"],["Finale: Alles oder nichts","1 Frage",String(LN.m+2)]);
-  if(!host){const th0=themeOf();return '<div class="card"><div class="eyebrow">Einstellungen</div><div class="sumrow"><span class="thb on">⏱ '+LN.t+'</span><span class="thb on">'+THEME_ICON[th0]+' '+h(THEMES[th0][0])+'</span>'+(teamsOn()&&lobbyPlayers().length>=4?'<span class="thb on">🔴🔵 Teams</span>':'')+'</div>'+flowHtml(LN)+'</div>';}
+  if(!host){const th0=themeOf();return '<div class="card"><div class="eyebrow">Einstellungen · legt '+hostName()+' fest</div><div class="sumrow"><span class="thb on">⏱ '+LN.t+'</span><span class="thb on">'+THEME_ICON[th0]+' '+h(THEMES[th0][0])+'</span>'+(teamsOn()&&lobbyPlayers().length>=4?'<span class="thb on">🔴🔵 Teams</span>':'')+'</div>'+flowHtml(LN)+'</div>';}
   const LK=Object.keys(LENS);
-  let o='<div class="card"><div class="eyebrow">Spiellänge</div><div class="hwbox"><div class="hwsel"></div><div class="hwheel" id="lnwheel"><div class="hpad"></div>'+LK.map((l,i)=>'<div class="hitem" data-wi="'+i+'"><span class="emo">'+({kurz:"⚡",normal:"⏱️",lang:"🍿"})[l]+'</span><b>'+LENS[l].t+'</b><small>'+LENS[l].d+'</small></div>').join('')+'<div class="hpad"></div></div></div>'+flowHtml(LN);
+  let o='<div class="card"><div class="eyebrow">Einstellungen · Spiellänge</div><div class="hwbox"><div class="hwsel"></div><div class="hwheel" id="lnwheel"><div class="hpad"></div>'+LK.map((l,i)=>'<div class="hitem" data-wi="'+i+'"><span class="emo">'+({kurz:"⚡",normal:"⏱️",lang:"🍿"})[l]+'</span><b>'+LENS[l].t+'</b><small>'+LENS[l].d+'</small></div>').join('')+'<div class="hpad"></div></div></div>'+flowHtml(LN);
   o+='<button class="mrow2" data-act="showmodes"><span>🎲 <b>Überraschungsrunden</b></span><span class="muted" style="white-space:nowrap">'+on+'/'+POOL_MODES.length+'</span><span class="chev'+(L.showModes?' up':'')+'">›</span></button>'+(L.showModes?modeGrid():'');
   const th=themeOf();
   const TK=lobbyThemes(),cnt=t=>{if(t==="ki")return KI_MC.length;if(t==="iq")return IQ.length;if(t==="baby")return BABY.length;const c=THEMES[t][1];return c?THEME_MC.filter(x=>c.indexOf(x)>=0).length:THEME_MC.filter(x=>x!=="xmas").length;};
   o+='<div class="eyebrow" style="margin-top:8px">Thema für Runde 1 und Finale</div>'+(host?'<div class="hwbox"><div class="hwsel"></div><div class="hwheel" id="thwheel"><div class="hpad"></div>'+TK.map((t,i)=>'<div class="hitem" data-wi="'+i+'"><span class="emo">'+(t==="ki"?"🧠":THEME_ICON[t])+'</span><b>'+(t==="ki"?"Google KI-Prüfung":h(THEMES[t][0]))+'</b><small>'+(t==="ki"?"nur solo, nur du":cnt(t)+' Fragen')+'</small></div>').join('')+'<div class="hpad"></div></div></div>'+(lobbyKI()?'<p class="muted small" style="margin:0">Nur Prüfungsfragen wie im Test „Generative AI Leader“. Starte mit „🤖 Solo spielen“.</p>':''):'<span class="thb on">'+THEME_ICON[th]+' '+h(THEMES[th][0])+'</span>');
   const np=lobbyPlayers().length,tOn=teamsOn();
-  return o+'</div>';
+  return o+roomOpenRow()+'</div>';
 }
 function modeGrid(){
   const off=offModes();
@@ -2993,6 +3002,10 @@ const ROOM_NAMES=["🔥 Phönix-Arena","🥨 Brezn-Stüberl","🦁 Löwengrube",
 function roomCode(){const A="ABCDEFGHJKMNPQRSTUVWXYZ23456789";let c;do{c="";for(let i=0;i<4;i++)c+=A[Math.floor(Math.random()*A.length)];}while(ROOMS[c]);return c;}
 function roomName(){const used=Object.values(ROOMS).filter(roomLive).map(r=>r.name);const free=ROOM_NAMES.filter(n=>used.indexOf(n)<0);const pool=free.length?free:ROOM_NAMES;return pool[Math.floor(Math.random()*pool.length)];}
 function roomLive(r){return !!(r&&(r.phase==="lobby"||r.phase==="play")&&Date.now()-(r.at||0)<6*36e5);}
+/* In der Liste nur Räume mit Leuten: wartend mit mindestens einer aktiven Person, laufend mit Bewegung in den letzten 30 Min. */
+function roomShown(r){if(!roomLive(r))return false;if(r.phase==="lobby")return roomCount(r)>0;return Date.now()-(r.at||0)<30*60000;}
+function nextHost(){if(!G)return null;const c=G.phase==="lobby"?lobbyPlayers():roster().filter(u=>!isOut(u)&&!BOT_BY[u]);return c.find(u=>u!==ME)||null;}
+function hostAway(){if(!G||!G.host)return true;if(G.phase==="lobby"){const p=P[G.host];return !p||p.g!==G.v||(typeof p.seen==="number"&&Date.now()-p.seen>AWAY_MS);}return Date.now()-(G.at||0)>120000;}
 function gRef(){
   if(SOLO)return LDB.doc("game/state");
   const r=DB.doc("rooms/"+(ROOM||"_none"));
@@ -3011,13 +3024,17 @@ function setRoomUrl(){try{const u=new URL(location.href);if(ROOM)u.searchParams.
 function enterRoom(code,via){if(!code||code===ROOM){renderAll(true);return;}L.roomVia=via||"liste";ROOM=code;try{localStorage.setItem("dk_room",code);}catch(e){}setRoomUrl();L.view=null;L.leftV=null;G=null;subRoom();window.scrollTo(0,0);}
 function leaveRoom(){
   if(G&&G.phase==="lobby"&&P[ME]&&P[ME].g===G.v)logEv("raum_verlassen",{host:amHost()?1:0,n:lobbyPlayers().length});
+  if(!SOLO&&G&&amHost()&&(G.phase==="lobby"||G.phase==="play")){const nx=nextHost(),ref=gRef();
+    if(nx){const pr=ref.update({host:nx});gWrite(()=>pr);logEv("leitung_uebergeben",{phase:G.phase});}
+    else{const pr=ref.set({v:rid(),phase:"done",host:ME,roster:[],steps:[],idx:0,reveal:false,used:G.used||{}});gWrite(()=>pr);logEv("raum_geschlossen",{leer:1});}}
   if(G&&G.phase==="play"&&inGame()&&!atEnd()&&!SOLO)meFlag({out:G.v,quit:G.v});
+  else if(G&&G.phase==="play"&&inGame()&&atEnd()&&!SOLO)meFlag({out:G.v});
   if(G&&P[ME]&&(P[ME].g===G.v||P[ME].wait===G.v)&&!(G.phase==="play"&&inGame()))meWrite(()=>myRef().update({g:"",wait:""}));
   ROOM=null;try{localStorage.removeItem("dk_room");}catch(e){}setRoomUrl();L.view=null;L.menu=false;G=null;subRoom();window.scrollTo(0,0);
 }
 /* ===== MESSUNG ===== */
 let EVS=[],ROOMS_ALL={};
-function logEv(t,x){try{if(!DB||!ME)return;const d=Object.assign({t:t,u:ME,room:ROOM||"",at:Date.now()},x||{});meWrite(()=>DB.doc("ev/"+rid()).set(d));}catch(e){}}
+function logEv(t,x){try{if(!DB||!ME)return;const d=Object.assign({t:t,u:ME,room:ROOM||"",at:Date.now(),ux:2},x||{});meWrite(()=>DB.doc("ev/"+rid()).set(d));}catch(e){}}
 function vStats(){
   const med=a=>{if(!a.length)return null;const b=a.slice().sort((x,y)=>x-y);return b[Math.floor(b.length/2)];};
   const dd=t=>t?new Date(t).toLocaleDateString("de-DE",{day:"2-digit",month:"2-digit"}):"–";
@@ -3027,26 +3044,32 @@ function vStats(){
   const rooms=Object.values(ROOMS_ALL),now=Date.now();
   const started=rooms.filter(r=>r.startedAt),never=rooms.filter(r=>!r.startedAt&&!roomLive(r)),waitLive=rooms.filter(r=>!r.startedAt&&roomLive(r));
   const tts=started.filter(r=>r.createdAt).map(r=>(r.startedAt-r.createdAt)/60000);
-  const ev={};EVS.forEach(e=>{const k=e.t+(e.via?" ("+e.via+")":"");ev[k]=(ev[k]||0)+1;});
+  const ev={};EVS.forEach(e=>{const k=e.t+(e.via?" ("+e.via+")":"")+(e.ux===2?" · neu":"");ev[k]=(ev[k]||0)+1;});
   const evFirst=EVS.length?Math.min.apply(null,EVS.map(e=>num0(e.at)).filter(Boolean)):0;
   const row=(a,b)=>'<div class="row"><span class="who">'+a+'</span><span class="pts">'+b+'</span></div>';
   let o='<div class="marquee fade"><div class="mq-in"><div class="eyebrow">Nur für dich</div><h2 class="rtitle">Statistik</h2></div></div>';
   o+='<div class="card"><div class="eyebrow">Gespeicherte Spiele</div><p class="muted small">Zeitraum: '+(ats.length?dd(Math.min.apply(null,ats))+' bis '+dd(Math.max.apply(null,ats)):'keine Daten')+'</p><div class="rows">'+row("Gruppenspiele",grp.length)+Object.keys(byN).sort((a,b)=>a-b).map(n=>row("· mit "+n+" Leuten",byN[n])).join('')+row("Solo-Spiele",solo.length)+(grp.length+solo.length?row("Solo-Anteil",Math.round(100*solo.length/(grp.length+solo.length))+" %"):'')+'</div></div>';
   o+='<div class="card"><div class="eyebrow">Räume (erst seit 14.10.)</div><div class="rows">'+row("Räume gesamt",rooms.length)+row("mit gestartetem Spiel",started.length)+row("nie gestartet, verlassen",never.length)+row("warten gerade",waitLive.length)+(tts.length?row("Zeit bis Spielstart (Median)",Math.round(med(tts)*10)/10+" Min."):row("Zeit bis Spielstart","noch keine Daten"))+'</div><p class="muted small">Räume vor dieser Messung haben keine Start-Zeit und zählen als „nie gestartet“, wenn kein Spiel lief.</p></div>';
-  o+='<div class="card"><div class="eyebrow">Ereignisse seit Messstart'+(evFirst?' ('+dd(evFirst)+')':'')+'</div>'+(EVS.length?'<div class="rows">'+Object.keys(ev).sort().map(k=>row(h(k),ev[k])).join('')+'</div>':'<p class="muted">Noch keine. Die Messung läuft ab jetzt.</p>')+'</div>';
+  o+='<div class="card"><div class="eyebrow">Ereignisse seit Messstart'+(evFirst?' ('+dd(evFirst)+')':'')+'</div>'+(EVS.length?'<div class="rows">'+Object.keys(ev).sort().map(k=>row(h(k),ev[k])).join('')+'</div>':'<p class="muted">Noch keine. Die Messung läuft ab jetzt.</p>')+'<p class="muted small">„· neu“ heißt: nach dem Umbau der Räume (15.10. mittags).</p></div>';
   return o+'<button class="btn alt" data-act="boardclose">Zurück</button>';
 }
 function sameRoom(u){if(!G||!P[u])return false;return P[u].g===G.v||roster().indexOf(u)>=0||P[u].wait===G.v;}
 function roomCount(r){if(!r)return 0;if(r.phase==="play")return Array.isArray(r.roster)?r.roster.length:0;return Object.keys(P).filter(u=>P[u]&&P[u].g===r.v&&isActive(u)).length;}
-function roomCtl(){if(SOLO||!G||!ROOM)return '';return '<div class="mtog rctl" style="margin-top:8px"><button class="mtg" data-act="roomopen"><span>👀 Zuschauen</span><span class="tsw'+(G.open!==false?' on':'')+'"><i></i></span></button><button class="mtg" data-act="roomname" style="justify-content:center"><span>✏️ Umbenennen</span></button></div>';}
-function roomsSig(){return Object.values(ROOMS).filter(roomLive).map(r=>r.code+r.phase+r.name+(r.open!==false)+roomCount(r)+(r.host||"")).join(",");}
+function roomOpenRow(){if(SOLO||!G||!ROOM||!amHost())return '';const on=G.open!==false;return '<div class="tgrow" style="margin-top:10px"><span class="tgl"><b>👀 Andere dürfen zuschauen</b><small>Gilt für laufende Spiele. Für die nächste Runde anmelden geht immer.</small></span><button class="tsw'+(on?' on':'')+'" data-act="roomopen" role="switch" aria-checked="'+on+'" aria-label="Zuschauen erlauben"><i></i></button></div>';}
+function roomsSig(){return (L.roomPick||"")+"|"+Object.values(ROOMS).filter(roomShown).map(r=>r.code+r.phase+r.name+(r.open!==false)+roomCount(r)+(r.host||"")).join(",");}
 function vRooms(){
-  const list=Object.values(ROOMS).filter(roomLive).filter(r=>r.code!==ROOM||!G||(G.phase!=="lobby"&&G.phase!=="play")).sort((a,b)=>(b.at||0)-(a.at||0));
-  if(!list.length)return '';
-  return '<div class="card"><div class="eyebrow">Offene Räume</div><div class="rows">'+list.map(r=>{const n=roomCount(r),host=r.host?nm(r.host):"?",pl=r.phase==="play";
-    return '<button class="row roomrow" data-act="roomjoin" data-r="'+h(r.code)+'"><span class="who">'+h(r.name||r.code)+'<br><span class="muted" style="font-weight:600;font-size:13px">'+host+' leitet · '+n+(n===1?' Spieler':' Spieler')+' · '+(pl?(r.open===false?'Spiel läuft 🔒':'Spiel läuft 👀'):'Lobby offen')+'</span></span><span class="pts">'+(pl?(r.open===false?'Anmelden':'Ansehen'):'Beitreten')+' ›</span></button>';}).join('')+'</div></div>';
+  const list=Object.values(ROOMS).filter(roomShown).filter(r=>r.code!==ROOM||!G||(G.phase!=="lobby"&&G.phase!=="play")).sort((a,b)=>(b.at||0)-(a.at||0));
+  let o='<div class="card"><div class="eyebrow">👥 Mit anderen spielen</div>';
+  if(list.length)o+='<div class="rows" style="margin-top:8px">'+list.map(r=>{const n=roomCount(r),host=r.host?nm(r.host):"?",pl=r.phase==="play",pick=L.roomPick===r.code;
+    const chip=pl?(r.open===false?'<span class="rchip lock">Spiel läuft · 🔒</span>':'<span class="rchip play">Spiel läuft · 👀</span>'):'<span class="rchip wait">wartet auf Start</span>';
+    let x='<button class="row roomrow" data-act="'+(pl?'roompick':'roomjoin')+'" data-r="'+h(r.code)+'"><span class="who">'+h(r.name||r.code)+'<br><span class="muted rmeta">'+host+' leitet · '+n+' dabei</span><br>'+chip+'</span><span class="ract'+(pl?' alt':'')+'">'+(pl?(pick?'▲':'Anmelden'):'Beitreten')+'</span></button>';
+    if(pl&&pick)x+='<div class="rpick"><button class="btn" data-act="roomwait" data-r="'+h(r.code)+'">🙋 Für nächste Runde anmelden</button>'+(r.open===false?'<p class="muted small center" style="margin:0">🔒 Zuschauen ist in diesem Raum aus.</p>':'<button class="btn alt" data-act="roomwatch" data-r="'+h(r.code)+'">👀 Zuschauen</button>')+'</div>';
+    return x;}).join('')+'</div>';
+  else o+='<p class="muted small" style="margin:6px 0 0">Gerade ist kein Raum offen.</p>';
+  return o+'<button class="btn" data-act="newlobby" style="margin-top:12px">Neuen Raum eröffnen</button></div>';
 }
-function cleanRooms(){const now=Date.now();Object.values(ROOMS).forEach(r=>{if(r&&r.code&&now-(r.at||0)>24*36e5&&r.code!==ROOM&&!cleanRooms.d[r.code]){cleanRooms.d[r.code]=1;meWrite(()=>DB.doc("rooms/"+r.code).delete());}});}
+function vSoloCard(){return '<div class="card menu fade"><div class="eyebrow" style="padding:6px 8px 0">🤖 Allein spielen</div><button class="mrow" data-act="solo"><span class="mic">🤖</span><span class="mt">Gegen den Computer<small>Leicht, mittel oder Profi · ohne Raum</small></span><span class="chev">›</span></button></div>';}
+function cleanRooms(){const now=Date.now();Object.values(ROOMS).forEach(r=>{if(r&&r.code&&r.phase!=="gone"&&now-(r.at||0)>24*36e5&&r.code!==ROOM&&!cleanRooms.d[r.code]){cleanRooms.d[r.code]=1;const a={code:r.code,name:r.name||"",phase:"gone",v:"gone",at:r.at||0,createdAt:r.createdAt||0,startedAt:r.startedAt||0};meWrite(()=>DB.doc("rooms/"+r.code).set(a));}});}
 cleanRooms.d={};
 function saveMetaUsed(u){if(SOLO||!u)return;const x={};Object.keys(u).forEach(k=>{if(Array.isArray(u[k])&&k!=="off"&&k!=="lastModes")x[k]=u[k];});META_USED=x;meWrite(()=>DB.doc("meta/used").set({used:x,at:Date.now()}));}
 
@@ -3185,6 +3208,7 @@ function nameField(){
   return '<div class="field" style="--c:var(--p2)"><label for="myname">Dein Name</label><input id="myname" maxlength="14" autocomplete="off" placeholder="Name eingeben" value="'+h(L.name)+'"></div>';
 }
 function errBox(){return L.err?'<div class="msg">'+h(L.err)+'</div>':'';}
+function backBtn(){const c=L.confirm==="roomleave",nx=c?nextHost():null;return '<button class="linkbtn rback'+(c?' warn':'')+'" data-act="roomleave">'+(c&&nx?'Leitung an '+nm(nx)+' geben und gehen? Nochmal tippen':'← Alle Räume')+'</button>';}
 function waitNote(t){return '<p class="center muted wait">'+t+'</p>';}
 function hostBtn(label,act){return amHost()?'<button class="btn stick" data-act="'+act+'">'+label+'</button>':waitNote('Warten auf '+hostName()+' …');}
 
@@ -3206,27 +3230,26 @@ function vMain(){
   if(dbState==="nodb")return '<div class="marquee"><div class="mq-in"><div class="logo">DREI<br>KAMPF</div></div></div><div class="card"><p>Keine Verbindung zum Spielstand. Prüf dein Internet und lade die Seite neu.</p></div>';
   if(!G||(G.phase!=="lobby"&&G.phase!=="play")||leftGame()){
     return '<div class="marquee fade"><div class="mq-in"><div class="logo one">DREIKAMPF</div><p class="tag small">Jeder am eigenen Handy</p></div></div>'+
-      vMyCard(true)+errBox()+pinSetCard()+vRooms()+
-      '<button class="btn" data-act="newlobby">Neues Spiel eröffnen</button><p class="center muted small" style="margin-top:-4px">Du bekommst einen eigenen Raum. Die anderen treten über die Liste oder deinen Einladungslink bei.</p>'+vHome();
+      vMyCard(true)+errBox()+(ROOM&&G&&(G.phase==="done"||G.phase==="gone")&&L.roomVia==="link"&&G.host!==ME?'<div class="msg">Der Raum aus dem Link ist schon geschlossen. Tritt unten einem offenen Raum bei oder eröffne einen neuen.</div>':'')+pinSetCard()+vRooms()+vSoloCard()+vHome();
   }
   if(G.phase==="lobby"){
-    const joined=P[ME]&&P[ME].g===G.v;
-    let out='<div class="marquee fade"><div class="mq-in"><div class="logo one">DREIKAMPF</div><p class="tag small">'+h(G.name||"Lobby")+' · '+hostName()+' leitet</p></div></div>';
+    const joined=P[ME]&&P[ME].g===G.v,host=amHost(),np=lobbyPlayers().length;
+    let out='<div class="rtop">'+backBtn()+'</div><div class="marquee fade"><div class="mq-in"><div class="logo one">DREIKAMPF</div><p class="rnm">'+h(G.name||"Raum")+(host?'<button class="rpen" data-act="roomname" aria-label="Raum umbenennen">✏️</button>':'')+'</p><p class="tag small">Wartet auf Start · '+(host?'Du leitest':hostName()+' leitet')+'</p></div></div>';
     if(!joined){
-      out+=(P[ME]&&P[ME].kicked===G.v?'<div class="msg">'+h(hostName())+' hat dich aus der Lobby genommen. Du kannst wieder beitreten.</div>':'')+vMyCard(true)+errBox()+(lobbyPlayers().length>=MAXP?'<div class="msg">Die Lobby ist voll ('+MAXP+' Leute). Du kannst zuschauen und in der nächsten Runde mitspielen.</div>':'<button class="btn" data-act="join">Mitspielen</button><p class="center muted small" style="margin-top:-4px">Du kannst dich auch nur umschauen, ohne beizutreten.</p>');
-    }else if(amHost()){
-      out+=errBox()+'<div class="strow"><button class="btn" id="startbtn" data-act="start">Spiel starten</button><button class="btn alt invb" data-act="invite" aria-label="Alle einladen">📣<small>Einladen</small></button></div>'+teamRow()+roomCtl();
+      out+=(P[ME]&&P[ME].kicked===G.v?'<div class="msg">'+h(hostName())+' hat dich aus dem Raum genommen. Du kannst wieder beitreten.</div>':'')+vMyCard(true)+errBox()+(np>=MAXP?'<div class="msg">Der Raum ist voll ('+MAXP+' Leute). Warte auf die nächste Runde oder eröffne einen eigenen Raum.</div>':'<button class="btn" data-act="join">Beitreten</button>');
+    }else if(host){
+      out+=errBox()+(np<2?'<div class="card center"><b>Noch niemand da</b><p class="muted small" style="margin:4px 0 0">Wer die Startseite öffnet, sieht deinen Raum. Schneller geht es mit einem Link.</p></div><button class="btn" data-act="invite">📣 Leute einladen</button>':'<div class="strow"><button class="btn" id="startbtn" data-act="start">Spiel starten ('+np+' dabei)</button><button class="btn alt invb" data-act="invite" aria-label="Leute einladen">📣<small>Einladen</small></button></div>')+teamRow();
     }else{
-      out+=errBox()+waitNote('Du bist dabei. Warten, bis '+hostName()+' startet …')+'<button class="linkbtn" style="display:block;margin:0 auto" data-act="leave">Doch nicht mitspielen</button>';
+      out+=errBox()+waitNote('✓ Du bist dabei. Warten, bis '+hostName()+' startet …');
     }
-    out+=lobbyPlayersCard()+(joined?pinSetCard():'')+lobbyShow()+(joined?'':vHome());
+    out+=lobbyPlayersCard()+(joined?pinSetCard():'')+lobbyShow();
     return out;
   }
   const st=step();if(!st)return '';
-  const spect=!inGame()?(amWaiting()?'<div class="waitbar">✓ Du bist vorgemerkt. Bei der Revanche oder in der nächsten Lobby bist du automatisch dabei.</div>':'<p class="center muted">Du schaust zu. Das Spiel läuft schon.</p>'+(L.name?'':vMyCard(true))+'<button class="btn" data-act="waitjoin">🙋 Beim nächsten Spiel mitmachen</button>'):'';
-  if(!inGame()&&!SOLO&&G.open===false)return '<div class="card center"><p class="qtext">🔒 Zuschauen ist in diesem Raum aus</p><p class="muted">'+h(G.name||"")+' · '+roster().length+' Spieler spielen gerade</p></div>'+(amWaiting()?'<div class="waitbar">✓ Du bist vorgemerkt. Bei der Revanche oder in der nächsten Lobby bist du automatisch dabei.</div>':(L.name?'':vMyCard(true))+'<button class="btn" data-act="waitjoin">🙋 Beim nächsten Spiel mitmachen</button>')+'<button class="btn alt" data-act="roomleave">🏠 Andere Räume</button>';
+  const spect=!inGame()?'<div class="rtop">'+backBtn()+'</div>'+(amWaiting()?'<div class="waitbar">✓ Du bist für die nächste Runde angemeldet. Bei der Revanche bist du automatisch dabei.</div>':'<p class="center muted">👀 Du schaust zu. Das Spiel läuft schon.</p>'+(L.name?'':vMyCard(true))+errBox()+'<button class="btn" data-act="waitjoin">🙋 Für nächste Runde anmelden</button>'):'';
+  if(!inGame()&&!SOLO&&G.open===false)return '<div class="rtop">'+backBtn()+'</div><div class="card center"><p class="qtext">'+h(G.name||"Raum")+'</p><p class="muted">Spiel läuft · '+hostName()+' leitet</p><p><b>'+roster().map(u=>nm(u)).join(', ')+'</b> '+(roster().length>1?'spielen':'spielt')+' gerade.</p><p class="muted small">🔒 Zuschauen ist in diesem Raum aus.</p></div>'+(amWaiting()?'<div class="waitbar">✓ Du bist für die nächste Runde angemeldet. Bei der Revanche bist du automatisch dabei.</div>':(L.name?'':vMyCard(true))+errBox()+'<button class="btn" data-act="waitjoin">🙋 Für nächste Runde anmelden</button>');
   const wl=inGame()?waiters():[];
-  const wbar=wl.length?'<div class="waitbar">🙋 '+wl.map(u=>h(nameOf(u))).join(', ')+(wl.length>1?' warten':' wartet')+' aufs nächste Spiel</div>':'';
+  const wbar=wl.length?'<div class="waitbar">🙋 '+wl.map(u=>h(nameOf(u))).join(', ')+(wl.length>1?' sind':' ist')+' für die nächste Runde angemeldet</div>':'';
   let body='';
   switch(st.t){
     case "intro":body=vIntro(st);break;
@@ -3479,7 +3502,7 @@ function vEnd(){
   rows+='</div>';
   const wl=waiters(),wn=wl.map(u=>h(nameOf(u))).join(', ');
   const outs=roster().filter(u=>isOut(u)),inR=inGame()&&!amHost()&&!SOLO;
-  const btns=(outs.length?'<div class="waitbar">🚪 '+outs.map(u=>h(nameOf(u))).join(', ')+(outs.length>1?' hören':' hört')+' auf und '+(outs.length>1?'sind':'ist')+' bei der Revanche nicht dabei</div>':'')+(inR?(isOut(ME)?'<button class="btn alt" data-act="outundo">↩️ Doch bei der Revanche mitmachen</button>':'<button class="btn alt" data-act="outnext">🚪 Bei der Revanche nicht mitmachen</button>'):'')+(wl.length?'<div class="waitbar">🙋 '+wn+(wl.length>1?' warten':' wartet')+(amHost()?' und '+(wl.length>1?'spielen':'spielt')+' bei der Revanche mit':' aufs nächste Spiel')+'</div>':'')+(amHost()?'<button class="btn stick" data-act="rematch">Revanche mit neuen Fragen</button><button class="btn alt" data-act="tolobby">'+(SOLO?'Solo beenden':'Neue Lobby öffnen')+'</button>':waitNote('Warten auf '+hostName()+' für die Revanche …'))+'<button class="btn alt" data-act="board">Siegerboard</button>'+(SOLO?'':'<button class="btn alt" data-act="endgame">'+(amHost()?'Spiel beenden':'Zur Startseite')+'</button>');
+  const btns=(outs.length?'<div class="waitbar">🚪 '+outs.map(u=>h(nameOf(u))).join(', ')+(outs.length>1?' hören':' hört')+' auf und '+(outs.length>1?'sind':'ist')+' bei der Revanche nicht dabei</div>':'')+(inR?(isOut(ME)?'<button class="btn alt" data-act="outundo">↩️ Doch bei der Revanche mitmachen</button>':'<button class="btn alt" data-act="outnext">🚪 Nach diesem Spiel aufhören</button>'):'')+(wl.length?'<div class="waitbar">🙋 '+wn+(amHost()?(wl.length>1?' spielen':' spielt')+' bei der Revanche mit':(wl.length>1?' sind':' ist')+' für die nächste Runde angemeldet')+'</div>':'')+(amHost()?'<button class="btn stick" data-act="rematch">Revanche</button><button class="btn alt" data-act="tolobby">'+(SOLO?'Solo beenden':'Neue Runde einstellen')+'</button>':waitNote('Warten auf '+hostName()+' für die Revanche …'))+'<button class="btn alt" data-act="board">Siegerboard</button>'+(SOLO?'':'<button class="btn alt" data-act="endgame">'+(amHost()?'Raum schließen':'Raum verlassen')+'</button>');
   return '<div class="marquee fade"><div class="mq-in"><div class="eyebrow">Endstand</div><h2 class="rtitle">'+head+'</h2><p class="tag">'+(tops.length>1?'Das Stechen findet am Küchentisch statt.':'Applaus, Applaus. Bitte verbeugen.')+'</p></div></div>'+rows+(tw?vTeamBar():'')+'<p class="muted center">Der Sieger trägt bis zum nächsten Spiel die Krone, der Letzte die Eselsohren.</p>'+vRecap()+vXpCard()+btns+vShot();
 }
 
@@ -3508,10 +3531,10 @@ function vMenu(){
     else{b+=isOut(ME)?B("outundo","↩️ Doch weiterspielen"):B("outnext","🚪 Nach diesem Spiel aufhören");
       b+=B("quitnow",L.confirm==="quitnow"?'Wirklich sofort raus? Nochmal tippen':'⏹ Sofort aussteigen');}
   }
-  if(!amHost()&&G&&(G.phase==="lobby"||G.phase==="play"))b+=B("takeover",L.confirm==="takeover"?'Sicher? Nochmal tippen':'Spielleitung übernehmen');
-  if(atEnd()&&!SOLO&&!leftGame())b+=B("endgame",amHost()?'Spiel beenden':'Zur Startseite');
-  else if(amHost()&&G.phase==="play")b+=B("abort",L.confirm==="abort"?'Wirklich abbrechen? Nochmal tippen':'Spiel abbrechen, neue Lobby');
-  if(ROOM&&!SOLO&&G)b+=B("roomleave",(G.phase==="play"&&inGame()&&!atEnd())?'🏠 Raum verlassen (Spiel läuft weiter)':'🏠 Andere Räume / Raum verlassen');
+  if(!amHost()&&G&&(G.phase==="lobby"||G.phase==="play")&&hostAway()&&(inGame()||(P[ME]&&P[ME].g===G.v)))b+=B("takeover",L.confirm==="takeover"?'Sicher? Nochmal tippen':'Spielleitung übernehmen');
+  if(atEnd()&&!SOLO&&!leftGame()&&amHost())b+=B("endgame",'Raum schließen');
+  else if(amHost()&&G.phase==="play"&&!atEnd())b+=B("abort",L.confirm==="abort"?'Wirklich abbrechen? Nochmal tippen':'Spiel abbrechen (zurück zum Warten)');
+  if(ROOM&&!SOLO&&G&&(G.phase==="lobby"||G.phase==="play")){const c=L.confirm==="roomleave",nx=c?nextHost():null;b+=B("roomleave",c&&nx?'Leitung an '+nm(nx)+' geben und gehen? Nochmal tippen':'🏠 Raum verlassen'+((G.phase==="play"&&inGame()&&!atEnd())?' (Spiel läuft ohne dich weiter)':''));}
   b+='<div class="mduo">'+B("board","🏆 Siegerboard")+B("avatar","🎨 Avatar")+'</div>';
   b+='<div class="mduo">'+B("guide","📖 Anleitung")+B("custom","✍️ Eigene Frage")+'</div>';
   if(canSwitch())b+='<div class="msec">Mein Profil</div><div class="mtri">'+B("pinview","🔐 PIN")+B("devcopy","📲 Code")+B("devload","📥 Laden")+'</div>';
@@ -3553,7 +3576,7 @@ function renderAll(force){
     lastKey=null;
     try{
       mainEl.innerHTML='<div class="card"><div class="rtitle" style="font-size:22px">Ups, Anzeige-Fehler</div><p>Diese Ansicht konnte nicht angezeigt werden. Das Spiel selbst läuft weiter.</p>'+
-        (G&&G.phase==="play"&&amHost()?'<button class="btn" data-act="reveal">Auflösen</button><button class="btn" data-act="next">Weiter</button><button class="btn alt" data-act="abort">'+(L.confirm==="abort"?'Wirklich abbrechen? Nochmal tippen':'Spiel abbrechen, neue Lobby')+'</button>':'<p class="muted">Die Spielleitung kann weiterschalten.</p>')+'</div>';
+        (G&&G.phase==="play"&&amHost()?'<button class="btn" data-act="reveal">Auflösen</button><button class="btn" data-act="next">Weiter</button><button class="btn alt" data-act="abort">'+(L.confirm==="abort"?'Wirklich abbrechen? Nochmal tippen':'Spiel abbrechen (zurück zum Warten)')+'</button>':'<p class="muted">Die Spielleitung kann weiterschalten.</p>')+'</div>';
     }catch(e2){}
   }
 }
@@ -3580,7 +3603,7 @@ function renderAll0(force){
     afterMain();
   }
   const sb=document.getElementById("startbtn");
-  if(sb){const n=lobbyPlayers().length;sb.disabled=false;sb.textContent=n<2?"🤖 Solo spielen":"Spiel starten ("+n+" Leute)";}
+  if(sb){const n=lobbyPlayers().length;sb.disabled=n<2;sb.textContent="Spiel starten ("+n+" dabei)";}
   statusEl.innerHTML=vStatus();
   const fsg=topEl.offsetHeight+"|"+window.innerHeight+"|"+(G?G.phase+G.idx+G.reveal:"")+"|"+(L.view||"");if(fsg!==renderAll.fsg){renderAll.fsg=fsg;try{fitLayout();if(mainEl.querySelector("#stage"))fitZoom();}catch(e){}}
 }
@@ -3676,15 +3699,15 @@ function startConfetti(){
 function act(a,d){
   const st=step();
   if(a==="newlobby"||a==="join"||a==="waitjoin"){L.curAct=a;L.curD=d;}
-  if(a!=="takeover"&&a!=="abort"&&a!=="joker"&&a!=="kick"&&a!=="mdo"&&a!=="mauto"&&a!=="reveal"&&a!=="quitnow")L.confirm=null;
+  if(a!=="takeover"&&a!=="abort"&&a!=="roomleave"&&a!=="joker"&&a!=="kick"&&a!=="mdo"&&a!=="mauto"&&a!=="reveal"&&a!=="quitnow")L.confirm=null;
   switch(a){
     case "newlobby":newLobby();break;
     case "leave":if(G&&G.phase==="lobby"&&!amHost()){meWrite(()=>myRef().update({g:""}));if(P[ME])P[ME].g="";renderAll(true);}break;
     case "outnext":if(G&&G.phase==="play"&&inGame()&&!amHost()){meFlag({out:G.v});L.menu=false;renderAll(true);}break;
     case "outundo":if(G&&G.phase==="play"&&inGame()){meFlag({out:"",quit:""});L.menu=false;renderAll(true);}break;
     case "quitnow":if(G&&G.phase==="play"&&inGame()&&!amHost()){if(L.confirm!=="quitnow"){L.confirm="quitnow";renderAll(true);break;}L.confirm=null;meFlag({out:G.v,quit:G.v});L.menu=false;renderAll(true);}break;
-    case "pinok":if(L.pinAsk){const v=((document.getElementById("pinin")||{}).value||"").trim(),a=L.pinAsk,pr=PINS[a.u];if(pr&&pr.h===pinHash(a.u,v)){DK_SWITCH(a.u,a.n);}else{L.pinErr="Die PIN stimmt nicht.";renderAll(true);}}break;
-    case "pinme":if(L.pinAsk&&pinFresh(L.pinAsk.u)&&canSwitch()){DK_SWITCH(L.pinAsk.u,L.pinAsk.n);}break;
+    case "pinok":if(L.pinAsk){const v=((document.getElementById("pinin")||{}).value||"").trim(),a=L.pinAsk,pr=PINS[a.u];if(pr&&pr.h===pinHash(a.u,v)){pinGo(a);}else{L.pinErr="Die PIN stimmt nicht.";renderAll(true);}}break;
+    case "pinme":if(L.pinAsk&&pinFresh(L.pinAsk.u)&&canSwitch()){pinGo(L.pinAsk);}break;
     case "pinother":L.pinAsk=null;L.name="";try{localStorage.removeItem("dk_name");}catch(e){}renderAll(true);break;
     case "pinno":if(L.pinAsk){const a=L.pinAsk;L.pinSkip=L.pinSkip||{};L.pinSkip[a.n.trim().toLowerCase()]=1;L.pinAsk=null;if(a.act)act(a.act,a.d);else renderAll(true);}break;
     case "pinsave":{const v=((document.getElementById("pinset")||{}).value||"").trim();if(!/^\d{4}$/.test(v)){L.pinMsg="Bitte genau 4 Ziffern.";renderAll(true);break;}PINS[ME]={h:pinHash(ME,v),at:Date.now()};meWrite(()=>DB.doc("pins/"+ME).set(PINS[ME]));L.pinMsg="✓ PIN gespeichert. Merk sie dir gut!";renderAll(true);}break;
@@ -3693,15 +3716,20 @@ function act(a,d){
     case "pindel":if(ME===FOUNDER&&L.mA){const u=L.mA;delete PINS[u];meWrite(()=>DB.doc("pins/"+u).delete());L.mA=null;renderAll(true);}break;
     case "join":if(G&&G.phase==="lobby"&&lobbyPlayers().length>=MAXP&&!(P[ME]&&P[ME].g===G.v)){renderAll(true);break;}join(G.v);break;
     case "waitjoin":if(G&&G.phase==="play"&&!inGame()){const n=saveName();if(n){logEv("angemeldet_naechstes_spiel",{via:L.roomVia||"unbekannt"});}if(n)meWrite(()=>myRef().set({name:n,g:"",wait:G.v,waitRoom:ROOM||"",t:Date.now(),seen:Date.now(),ans:{}}));}break;
-    case "roomjoin":if(d.r)enterRoom(String(d.r),"liste");break;
-    case "roomleave":leaveRoom();break;
+    case "roomjoin":if(d.r){L.roomPick=null;L.autoAct={a:"join",r:String(d.r)};enterRoom(String(d.r),"liste");}break;
+    case "roompick":if(d.r){L.roomPick=L.roomPick===d.r?null:String(d.r);renderAll(true);}break;
+    case "roomwait":if(d.r){L.roomPick=null;L.autoAct={a:"wait",r:String(d.r)};enterRoom(String(d.r),"liste");}break;
+    case "roomwatch":if(d.r){L.roomPick=null;logEv("zuschauen",{via:"liste"});enterRoom(String(d.r),"liste");}break;
+    case "roomleave":if(!SOLO&&G&&amHost()&&(G.phase==="lobby"||G.phase==="play")&&nextHost()&&L.confirm!=="roomleave"){L.confirm="roomleave";renderAll(true);setTimeout(()=>{if(L.confirm==="roomleave"){L.confirm=null;renderAll(true);}},5000);break;}L.confirm=null;leaveRoom();break;
+    case "invite":{const url=location.origin+location.pathname+(ROOM?"?r="+ROOM:""),t=(nameOf(ME)||L.name||"Jemand")+" lädt dich in "+(G&&G.name?"den Raum „"+G.name+"“":"ein Dreikampf-Spiel")+" ein 🔥 Wer ist dabei?";logEv("eingeladen");
+      if(navigator.share)navigator.share({title:"Dreikampf",text:t,url:url}).catch(()=>{});else window.open("https://wa.me/?text="+encodeURIComponent(t+" "+url),"_blank");}break;
     case "roomopen":if(amHost()&&G&&ROOM){const x=G.open===false;G.open=x;gWrite(()=>gRef().update({open:x}));renderAll(true);}break;
     case "roomname":if(amHost()&&G&&ROOM){const n=(prompt("Neuer Name für den Raum:",G.name||"")||"").trim().slice(0,22);if(n){G.name=n;gWrite(()=>gRef().update({name:n}));renderAll(true);}}break;
-    case "start":if(amHost()){if(lobbyPlayers().length<2){soloPrefs();L.view="solo";L.soloTheme=lobbyKI()?"ki":themeOf();L.soloLen=lenOf();L.soloOff=offModes();renderAll(true);}else startGame();}break;
+    case "start":if(amHost()&&lobbyPlayers().length>=2)startGame();break;
     case "next":hostNext();break;
     case "reveal":if(L.confirm!=="reveal"){L.confirm="reveal";renderAll(true);setTimeout(()=>{if(L.confirm==="reveal"){L.confirm=null;renderAll(true);}},4000);break;}L.confirm=null;hostReveal();break;
     case "rematch":if(amHost())rematch();break;
-    case "endgame":if(atEnd()&&!SOLO){L.menu=false;L.view=null;if(amHost())endGame();else{L.leftV=G.v;renderAll(true);}window.scrollTo(0,0);}break;
+    case "endgame":if(atEnd()&&!SOLO){L.menu=false;L.view=null;if(amHost()){endGame();logEv("raum_geschlossen");}else leaveRoom();window.scrollTo(0,0);}break;
     case "tolobby":if(SOLO)soloExit();else if(amHost())toLobby();break;
     case "menu":L.menu=true;renderAll();break;
     case "themeset":if(amHost()&&G&&G.phase==="lobby"&&themeKeys().indexOf(d.x)>=0){themeLocal={v:G.v,x:d.x,t:Date.now()};sfx.pop();renderAll(true);const used=Object.assign({},G.used||{},{theme:d.x});gWrite(()=>gRef().update({used:used}));}break;
@@ -3743,8 +3771,6 @@ function act(a,d){
     case "rx":{const k=Number(d.k);if(RX[k]&&P[ME]&&Date.now()-lastRxSend>3000){lastRxSend=Date.now();const t=Date.now();lastRx[ME]=t;meWrite(()=>myRef().update({rx:{k:k,t:t}}));floatRx(ME,k);}break;}
     case "devcopy":{const c=ME||"";const done=()=>alert("Dein Profil-Code wurde kopiert:\n\n"+c+"\n\nAuf dem anderen Gerät oder in der Home-Bildschirm-App: Menü → „Profil von anderem Gerät laden“ und einfügen.");try{navigator.clipboard.writeText(c).then(done,()=>prompt("Dein Profil-Code (kopieren):",c));}catch(e){prompt("Dein Profil-Code (kopieren):",c);}}break;
     case "devload":{const c=(prompt("Profil-Code vom anderen Gerät einfügen:")||"").trim();if(!c)break;if(!/^[A-Za-z0-9_-]{10,40}$/.test(c)){alert("Das ist kein gültiger Code.");break;}if(c===ME){alert("Das ist schon dein Profil.");break;}if(confirm("Dieses Gerät übernimmt das andere Profil (Name, Level, Freischaltungen). Weiter?")){try{localStorage.setItem("dk_id",c);localStorage.removeItem("dk_name");}catch(e){}location.reload();}}break;
-    case "invite":{const url=location.origin+location.pathname+(ROOM?"?r="+ROOM:""),t=(nameOf(ME)||L.name||"Jemand")+" hat ein Dreikampf-Spiel eröffnet 🔥 Wer ist dabei?";
-      if(navigator.share)navigator.share({title:"Dreikampf",text:t,url:url}).catch(()=>{});else window.open("https://wa.me/?text="+encodeURIComponent(t+" "+url),"_blank");}break;
     case "sound":soundOn=!soundOn;try{localStorage.setItem("dk_snd",soundOn?"1":"0");}catch(e){}
       if(!soundOn&&silentEl){try{silentEl.pause();}catch(e){}silentEl=null;}
       unlockAudio();renderAll();if(soundOn)setTimeout(()=>sfx.good(),60);break;
@@ -3967,7 +3993,6 @@ function vHome(){
   const L2=leagueOf(monthKey()),pi=L2.findIndex(a=>a.u===ME),nc=CUST.filter(c=>c.u===ME&&!c.del).length;
   const row=(act,ic,t,sub,right)=>'<button class="mrow" data-act="'+act+'"><span class="mic">'+ic+'</span><span class="mt">'+t+(sub?'<small>'+sub+'</small>':'')+'</span>'+right+'</button>';
   let o='<div class="card menu fade">';
-  o+=row("solo","🤖","Solo gegen Computer","Leicht, mittel oder Profi",'<span class="chev">›</span>');
   o+=row("board","🏆","Liga & Siegerboard",monthName(monthKey()).split(" ")[0]+": "+(pi>=0?"Platz "+(pi+1)+" · "+L2[pi].pts+" Pkt":"noch keine Punkte"),'<span class="chev">›</span>');
   return o+'</div>';
 }
@@ -4418,6 +4443,7 @@ let prevReveal=null;
 function onChange(){
   if(!gotGame||!gotPlayers)return;
   dbState="ok";
+  try{runAfter();runAuto();}catch(e){}
   if(!SOLO&&G&&G.phase==="lobby"&&P[ME]&&P[ME].wait&&(!P[ME].waitRoom||P[ME].waitRoom===ROOM)&&P[ME].g!==G.v&&autoJ!==G.v){autoJ=G.v;const n=P[ME].name||L.name||"Mitspieler";meWrite(()=>myRef().set({name:n,g:G.v,t:Date.now(),seen:Date.now(),ans:{}}));}
   // Ton beim Auflösen
   const rk=G?G.v+"|"+G.idx+"|"+G.reveal:null;
@@ -4469,6 +4495,13 @@ function knownByName(n){const k=(n||"").trim().toLowerCase();if(!k)return null;l
   mergeList().forEach(x=>{if(x.u===ME||ALIAS[x.u]||OLD_IDS[x.u]||/^bot_/.test(x.u))return;if((x.n||"").trim().toLowerCase()!==k)return;const t=lastAct(x.u);if(t>bt){bt=t;best=x;}});return best;}
 /* neues Profil ohne Spiele und ohne PIN: darf ohne PIN übernommen werden */
 function pinFresh(u){if(PINS[u])return false;const pr=progOf(u);return !(pr.games>0)&&!(num0(pr.soloG)>0)&&!(num0(pr.xp)>0);}
+/* Nach dem Profilwechsel (Neuladen) die angefangene Handlung fortsetzen, z. B. Beitreten */
+function pinGo(a){try{localStorage.setItem("dk_after",JSON.stringify({a:a.act||"",room:ROOM||"",at:Date.now()}));}catch(e){}logEv("pin_profil_geholt");DK_SWITCH(a.u,a.n);}
+function runAfter(){if(SOLO||runAfter.done||!G&&ROOM)return;runAfter.done=1;let a=null;try{a=JSON.parse(localStorage.getItem("dk_after")||"null");localStorage.removeItem("dk_after");}catch(e){}
+  if(!a||Date.now()-(a.at||0)>300000||(a.room||"")!==(ROOM||""))return;
+  setTimeout(()=>{L.curAct=a.a;if(a.a==="join"&&G&&G.phase==="lobby"&&!(P[ME]&&P[ME].g===G.v))join(G.v);else if(a.a==="waitjoin"&&G&&G.phase==="play"&&!inGame())act("waitjoin",{});else if(a.a==="newlobby")newLobby();},0);}
+function runAuto(){if(SOLO||!L.autoAct||L.autoAct.r!==ROOM||!G)return;const x=L.autoAct;L.autoAct=null;
+  setTimeout(()=>{if(x.a==="join"&&G.phase==="lobby"&&!(P[ME]&&P[ME].g===G.v)&&lobbyPlayers().length<MAXP){L.curAct="join";L.curD={};join(G.v);}else if(x.a==="wait"&&G.phase==="play"&&!inGame()&&!amWaiting()){L.curAct="waitjoin";L.curD={};act("waitjoin",{});}},0);}
 function pinCheck(n){
   if(!canSwitch()||!ME||progOf(ME).games>0)return false;
   L.pinSkip=L.pinSkip||{};const k=n.trim().toLowerCase();if(L.pinSkip[k])return false;
@@ -4708,7 +4741,7 @@ function makeLDB(){
       onSnapshot:fn=>{const f=()=>fn(snap(p));subs.push(f);setTimeout(f,0);return ()=>{};}}),
     collection:c=>({onSnapshot:fn=>{const f=()=>fn({docs:Object.keys(store).filter(k=>k.indexOf(c+"/")===0&&k.split("/").length===2).map(snap)});subs.push(f);setTimeout(f,0);return ()=>{};}})};
 }
-function kiLobbyOk(){return !!(ME===FOUNDER&&KI_MC.length&&G&&G.phase==="lobby"&&amHost()&&lobbyPlayers().length<2);}
+function kiLobbyOk(){return false&&!!(ME===FOUNDER&&KI_MC.length&&G&&G.phase==="lobby"&&amHost()&&lobbyPlayers().length<2);}
 function lobbyThemes(){return themeKeys().concat(kiLobbyOk()?["ki"]:[]);}
 function lobbyKI(){return !!(L.lobbyKI&&kiLobbyOk());}
 function soloThemes(){return themeKeys().concat(ME===FOUNDER&&!xmasOn()?["xmas"]:[]).concat(ME===FOUNDER&&KI_MC.length?["ki"]:[]);}
@@ -4834,13 +4867,13 @@ const G_SYN={punkte:"punkt score zaehlt zaehlen",joker:"doppelt x2 verdoppeln",f
 function gSec(){
   const S=[];const add=(c,t,x,k)=>S.push({c:c,t:t,x:x,k:k||""});
   add("Start","So funktioniert Dreikampf","Jeder spielt am eigenen Handy. Wissen, Bauchgefühl und Geschick bringen Punkte. Wer nach dem Finale vorne liegt, gewinnt. Die Spielleitung (wer das Spiel eröffnet) tippt sich durch die Runden.","regeln ueberblick");
-  add("Start","Spiel eröffnen und Leute einladen","Namen eingeben, „Neues Spiel eröffnen“ tippen. Mit „📣 Einladen“ schickst du den Link per WhatsApp oder Nachricht. Die anderen öffnen den Link und tippen „Mitspielen“. Gestartet wird ab 2 Leuten, maximal "+MAXP+". Allein steht auf dem Knopf „🤖 Solo spielen“.","lobby link");
-  add("Lobby","Spiellänge","Kurz (ca. 8 Min.), Normal (ca. 15 Min.) oder Lang (ca. 25 Min.). Darunter siehst du den Ablauf: Fragen, Überraschungsrunden, Geschicklichkeitsspiel und Finale.","dauer runden");
-  add("Lobby","Spielräume","Jedes Spiel läuft in einem eigenen Raum mit Namen, z. B. „🔥 Phönix-Arena“. Mehrere Gruppen können gleichzeitig spielen. Auf der Startseite stehen alle offenen Räume: Lobby beitreten, laufendes Spiel ansehen oder fürs nächste Spiel anmelden. Die Spielleitung kann den Raum umbenennen und „Zuschauen erlaubt“ ausschalten. Mitspielen anmelden geht immer. Den Raum wechselst du im Menü über „Andere Räume“. Liga, Level und Siegerboard zählen über alle Räume.","raum räume parallel gleichzeitig zuschauen umbenennen");
-  add("Lobby","Thema für Runde 1 und Finale","Am Drehrad wählt die Spielleitung ein Thema, z. B. Bayern, Sport, Sportlerinnen, Logik & IQ oder Gemischt. Es gilt für die Fragen in Runde 1 und das Finale. Bei „Logik & IQ“ sind Runde 1 und Finale reine Denkrätsel ohne Wissen. „Baby & Eltern“ ist ein Extra-Thema für Eltern kleiner Kinder (Entwicklung, Schlaf, Essen, Sicherheit): Die Fragen kommen nur, wenn man dieses Thema wählt.","kategorie themen");
-  add("Lobby","Überraschungsrunden auswählen","Die Spielleitung kann einzelne Spielarten abwählen. Mindestens 2 bleiben an. „Kleinste Zahl“ und „Mehrheit“ kommen erst ab 3 Leuten.","spielarten modi");
-  add("Lobby","Team-Modus","Ab 4 Leuten: zwei Teams (🔴 Rot und 🔵 Blau), fair nach Level gemischt. Die Punkte im Team werden zusammengezählt, ein kleineres Team wird hochgerechnet. Für Level, Abzeichen und Liga zählt weiter deine eigene Platzierung. Unter 4 Leuten spielt jeder für sich, auch wenn der Schalter an ist.","teams rot blau");
-  add("Lobby","Leute rauswerfen und Abwesende","Die Spielleitung tippt neben einem Namen auf ✕ und dann auf „Raus?“. Wer die Seite schließt, bleibt erst einmal in der Lobby und verschwindet nach 3 Minuten ohne Lebenszeichen.","kick entfernen offline");
+  add("Start","Raum eröffnen und Leute einladen","Namen eingeben, „Neuen Raum eröffnen“ tippen. Mit „📣 Leute einladen“ schickst du den Link per WhatsApp. Die anderen öffnen den Link und tippen „Beitreten“, oder sie tippen deinen Raum auf der Startseite an. Gestartet wird ab 2 Leuten, maximal "+MAXP+". Allein spielst du über „🤖 Allein spielen“ auf der Startseite.","lobby link einladen beitreten");
+  add("Raum","Spiellänge","Kurz (ca. 8 Min.), Normal (ca. 15 Min.) oder Lang (ca. 25 Min.). Darunter siehst du den Ablauf: Fragen, Überraschungsrunden, Geschicklichkeitsspiel und Finale.","dauer runden");
+  add("Raum","Räume","Jedes Gruppenspiel läuft in einem eigenen Raum mit Namen, z. B. „🔥 Phönix-Arena“. Mehrere Gruppen können gleichzeitig spielen. Auf der Startseite stehen alle Räume, in denen gerade jemand ist: „wartet auf Start“ → Beitreten. „Spiel läuft“ → Für nächste Runde anmelden oder Zuschauen. Die Spielleitung kann den Raum mit ✏️ umbenennen und „Andere dürfen zuschauen“ ausschalten. Anmelden geht immer. Raus geht es oben über „← Alle Räume“. Geht die Spielleitung, übernimmt automatisch die nächste Person. Liga, Level und Siegerboard zählen über alle Räume.","raum räume parallel gleichzeitig zuschauen umbenennen verlassen");
+  add("Raum","Thema für Runde 1 und Finale","Am Drehrad wählt die Spielleitung ein Thema, z. B. Bayern, Sport, Sportlerinnen, Logik & IQ oder Gemischt. Es gilt für die Fragen in Runde 1 und das Finale. Bei „Logik & IQ“ sind Runde 1 und Finale reine Denkrätsel ohne Wissen. „Baby & Eltern“ ist ein Extra-Thema für Eltern kleiner Kinder (Entwicklung, Schlaf, Essen, Sicherheit): Die Fragen kommen nur, wenn man dieses Thema wählt.","kategorie themen");
+  add("Raum","Überraschungsrunden auswählen","Die Spielleitung kann einzelne Spielarten abwählen. Mindestens 2 bleiben an. „Kleinste Zahl“ und „Mehrheit“ kommen erst ab 3 Leuten.","spielarten modi");
+  add("Raum","Team-Modus","Ab 4 Leuten: zwei Teams (🔴 Rot und 🔵 Blau), fair nach Level gemischt. Die Punkte im Team werden zusammengezählt, ein kleineres Team wird hochgerechnet. Für Level, Abzeichen und Liga zählt weiter deine eigene Platzierung. Unter 4 Leuten spielt jeder für sich, auch wenn der Schalter an ist.","teams rot blau");
+  add("Raum","Leute rauswerfen und Abwesende","Die Spielleitung tippt neben einem Namen auf ✕ und dann auf „Raus?“. Wer die Seite schließt, bleibt erst einmal im Raum und verschwindet nach 3 Minuten ohne Lebenszeichen.","kick entfernen offline");
   add("Spielablauf","Zeit pro Frage","Pro Frage gibt es 2 Minuten. Fehlt nur noch einer, bleiben ihm 30 Sekunden. Die Spielleitung kann mit „Jetzt auflösen“ früher auflösen (zweimal tippen, damit es nicht aus Versehen passiert).","timer");
   POOL_MODES.concat(["mc","fin"]).forEach(m=>{if(MODES[m])add("Spielarten",MODES[m].t,MODES[m].r+(MIN3[m]?" Erst ab 3 Leuten.":"")+(SOLO_NO[m]?" Nicht im Solo-Modus.":""),m);});
   SKILLS.forEach(g=>{if(SKG[g])add("Geschicklichkeit",SKG[g].e+" "+SKG[g].t,SKG[g].r+" Ein Versuch. Platz 1: 150 Punkte, Platz 2: 100, Platz 3: 50 (zu zweit 150 und 50).","geschick "+g);});
@@ -4857,8 +4890,8 @@ function gSec(){
   SLOTS.forEach(([s,sn])=>{const its=Object.keys(ITEMS).filter(i=>ITEMS[i].s===s&&!ITEMS[i].only);if(!its.length)return;
     add("Freischalten",sn,its.map(i=>"<b>"+h(ITEMS[i].n)+"</b>: "+h(LI[i]||unlockHint(i)||"Abzeichen")).join(" · "),"freischalten "+sn+" "+its.map(i=>ITEMS[i].n).join(" "));});
   add("Freischalten","Figuren",Object.keys(FIG_LOCK).map(f=>"<b>"+h(FIGS[f].n)+"</b>: "+h(FIG_LOCK[f][0])).join(" · ")+". Alle anderen Figuren sind frei.","figur avatar loewe tiger hase schildkroete");
-  add("Freischalten","Champion-Auftritt","Ab 10 Gruppenspielen zählt deine Siegquote: ab 40 % 🎺 Favorit, ab 50 % 👑 Champion, ab 60 % 🏆 Legende, ab 80 % ⚡ Quizgott. Je höher, desto größer dein Auftritt in der Lobby.","siegquote favorit champion legende quizgott");
-  add("Solo","Solo gegen Computer","Startseite → „🤖 Solo gegen Computer“, oder allein in der Lobby auf „Solo spielen“. 1 bis 3 Gegner, je Leicht, Mittel oder Profi. Ohne Bluff, Mehrheit, Kleinste Zahl, „Wie gut kennst du …?“ und Gruppenfragen. Zählt halb fürs Level, nicht für Liga und Siegerboard. Manche Belohnungen gibt es nur solo.","computer bots einzelspieler");
+  add("Freischalten","Champion-Auftritt","Ab 10 Gruppenspielen zählt deine Siegquote: ab 40 % 🎺 Favorit, ab 50 % 👑 Champion, ab 60 % 🏆 Legende, ab 80 % ⚡ Quizgott. Je höher, desto größer dein Auftritt im Raum.","siegquote favorit champion legende quizgott");
+  add("Solo","Allein gegen den Computer","Startseite → „🤖 Allein spielen“. Dafür wird kein Raum eröffnet. 1 bis 3 Gegner, je Leicht, Mittel oder Profi. Ohne Bluff, Mehrheit, Kleinste Zahl, „Wie gut kennst du …?“ und Gruppenfragen. Zählt halb fürs Level, nicht für Liga und Siegerboard. Manche Belohnungen gibt es nur solo.","computer bots einzelspieler");
   add("Mehr","Monatsliga","In der Monatsliga zählen Gruppenspiele: Sieg 5, Platz 2: 3, Platz 3: 1 (zu zweit 3 und 1). Am Monatsende gibt es den Titel „Monatschampion“.","liga monat");
   add("Mehr","Frage melden","Nach der Auflösung unten „⚑ Stimmt was nicht? Frage melden“. So landen Fehler bei der Spielleitung.","fehler report");
   add("Mehr","Profil auf ein anderes Gerät mitnehmen","Startseite oder Menü: „📲 Profil mitnehmen“ kopiert deinen Code. Auf dem anderen Gerät oder in der App vom Home-Bildschirm „📥 Profil laden“ und Code einfügen. Code nicht weitergeben.","handy code geraet");
@@ -5003,7 +5036,7 @@ function founderWatch(){
 }
 if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js",{scope:"./"}).catch(()=>{});
 function DK_SWITCH(id,n){try{localStorage.setItem("dk_id",id);if(n)localStorage.setItem("dk_name",n);}catch(e){}location.reload();}
-const BUILD_ID="1792053846";
+const BUILD_ID="1792054964";
 function verCheck(){fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(r=>r.json()).then(j=>{if(j&&j.v&&j.v!==BUILD_ID&&!document.getElementById("upd")){const b=document.createElement("button");b.id="upd";b.textContent="✨ Neue Version da. Tippen zum Laden";b.onclick=()=>location.reload();document.body.appendChild(b);}}).catch(()=>{});}
 setInterval(verCheck,60000);document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")verCheck();});setTimeout(verCheck,5000);
 (async function boot(){
