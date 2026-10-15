@@ -2998,7 +2998,7 @@ function gRef(){
   const r=DB.doc("rooms/"+(ROOM||"_none"));
   return {onSnapshot:(a,b)=>r.onSnapshot(a,b),
     update:d=>r.update(Object.assign({},d,{at:Date.now()})),
-    set:d=>r.set(Object.assign({code:ROOM,name:(G&&G.name)||L.newRoomName||ROOM_NAMES[0],open:G?G.open!==false:true},d,{at:Date.now()}))};
+    set:d=>{const keep={code:ROOM,name:(G&&G.name)||L.newRoomName||ROOM_NAMES[0],open:G?G.open!==false:true};if(G&&G.createdAt)keep.createdAt=G.createdAt;if(G&&G.startedAt)keep.startedAt=G.startedAt;if(d.phase==="play"&&!keep.startedAt)keep.startedAt=Date.now();return r.set(Object.assign(keep,d,{at:Date.now()}));}};
 }
 function subRoom(){
   if(roomUnsub){try{roomUnsub();}catch(e){}roomUnsub=null;}
@@ -3008,11 +3008,33 @@ function subRoom(){
   roomUnsub=gRef().onSnapshot(s=>{if(my!==ROOM)return;RG=s.exists?saneGame(cln(s.data())):null;if(SOLO)return;G=RG;gotGame=true;onChange();},()=>{dbState="nodb";renderAll(true);});
 }
 function setRoomUrl(){try{const u=new URL(location.href);if(ROOM)u.searchParams.set("r",ROOM);else u.searchParams.delete("r");history.replaceState(null,"",u.pathname+(u.search||"")+u.hash);}catch(e){}}
-function enterRoom(code){if(!code||code===ROOM){renderAll(true);return;}ROOM=code;try{localStorage.setItem("dk_room",code);}catch(e){}setRoomUrl();L.view=null;L.leftV=null;G=null;subRoom();window.scrollTo(0,0);}
+function enterRoom(code,via){if(!code||code===ROOM){renderAll(true);return;}L.roomVia=via||"liste";ROOM=code;try{localStorage.setItem("dk_room",code);}catch(e){}setRoomUrl();L.view=null;L.leftV=null;G=null;subRoom();window.scrollTo(0,0);}
 function leaveRoom(){
+  if(G&&G.phase==="lobby"&&P[ME]&&P[ME].g===G.v)logEv("raum_verlassen",{host:amHost()?1:0,n:lobbyPlayers().length});
   if(G&&G.phase==="play"&&inGame()&&!atEnd()&&!SOLO)meFlag({out:G.v,quit:G.v});
   if(G&&P[ME]&&(P[ME].g===G.v||P[ME].wait===G.v)&&!(G.phase==="play"&&inGame()))meWrite(()=>myRef().update({g:"",wait:""}));
   ROOM=null;try{localStorage.removeItem("dk_room");}catch(e){}setRoomUrl();L.view=null;L.menu=false;G=null;subRoom();window.scrollTo(0,0);
+}
+/* ===== MESSUNG ===== */
+let EVS=[],ROOMS_ALL={};
+function logEv(t,x){try{if(!DB||!ME)return;const d=Object.assign({t:t,u:ME,room:ROOM||"",at:Date.now()},x||{});meWrite(()=>DB.doc("ev/"+rid()).set(d));}catch(e){}}
+function vStats(){
+  const med=a=>{if(!a.length)return null;const b=a.slice().sort((x,y)=>x-y);return b[Math.floor(b.length/2)];};
+  const dd=t=>t?new Date(t).toLocaleDateString("de-DE",{day:"2-digit",month:"2-digit"}):"–";
+  const grp=RAW.res.filter(r=>r&&Array.isArray(r.players)&&r.players.length>1),solo=RAW.solo.filter(r=>r);
+  const byN={};grp.forEach(r=>{const n=r.players.length;byN[n]=(byN[n]||0)+1;});
+  const ats=grp.concat(solo).map(r=>num0(r.at)).filter(Boolean);
+  const rooms=Object.values(ROOMS_ALL),now=Date.now();
+  const started=rooms.filter(r=>r.startedAt),never=rooms.filter(r=>!r.startedAt&&!roomLive(r)),waitLive=rooms.filter(r=>!r.startedAt&&roomLive(r));
+  const tts=started.filter(r=>r.createdAt).map(r=>(r.startedAt-r.createdAt)/60000);
+  const ev={};EVS.forEach(e=>{const k=e.t+(e.via?" ("+e.via+")":"");ev[k]=(ev[k]||0)+1;});
+  const evFirst=EVS.length?Math.min.apply(null,EVS.map(e=>num0(e.at)).filter(Boolean)):0;
+  const row=(a,b)=>'<div class="row"><span class="who">'+a+'</span><span class="pts">'+b+'</span></div>';
+  let o='<div class="marquee fade"><div class="mq-in"><div class="eyebrow">Nur für dich</div><h2 class="rtitle">Statistik</h2></div></div>';
+  o+='<div class="card"><div class="eyebrow">Gespeicherte Spiele</div><p class="muted small">Zeitraum: '+(ats.length?dd(Math.min.apply(null,ats))+' bis '+dd(Math.max.apply(null,ats)):'keine Daten')+'</p><div class="rows">'+row("Gruppenspiele",grp.length)+Object.keys(byN).sort((a,b)=>a-b).map(n=>row("· mit "+n+" Leuten",byN[n])).join('')+row("Solo-Spiele",solo.length)+(grp.length+solo.length?row("Solo-Anteil",Math.round(100*solo.length/(grp.length+solo.length))+" %"):'')+'</div></div>';
+  o+='<div class="card"><div class="eyebrow">Räume (erst seit 14.10.)</div><div class="rows">'+row("Räume gesamt",rooms.length)+row("mit gestartetem Spiel",started.length)+row("nie gestartet, verlassen",never.length)+row("warten gerade",waitLive.length)+(tts.length?row("Zeit bis Spielstart (Median)",Math.round(med(tts)*10)/10+" Min."):row("Zeit bis Spielstart","noch keine Daten"))+'</div><p class="muted small">Räume vor dieser Messung haben keine Start-Zeit und zählen als „nie gestartet“, wenn kein Spiel lief.</p></div>';
+  o+='<div class="card"><div class="eyebrow">Ereignisse seit Messstart'+(evFirst?' ('+dd(evFirst)+')':'')+'</div>'+(EVS.length?'<div class="rows">'+Object.keys(ev).sort().map(k=>row(h(k),ev[k])).join('')+'</div>':'<p class="muted">Noch keine. Die Messung läuft ab jetzt.</p>')+'</div>';
+  return o+'<button class="btn alt" data-act="boardclose">Zurück</button>';
 }
 function sameRoom(u){if(!G||!P[u])return false;return P[u].g===G.v||roster().indexOf(u)>=0||P[u].wait===G.v;}
 function roomCount(r){if(!r)return 0;if(r.phase==="play")return Array.isArray(r.roster)?r.roster.length:0;return Object.keys(P).filter(u=>P[u]&&P[u].g===r.v&&isActive(u)).length;}
@@ -3037,6 +3059,7 @@ function saveName(){
 }
 function join(v){
   const n=saveName();if(!n)return;
+  logEv("beitritt",{via:L.roomVia||"unbekannt"});
   meWrite(()=>myRef().set({name:n,g:v,t:Date.now(),seen:Date.now(),ans:{}}));
 }
 function answer(val){
@@ -3053,8 +3076,8 @@ function newLobby(){
   const v=rid(),used=JSON.parse(JSON.stringify(META_USED||(G&&G.used)||{mc:[],size:[],est:[],fin:[]}));
   const prev=G;ROOM=roomCode();L.newRoomName=roomName();G=null;try{localStorage.setItem("dk_room",ROOM);}catch(e){}setRoomUrl();
   if(prev&&prev.used&&prev.used.len){used.len=prev.used.len;used.theme=prev.used.theme;used.off=prev.used.off;used.teams=prev.used.teams;}
-  gWrite(()=>gRef().set({v:v,phase:"lobby",host:ME,roster:[],steps:[],idx:0,reveal:false,used:used,open:true,name:L.newRoomName}));
-  subRoom();
+  gWrite(()=>gRef().set({v:v,phase:"lobby",host:ME,roster:[],steps:[],idx:0,reveal:false,used:used,open:true,name:L.newRoomName,createdAt:Date.now()}));
+  subRoom();logEv("raum_eroeffnet");
   meWrite(()=>myRef().set({name:n,g:v,t:Date.now(),seen:Date.now(),ans:{}}));
 }
 function pick(used,pool,key,n){
@@ -3068,7 +3091,7 @@ function startGame(){
   const R=lobbyPlayers();if(R.length<2)return;
   const used=JSON.parse(JSON.stringify(G.used||{}));used.off=offModes();used.len=lenOf();used.theme=themeOf();used.teams=teamsOn();
   const steps=buildSteps(used,R),hc=computeHC(R),tm=(used.teams&&R.length>=4)?makeTeams(R):null;
-  gWrite(()=>gRef().update({phase:"play",roster:R,steps:steps,idx:0,reveal:false,used:used,hc:hc,teams:tm}));saveMetaUsed(used);
+  gWrite(()=>gRef().update(Object.assign({phase:"play",roster:R,steps:steps,idx:0,reveal:false,used:used,hc:hc,teams:tm},G.startedAt?{}:{startedAt:Date.now()})));saveMetaUsed(used);logEv("spiel_gestartet",{n:R.length});
 }
 function rematch(){
   const R0=roster().filter(u=>!isOut(u)).concat(waiters()).slice(0,MAXP);if(R0.length<2&&!SOLO){toLobby();return;}
@@ -3174,6 +3197,7 @@ function vMain(){
     if(L.view==="guide")return vGuide();
     if(L.view==="reports"&&ME===FOUNDER)return vReports();
     if(L.view==="merge"&&ME===FOUNDER)return vMerge();
+    if(L.view==="stats"&&ME===FOUNDER)return vStats();
     if(L.view==="solo"&&!SOLO)return vSolo();
     if(L.view==="avatar")return vEditor();
     if(L.view==="profile"&&L.pu)return vProfile(L.pu);
@@ -3492,13 +3516,13 @@ function vMenu(){
   b+='<div class="mduo">'+B("guide","📖 Anleitung")+B("custom","✍️ Eigene Frage")+'</div>';
   if(canSwitch())b+='<div class="msec">Mein Profil</div><div class="mtri">'+B("pinview","🔐 PIN")+B("devcopy","📲 Code")+B("devload","📥 Laden")+'</div>';
   if(xmasOn())b+=B("xspot","🎬 Weihnachtsspot ansehen");
-  if(ME===FOUNDER){const n=REPS.length;b+='<div class="msec">Nur für dich</div><div class="mduo">'+B("reports","🚩 Meldungen"+(n?' ('+n+')':''))+B("merge","🔗 Profile")+'</div>'+(xmasOn()?'':B("xspot","🎬 Weihnachtsspot"));}
+  if(ME===FOUNDER){const n=REPS.length;b+='<div class="msec">Nur für dich</div><div class="mduo">'+B("reports","🚩 Meldungen"+(n?' ('+n+')':''))+B("merge","🔗 Profile")+'</div>'+B("stats","📊 Statistik")+(xmasOn()?'':B("xspot","🎬 Weihnachtsspot"));}
   return '<div class="overlay"><div class="card"><h3 class="rtitle" style="font-size:26px">Menü</h3>'+(G&&G.host?'<p class="muted">Spielleitung: '+hostName()+'</p>':'')+''+b+'</div></div>';
 }
 
 /* ---------- Rendern ---------- */
 function viewKey(){return viewKey0()+"|R"+roomsSig()+"|p"+(L.pinMsg||"")+!!(PINS&&PINS[ME])+(L.pinAsk?1:0);}
-function viewKey0(){if(L.view==="guide")return "guide"+(SAMPLE?1:0);if(L.view==="reports")return "rep"+repSig+(L.confirm||"");if(L.pinAsk)return "pinask"+L.pinErr+!!PINS[L.pinAsk.u];if(L.view==="pin")return "pin"+L.pinMsg+!!PINS[ME];if(L.view==="merge")return "mg"+L.mA+L.mB+(L.migMsg||"")+(L.autoMsg||"")+JSON.stringify(ALIAS)+RAW.res.length+(L.confirm||"");return (L.view==="solo"?JSON.stringify([L.soloN,L.soloD,L.soloLen,L.soloTheme,FOUNDER]):"")+(SOLO?"S":"")+(L.view?L.view+"|"+L.pu+"|"+(L.view==="avatar"?L.edTab:"")+"|"+profVer:"")+"|"+progVer;}
+function viewKey0(){if(L.view==="guide")return "guide"+(SAMPLE?1:0);if(L.view==="reports")return "rep"+repSig+(L.confirm||"");if(L.pinAsk)return "pinask"+L.pinErr+!!PINS[L.pinAsk.u];if(L.view==="pin")return "pin"+L.pinMsg+!!PINS[ME];if(L.view==="stats")return "st"+EVS.length+Object.keys(ROOMS_ALL).length+RAW.res.length+RAW.solo.length;if(L.view==="merge")return "mg"+L.mA+L.mB+(L.migMsg||"")+(L.autoMsg||"")+JSON.stringify(ALIAS)+RAW.res.length+(L.confirm||"");return (L.view==="solo"?JSON.stringify([L.soloN,L.soloD,L.soloLen,L.soloTheme,FOUNDER]):"")+(SOLO?"S":"")+(L.view?L.view+"|"+L.pu+"|"+(L.view==="avatar"?L.edTab:"")+"|"+profVer:"")+"|"+progVer;}
 function mainKey(){
   if(dbState!=="ok")return dbState;
   if(!G)return "nogame"+viewKey();
@@ -3668,8 +3692,8 @@ function act(a,d){
     case "pinview":L.view="pin";L.pinMsg="";L.menu=false;renderAll(true);window.scrollTo(0,0);break;
     case "pindel":if(ME===FOUNDER&&L.mA){const u=L.mA;delete PINS[u];meWrite(()=>DB.doc("pins/"+u).delete());L.mA=null;renderAll(true);}break;
     case "join":if(G&&G.phase==="lobby"&&lobbyPlayers().length>=MAXP&&!(P[ME]&&P[ME].g===G.v)){renderAll(true);break;}join(G.v);break;
-    case "waitjoin":if(G&&G.phase==="play"&&!inGame()){const n=saveName();if(n)meWrite(()=>myRef().set({name:n,g:"",wait:G.v,waitRoom:ROOM||"",t:Date.now(),seen:Date.now(),ans:{}}));}break;
-    case "roomjoin":if(d.r)enterRoom(String(d.r));break;
+    case "waitjoin":if(G&&G.phase==="play"&&!inGame()){const n=saveName();if(n){logEv("angemeldet_naechstes_spiel",{via:L.roomVia||"unbekannt"});}if(n)meWrite(()=>myRef().set({name:n,g:"",wait:G.v,waitRoom:ROOM||"",t:Date.now(),seen:Date.now(),ans:{}}));}break;
+    case "roomjoin":if(d.r)enterRoom(String(d.r),"liste");break;
     case "roomleave":leaveRoom();break;
     case "roomopen":if(amHost()&&G&&ROOM){const x=G.open===false;G.open=x;gWrite(()=>gRef().update({open:x}));renderAll(true);}break;
     case "roomname":if(amHost()&&G&&ROOM){const n=(prompt("Neuer Name für den Raum:",G.name||"")||"").trim().slice(0,22);if(n){G.name=n;gWrite(()=>gRef().update({name:n}));renderAll(true);}}break;
@@ -3733,6 +3757,7 @@ function act(a,d){
     case "solod":{const a=(L.soloD||[1,1,1]).slice();a[Number(d.k)]=Number(d.v);L.soloD=a;soloSave();renderAll(true);}break;
     case "sololen":L.soloLen=d.l;soloSave();renderAll(true);break;
     case "solostart":soloStart();break;
+    case "stats":if(ME===FOUNDER){if(!logEv.sub){logEv.sub=1;DB.collection("ev").onSnapshot(s=>{EVS=s.docs.filter(d=>d.exists).map(d=>d.data());if(L.view==="stats")renderAll(true);},()=>{});}L.view="stats";L.menu=false;renderAll(true);window.scrollTo(0,0);}break;
     case "merge":if(ME===FOUNDER){L.view="merge";L.mA=null;L.mB=null;L.menu=false;renderAll(true);window.scrollTo(0,0);}break;
     case "mpick":if(ME===FOUNDER&&d.u){if(L.mA===d.u)L.mA=null;else if(L.mB===d.u)L.mB=null;else if(!L.mA)L.mA=d.u;else L.mB=d.u;renderAll(true);}break;
     case "mdo":if(ME===FOUNDER&&L.mA&&L.mB&&L.mA!==L.mB){if(L.confirm!=="mdo"){L.confirm="mdo";renderAll(true);break;}L.confirm=null;const dd=mergeDir(L.mA,L.mB),a=dd[0],b=dd[1];ALIAS[a]=b;L.mA=null;L.mB=null;meWrite(()=>DB.doc("alias/"+a).set({to:b,at:Date.now()}));applyAlias();}break;
@@ -4689,7 +4714,7 @@ function lobbyKI(){return !!(L.lobbyKI&&kiLobbyOk());}
 function soloThemes(){return themeKeys().concat(ME===FOUNDER&&!xmasOn()?["xmas"]:[]).concat(ME===FOUNDER&&KI_MC.length?["ki"]:[]);}
 function soloThemeInit(){lobbyWheel("sothwheel",soloThemes(),()=>soloThemes().indexOf(L.soloTheme)>=0?L.soloTheme:"mix",t=>{L.soloTheme=t;renderAll(true);},true);}
 function soloDiff(){let m=0;roster().forEach(u=>{if(BOT_BY[u])m=Math.max(m,BOT_BY[u].d);});return SOLO_DK[m];}
-function soloStart(){
+function soloStart(){logEv("solo_gestartet");
   if(SOLO)return;
   const n=L.soloN||1,D=(L.soloD||[1,1,1]).slice(0,n),cnt=[0,0,0];
   const name=(L.name||"").trim()||(RP[ME]&&RP[ME].name)||nameOf(ME)||"Du";
@@ -4978,7 +5003,7 @@ function founderWatch(){
 }
 if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js",{scope:"./"}).catch(()=>{});
 function DK_SWITCH(id,n){try{localStorage.setItem("dk_id",id);if(n)localStorage.setItem("dk_name",n);}catch(e){}location.reload();}
-const BUILD_ID="1792008579";
+const BUILD_ID="1792053846";
 function verCheck(){fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(r=>r.json()).then(j=>{if(j&&j.v&&j.v!==BUILD_ID&&!document.getElementById("upd")){const b=document.createElement("button");b.id="upd";b.textContent="✨ Neue Version da. Tippen zum Laden";b.onclick=()=>location.reload();document.body.appendChild(b);}}).catch(()=>{});}
 setInterval(verCheck,60000);document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")verCheck();});setTimeout(verCheck,5000);
 (async function boot(){
@@ -4989,10 +5014,10 @@ setInterval(verCheck,60000);document.addEventListener("visibilitychange",()=>{if
   if(user){try{ME=await user.id();}catch(e){ME=null;}}
   if(!DB||!ME){dbState="nodb";renderAll(true);return;}
   founderWatch();
-  try{const q=new URLSearchParams(location.search).get("r");ROOM=q?q.toUpperCase().replace(/[^A-Z0-9]/g,"").slice(0,6):(localStorage.getItem("dk_room")||null);}catch(e){ROOM=null;}
+  try{const q=new URLSearchParams(location.search).get("r");L.roomVia=q?"link":"gemerkt";ROOM=q?q.toUpperCase().replace(/[^A-Z0-9]/g,"").slice(0,6):(localStorage.getItem("dk_room")||null);}catch(e){ROOM=null;}
   if(ROOM){try{localStorage.setItem("dk_room",ROOM);}catch(e){}}setRoomUrl();
   subRoom();
-  DB.collection("rooms").onSnapshot(s=>{const m={};s.docs.forEach(d=>{if(d.exists){const x=d.data();if(x)m[d.id]=Object.assign({code:d.id},x);}});ROOMS=m;cleanRooms();renderAll();},()=>{});
+  DB.collection("rooms").onSnapshot(s=>{const m={};const all={};s.docs.forEach(d=>{if(d.exists){const x=d.data();if(x)all[d.id]=Object.assign({code:d.id},x);}});ROOMS_ALL=all;s.docs.forEach(d=>{if(d.exists){const x=d.data();if(x)m[d.id]=Object.assign({code:d.id},x);}});ROOMS=m;cleanRooms();renderAll();},()=>{});
   DB.doc("meta/used").onSnapshot(s=>{const x=s.exists?s.data():null;if(x&&x.used)META_USED=x.used;else if(!META_USED&&!metaSeed){metaSeed=1;const un=DB.doc("game/state").onSnapshot(o=>{try{un&&un();}catch(e){}const g=o.exists?o.data():null;if(g&&g.used&&!META_USED)saveMetaUsed(g.used);});}},()=>{});
   let resSig="",profSig="";
   DB.collection("results").onSnapshot(s=>{const r=s.docs.filter(d=>d.exists).map(d=>d.data()),sig=JSON.stringify(r);if(sig===resSig)return;resSig=sig;RAW.res=r;applyAlias();},()=>{});
