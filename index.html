@@ -727,7 +727,8 @@ html,body{margin:0}[hidden]:not([hidden=until-found i]){display:none!important}
 .teamcard{margin-top:-6px;border-style:dashed}
 .teamcard.on{border-style:solid;border-color:var(--good);background:rgba(74,222,128,.08)}
 .teamcard .infobox{margin-top:8px}
-.mduo{display:grid;grid-template-columns:1fr 1fr;gap:8px}.mduo .btn,.mtri .btn{margin:0;font-size:13px;padding-inline:2px;white-space:nowrap}.mtri{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.msec{font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:14px 2px 6px}
+.mduo{display:grid;grid-template-columns:1fr 1fr;gap:8px}.mduo .btn,.mtri .btn{margin:0;font-size:13px;padding-inline:2px;white-space:nowrap}.mtri{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.mhead{display:flex;align-items:center;justify-content:space-between;gap:8px}.mhow{border:0;border-radius:999px;padding:5px 11px;background:rgba(255,201,60,.15);color:var(--p2);font:800 12px var(--body);letter-spacing:0;text-transform:none;cursor:pointer}
+.msec{font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:14px 2px 6px}
 .rxbar{display:flex;justify-content:center;gap:6px;margin:14px 0 4px;flex-wrap:wrap}.rxb{width:46px;height:46px;border-radius:50%;border:2px solid var(--line);background:var(--bg2);font-size:24px;line-height:1;cursor:pointer;touch-action:manipulation}.rxb:active{transform:scale(.9)}.rxfly{position:fixed;bottom:110px;z-index:80;pointer-events:none;display:flex;flex-direction:column;align-items:center;animation:rxup 2.2s ease-out forwards}.rxfly b{font-size:46px;line-height:1}.rxfly small{font-weight:800;font-size:12px;background:rgba(0,0,0,.45);color:#fff;border-radius:8px;padding:1px 6px;margin-top:2px}@keyframes rxup{0%{transform:translateY(20px) scale(.6);opacity:0}15%{transform:translateY(0) scale(1.1);opacity:1}100%{transform:translateY(-260px) scale(1);opacity:0}}
 .swp-card{position:relative;height:190px;margin:4px 0 10px;border-radius:24px;background:var(--bg2);border:2px solid var(--line);display:grid;grid-template-columns:1fr 1fr;align-items:center;touch-action:pan-y;user-select:none;-webkit-user-select:none;cursor:grab;box-shadow:0 14px 30px -14px rgba(0,0,0,.6)}.swp-card span{display:flex;flex-direction:column;align-items:center;gap:6px;padding:0 10px;text-align:center;font-size:24px}.swp-card b{font-size:19px;line-height:1.2}.swo{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-style:normal;font-weight:800;color:var(--muted);font-size:13px}.swp-card.gl{border-color:#4da3ff;background:rgba(77,163,255,.2)}.swp-card.gl .swr,.swp-card.gr .swl{opacity:.25}.swp-card.gr{border-color:#ffb52e;background:rgba(255,181,46,.2)}
 html,body{overflow-x:clip}
@@ -3209,11 +3210,30 @@ function nameField(){
 }
 function errBox(){return L.err?'<div class="msg">'+h(L.err)+'</div>':'';}
 function backBtn(){const c=L.confirm==="roomleave",nx=c?nextHost():null;return '<button class="linkbtn rback'+(c?' warn':'')+'" data-act="roomleave">'+(c&&nx?'Leitung an '+nm(nx)+' geben und gehen? Nochmal tippen':'← Alle Räume')+'</button>';}
+function vLoad(){
+  const k=L.loadOk;let o='<div class="marquee fade"><div class="mq-in"><div class="eyebrow">Mein Profil</div><h2 class="rtitle">📥 Profil laden</h2></div></div><div class="card"><p style="margin-top:0">Füge hier den Code von deinem anderen Handy ein. Du findest ihn dort unter Menü → „📲 Code“ oder in deiner Code-Mail.</p>';
+  if(!k)o+='<input id="loadin" class="gq" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Code einfügen" style="font-size:16px">'+(L.loadErr?'<p style="color:var(--bad);font-weight:700">'+h(L.loadErr)+'</p>':'')+'<button class="btn" data-act="loadgo">Profil suchen</button>';
+  else{const pr=progOf(k.u);o+='<div class="row" style="margin:8px 0">'+avHtml(k.u,48)+'<span class="who">'+h(k.n||"Profil")+'<br><span class="muted" style="font-weight:600;font-size:13px">Level '+pr.lvl+'</span></span></div><p>Dieses Profil auf dieses Handy holen? Name, Level und Freischaltungen kommen mit.</p><button class="btn" data-act="loadyes">Ja, Profil holen</button><button class="btn alt" data-act="devload">Anderen Code eingeben</button>';}
+  return o+'</div><button class="btn alt" data-act="boardclose">Zurück</button>';
+}
+function howtoVideo(){
+  if(document.getElementById("xintro"))return;
+  const o=document.createElement("div");o.id="xintro";
+  o.innerHTML='<video playsinline webkit-playsinline muted autoplay preload="auto" src="profil-mitnehmen.mp4"></video><div class="xi-b"><button type="button" class="xi-snd">↺ Nochmal</button><button type="button" class="xi-skip">Schließen ✕</button></div>';
+  const v=o.querySelector("video");let gone=false;o.style.background=v.style.background="#17133a";
+  const close=()=>{if(gone)return;gone=true;try{v.pause();}catch(e){}o.remove();};
+  v.addEventListener("error",close);
+  o.querySelector(".xi-skip").addEventListener("click",close);
+  o.querySelector(".xi-snd").addEventListener("click",()=>{try{v.currentTime=0;const pr=v.play();if(pr&&pr.catch)pr.catch(()=>{});}catch(e){}});
+  document.body.appendChild(o);
+  try{const pr=v.play();if(pr&&pr.catch)pr.catch(()=>{});}catch(e){close();}
+}
 function waitNote(t){return '<p class="center muted wait">'+t+'</p>';}
 function hostBtn(label,act){return amHost()?'<button class="btn stick" data-act="'+act+'">'+label+'</button>':waitNote('Warten auf '+hostName()+' …');}
 
 function vMain(){
   if(L.pinAsk&&dbState==="ok")return vPinAsk();
+  if(L.view==="load"&&dbState==="ok"&&ME)return vLoad();
   if(L.view==="pin"&&dbState==="ok"&&ME)return pinSetCard(true)+'<div class="card"><div class="eyebrow">📲 Mit Code statt PIN</div><div class="mduo" style="margin-top:8px"><button class="btn alt" data-act="devcopy">📲 Code kopieren</button><button class="btn alt" data-act="devload">📥 Profil laden</button></div></div><button class="btn alt" data-act="boardclose">Zurück</button>';
   if(L.view&&dbState==="ok"&&ME){
     if(L.view==="board")return vBoard();
@@ -3537,7 +3557,7 @@ function vMenu(){
   if(ROOM&&!SOLO&&G&&(G.phase==="lobby"||G.phase==="play")){const c=L.confirm==="roomleave",nx=c?nextHost():null;b+=B("roomleave",c&&nx?'Leitung an '+nm(nx)+' geben und gehen? Nochmal tippen':'🏠 Raum verlassen'+((G.phase==="play"&&inGame()&&!atEnd())?' (Spiel läuft ohne dich weiter)':''));}
   b+='<div class="mduo">'+B("board","🏆 Siegerboard")+B("avatar","🎨 Avatar")+'</div>';
   b+='<div class="mduo">'+B("guide","📖 Anleitung")+B("custom","✍️ Eigene Frage")+'</div>';
-  if(canSwitch())b+='<div class="msec">Mein Profil</div><div class="mtri">'+B("pinview","🔐 PIN")+B("devcopy","📲 Code")+B("devmail","✉️ Mail")+B("devload","📥 Laden")+'</div>';
+  if(canSwitch())b+='<div class="msec mhead"><span>Mein Profil</span><button class="mhow" data-act="howto">▶️ So geht’s</button></div><div class="mtri">'+B("pinview","🔐 PIN")+B("devcopy","📲 Code")+B("devmail","✉️ Mail")+B("devload","📥 Laden")+'</div>';
   if(xmasOn())b+=B("xspot","🎬 Weihnachtsspot ansehen");
   if(ME===FOUNDER){const n=REPS.length;b+='<div class="msec">Nur für dich</div><div class="mduo">'+B("reports","🚩 Meldungen"+(n?' ('+n+')':''))+B("merge","🔗 Profile")+'</div>'+B("stats","📊 Statistik")+(xmasOn()?'':B("xspot","🎬 Weihnachtsspot"));}
   return '<div class="overlay"><div class="card"><h3 class="rtitle" style="font-size:26px">Menü</h3>'+(G&&G.host?'<p class="muted">Spielleitung: '+hostName()+'</p>':'')+''+b+'</div></div>';
@@ -3545,7 +3565,7 @@ function vMenu(){
 
 /* ---------- Rendern ---------- */
 function viewKey(){return viewKey0()+"|R"+roomsSig()+"|p"+(L.pinMsg||"")+!!(PINS&&PINS[ME])+(L.pinAsk?1:0);}
-function viewKey0(){if(L.view==="guide")return "guide"+(SAMPLE?1:0);if(L.view==="reports")return "rep"+repSig+(L.confirm||"");if(L.pinAsk)return "pinask"+L.pinErr+!!PINS[L.pinAsk.u];if(L.view==="pin")return "pin"+L.pinMsg+!!PINS[ME];if(L.view==="stats")return "st"+EVS.length+Object.keys(ROOMS_ALL).length+RAW.res.length+RAW.solo.length;if(L.view==="merge")return "mg"+L.mA+L.mB+(L.migMsg||"")+(L.autoMsg||"")+JSON.stringify(ALIAS)+RAW.res.length+(L.confirm||"");return (L.view==="solo"?JSON.stringify([L.soloN,L.soloD,L.soloLen,L.soloTheme,FOUNDER]):"")+(SOLO?"S":"")+(L.view?L.view+"|"+L.pu+"|"+(L.view==="avatar"?L.edTab:"")+"|"+profVer:"")+"|"+progVer;}
+function viewKey0(){if(L.view==="guide")return "guide"+(SAMPLE?1:0);if(L.view==="reports")return "rep"+repSig+(L.confirm||"");if(L.pinAsk)return "pinask"+L.pinErr+!!PINS[L.pinAsk.u];if(L.view==="pin")return "pin"+L.pinMsg+!!PINS[ME];if(L.view==="load")return "load"+(L.loadErr||"")+(L.loadOk?L.loadOk.u:"");if(L.view==="stats")return "st"+EVS.length+Object.keys(ROOMS_ALL).length+RAW.res.length+RAW.solo.length;if(L.view==="merge")return "mg"+L.mA+L.mB+(L.migMsg||"")+(L.autoMsg||"")+JSON.stringify(ALIAS)+RAW.res.length+(L.confirm||"");return (L.view==="solo"?JSON.stringify([L.soloN,L.soloD,L.soloLen,L.soloTheme,FOUNDER]):"")+(SOLO?"S":"")+(L.view?L.view+"|"+L.pu+"|"+(L.view==="avatar"?L.edTab:"")+"|"+profVer:"")+"|"+progVer;}
 function mainKey(){
   if(dbState!=="ok")return dbState;
   if(!G)return "nogame"+viewKey();
@@ -3717,6 +3737,13 @@ function act(a,d){
     case "join":if(G&&G.phase==="lobby"&&lobbyPlayers().length>=MAXP&&!(P[ME]&&P[ME].g===G.v)){renderAll(true);break;}join(G.v);break;
     case "waitjoin":if(G&&G.phase==="play"&&!inGame()){const n=saveName();if(n){logEv("angemeldet_naechstes_spiel",{via:L.roomVia||"unbekannt"});}if(n)meWrite(()=>myRef().set({name:n,g:"",wait:G.v,waitRoom:ROOM||"",t:Date.now(),seen:Date.now(),ans:{}}));}break;
     case "devmail":if(ME){const url=location.origin+location.pathname,sub="Mein Dreikampf-Profil-Code",body="Mein Profil-Code für Dreikampf:\n\n"+ME+"\n\nSo holst du dein Profil auf ein anderes Handy:\n1. Dreikampf öffnen: "+url+"\n2. Menü → „📥 Laden“\n3. Diesen Code einfügen\n\nWichtig: Code nicht weitergeben. Wer ihn hat, kann dein Profil übernehmen.";logEv("code_mail");location.href="mailto:?subject="+encodeURIComponent(sub)+"&body="+encodeURIComponent(body);}break;
+    case "howto":L.menu=false;renderAll();logEv("video_profil");howtoVideo();break;
+    case "loadgo":{const c=((document.getElementById("loadin")||{}).value||"").trim();L.loadOk=null;
+      if(!/^[A-Za-z0-9_-]{10,40}$/.test(c))L.loadErr="Das ist kein gültiger Code. Er besteht aus Buchstaben und Zahlen, ohne Leerzeichen.";
+      else if(c===ME)L.loadErr="Das ist schon dein Profil auf diesem Handy.";
+      else{const x=mergeList().find(m=>m.u===c);if(!x&&!P[c]){L.loadErr="Kein Profil mit diesem Code gefunden. Prüf, ob du ihn vollständig eingefügt hast.";logEv("laden_fehler");}else{L.loadErr="";L.loadOk={u:c,n:(x&&x.n)||nameOf(c)};}}
+      renderAll(true);}break;
+    case "loadyes":if(L.loadOk&&canSwitch()){logEv("laden_ok");DK_SWITCH(L.loadOk.u,L.loadOk.n);}break;
     case "roomjoin":if(d.r){L.roomPick=null;L.autoAct={a:"join",r:String(d.r)};enterRoom(String(d.r),"liste");}break;
     case "roompick":if(d.r){L.roomPick=L.roomPick===d.r?null:String(d.r);renderAll(true);}break;
     case "roomwait":if(d.r){L.roomPick=null;L.autoAct={a:"wait",r:String(d.r)};enterRoom(String(d.r),"liste");}break;
@@ -3770,8 +3797,8 @@ function act(a,d){
       renderAll();break;}
     case "menuclose":L.menu=false;renderAll();break;
     case "rx":{const k=Number(d.k);if(RX[k]&&P[ME]&&Date.now()-lastRxSend>3000){lastRxSend=Date.now();const t=Date.now();lastRx[ME]=t;meWrite(()=>myRef().update({rx:{k:k,t:t}}));floatRx(ME,k);}break;}
-    case "devcopy":{const c=ME||"";const done=()=>alert("Dein Profil-Code wurde kopiert:\n\n"+c+"\n\nAuf dem anderen Gerät oder in der Home-Bildschirm-App: Menü → „Profil von anderem Gerät laden“ und einfügen.");try{navigator.clipboard.writeText(c).then(done,()=>prompt("Dein Profil-Code (kopieren):",c));}catch(e){prompt("Dein Profil-Code (kopieren):",c);}}break;
-    case "devload":{const c=(prompt("Profil-Code vom anderen Gerät einfügen:")||"").trim();if(!c)break;if(!/^[A-Za-z0-9_-]{10,40}$/.test(c)){alert("Das ist kein gültiger Code.");break;}if(c===ME){alert("Das ist schon dein Profil.");break;}if(confirm("Dieses Gerät übernimmt das andere Profil (Name, Level, Freischaltungen). Weiter?")){try{localStorage.setItem("dk_id",c);localStorage.removeItem("dk_name");}catch(e){}location.reload();}}break;
+    case "devcopy":{const c=ME||"";logEv("code_kopiert");try{navigator.clipboard.writeText(c).then(()=>{L.menu=false;renderAll();showToast('<span class="toast-e">📲</span><span><strong>Code kopiert.</strong> Gut aufbewahren, nicht weitergeben.</span>');},()=>prompt("Dein Profil-Code (kopieren):",c));}catch(e){prompt("Dein Profil-Code (kopieren):",c);}}break;
+    case "devload":L.view="load";L.loadErr="";L.loadOk=null;L.menu=false;logEv("laden_geoeffnet");renderAll(true);window.scrollTo(0,0);break;
     case "sound":soundOn=!soundOn;try{localStorage.setItem("dk_snd",soundOn?"1":"0");}catch(e){}
       if(!soundOn&&silentEl){try{silentEl.pause();}catch(e){}silentEl=null;}
       unlockAudio();renderAll();if(soundOn)setTimeout(()=>sfx.good(),60);break;
@@ -5037,7 +5064,7 @@ function founderWatch(){
 }
 if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js",{scope:"./"}).catch(()=>{});
 function DK_SWITCH(id,n){try{localStorage.setItem("dk_id",id);if(n)localStorage.setItem("dk_name",n);}catch(e){}location.reload();}
-const BUILD_ID="1792170195";
+const BUILD_ID="1792171457";
 function verCheck(){fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(r=>r.json()).then(j=>{if(j&&j.v&&j.v!==BUILD_ID&&!document.getElementById("upd")){const b=document.createElement("button");b.id="upd";b.textContent="✨ Neue Version da. Tippen zum Laden";b.onclick=()=>location.reload();document.body.appendChild(b);}}).catch(()=>{});}
 setInterval(verCheck,60000);document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")verCheck();});setTimeout(verCheck,5000);
 (async function boot(){
