@@ -727,7 +727,7 @@ html,body{margin:0}[hidden]:not([hidden=until-found i]){display:none!important}
 .teamcard{margin-top:-6px;border-style:dashed}
 .teamcard.on{border-style:solid;border-color:var(--good);background:rgba(74,222,128,.08)}
 .teamcard .infobox{margin-top:8px}
-.mduo{display:grid;grid-template-columns:1fr 1fr;gap:8px}.mduo .btn,.mtri .btn{margin:0;font-size:14px;padding-inline:6px}.mtri{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}.msec{font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:14px 2px 6px}
+.mduo{display:grid;grid-template-columns:1fr 1fr;gap:8px}.mduo .btn,.mtri .btn{margin:0;font-size:13px;padding-inline:2px;white-space:nowrap}.mtri{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.msec{font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:14px 2px 6px}
 .rxbar{display:flex;justify-content:center;gap:6px;margin:14px 0 4px;flex-wrap:wrap}.rxb{width:46px;height:46px;border-radius:50%;border:2px solid var(--line);background:var(--bg2);font-size:24px;line-height:1;cursor:pointer;touch-action:manipulation}.rxb:active{transform:scale(.9)}.rxfly{position:fixed;bottom:110px;z-index:80;pointer-events:none;display:flex;flex-direction:column;align-items:center;animation:rxup 2.2s ease-out forwards}.rxfly b{font-size:46px;line-height:1}.rxfly small{font-weight:800;font-size:12px;background:rgba(0,0,0,.45);color:#fff;border-radius:8px;padding:1px 6px;margin-top:2px}@keyframes rxup{0%{transform:translateY(20px) scale(.6);opacity:0}15%{transform:translateY(0) scale(1.1);opacity:1}100%{transform:translateY(-260px) scale(1);opacity:0}}
 .swp-card{position:relative;height:190px;margin:4px 0 10px;border-radius:24px;background:var(--bg2);border:2px solid var(--line);display:grid;grid-template-columns:1fr 1fr;align-items:center;touch-action:pan-y;user-select:none;-webkit-user-select:none;cursor:grab;box-shadow:0 14px 30px -14px rgba(0,0,0,.6)}.swp-card span{display:flex;flex-direction:column;align-items:center;gap:6px;padding:0 10px;text-align:center;font-size:24px}.swp-card b{font-size:19px;line-height:1.2}.swo{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-style:normal;font-weight:800;color:var(--muted);font-size:13px}.swp-card.gl{border-color:#4da3ff;background:rgba(77,163,255,.2)}.swp-card.gl .swr,.swp-card.gr .swl{opacity:.25}.swp-card.gr{border-color:#ffb52e;background:rgba(255,181,46,.2)}
 html,body{overflow-x:clip}
@@ -3537,7 +3537,7 @@ function vMenu(){
   if(ROOM&&!SOLO&&G&&(G.phase==="lobby"||G.phase==="play")){const c=L.confirm==="roomleave",nx=c?nextHost():null;b+=B("roomleave",c&&nx?'Leitung an '+nm(nx)+' geben und gehen? Nochmal tippen':'🏠 Raum verlassen'+((G.phase==="play"&&inGame()&&!atEnd())?' (Spiel läuft ohne dich weiter)':''));}
   b+='<div class="mduo">'+B("board","🏆 Siegerboard")+B("avatar","🎨 Avatar")+'</div>';
   b+='<div class="mduo">'+B("guide","📖 Anleitung")+B("custom","✍️ Eigene Frage")+'</div>';
-  if(canSwitch())b+='<div class="msec">Mein Profil</div><div class="mtri">'+B("pinview","🔐 PIN")+B("devcopy","📲 Code")+B("devload","📥 Laden")+'</div>';b+=B("devmail","✉️ Code per Mail an mich schicken");
+  if(canSwitch())b+='<div class="msec">Mein Profil</div><div class="mtri">'+B("pinview","🔐 PIN")+B("devcopy","📲 Code")+B("devmail","✉️ Mail")+B("devload","📥 Laden")+'</div>';
   if(xmasOn())b+=B("xspot","🎬 Weihnachtsspot ansehen");
   if(ME===FOUNDER){const n=REPS.length;b+='<div class="msec">Nur für dich</div><div class="mduo">'+B("reports","🚩 Meldungen"+(n?' ('+n+')':''))+B("merge","🔗 Profile")+'</div>'+B("stats","📊 Statistik")+(xmasOn()?'':B("xspot","🎬 Weihnachtsspot"));}
   return '<div class="overlay"><div class="card"><h3 class="rtitle" style="font-size:26px">Menü</h3>'+(G&&G.host?'<p class="muted">Spielleitung: '+hostName()+'</p>':'')+''+b+'</div></div>';
@@ -5037,7 +5037,7 @@ function founderWatch(){
 }
 if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js",{scope:"./"}).catch(()=>{});
 function DK_SWITCH(id,n){try{localStorage.setItem("dk_id",id);if(n)localStorage.setItem("dk_name",n);}catch(e){}location.reload();}
-const BUILD_ID="1792169828";
+const BUILD_ID="1792170195";
 function verCheck(){fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(r=>r.json()).then(j=>{if(j&&j.v&&j.v!==BUILD_ID&&!document.getElementById("upd")){const b=document.createElement("button");b.id="upd";b.textContent="✨ Neue Version da. Tippen zum Laden";b.onclick=()=>location.reload();document.body.appendChild(b);}}).catch(()=>{});}
 setInterval(verCheck,60000);document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")verCheck();});setTimeout(verCheck,5000);
 (async function boot(){
