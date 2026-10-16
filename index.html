@@ -3537,7 +3537,7 @@ function vMenu(){
   if(ROOM&&!SOLO&&G&&(G.phase==="lobby"||G.phase==="play")){const c=L.confirm==="roomleave",nx=c?nextHost():null;b+=B("roomleave",c&&nx?'Leitung an '+nm(nx)+' geben und gehen? Nochmal tippen':'🏠 Raum verlassen'+((G.phase==="play"&&inGame()&&!atEnd())?' (Spiel läuft ohne dich weiter)':''));}
   b+='<div class="mduo">'+B("board","🏆 Siegerboard")+B("avatar","🎨 Avatar")+'</div>';
   b+='<div class="mduo">'+B("guide","📖 Anleitung")+B("custom","✍️ Eigene Frage")+'</div>';
-  if(canSwitch())b+='<div class="msec">Mein Profil</div><div class="mtri">'+B("pinview","🔐 PIN")+B("devcopy","📲 Code")+B("devload","📥 Laden")+'</div>';
+  if(canSwitch())b+='<div class="msec">Mein Profil</div><div class="mtri">'+B("pinview","🔐 PIN")+B("devcopy","📲 Code")+B("devload","📥 Laden")+'</div>';b+=B("devmail","✉️ Code per Mail an mich schicken");
   if(xmasOn())b+=B("xspot","🎬 Weihnachtsspot ansehen");
   if(ME===FOUNDER){const n=REPS.length;b+='<div class="msec">Nur für dich</div><div class="mduo">'+B("reports","🚩 Meldungen"+(n?' ('+n+')':''))+B("merge","🔗 Profile")+'</div>'+B("stats","📊 Statistik")+(xmasOn()?'':B("xspot","🎬 Weihnachtsspot"));}
   return '<div class="overlay"><div class="card"><h3 class="rtitle" style="font-size:26px">Menü</h3>'+(G&&G.host?'<p class="muted">Spielleitung: '+hostName()+'</p>':'')+''+b+'</div></div>';
@@ -3716,6 +3716,7 @@ function act(a,d){
     case "pindel":if(ME===FOUNDER&&L.mA){const u=L.mA;delete PINS[u];meWrite(()=>DB.doc("pins/"+u).delete());L.mA=null;renderAll(true);}break;
     case "join":if(G&&G.phase==="lobby"&&lobbyPlayers().length>=MAXP&&!(P[ME]&&P[ME].g===G.v)){renderAll(true);break;}join(G.v);break;
     case "waitjoin":if(G&&G.phase==="play"&&!inGame()){const n=saveName();if(n){logEv("angemeldet_naechstes_spiel",{via:L.roomVia||"unbekannt"});}if(n)meWrite(()=>myRef().set({name:n,g:"",wait:G.v,waitRoom:ROOM||"",t:Date.now(),seen:Date.now(),ans:{}}));}break;
+    case "devmail":if(ME){const url=location.origin+location.pathname,sub="Mein Dreikampf-Profil-Code",body="Mein Profil-Code für Dreikampf:\n\n"+ME+"\n\nSo holst du dein Profil auf ein anderes Handy:\n1. Dreikampf öffnen: "+url+"\n2. Menü → „📥 Laden“\n3. Diesen Code einfügen\n\nWichtig: Code nicht weitergeben. Wer ihn hat, kann dein Profil übernehmen.";logEv("code_mail");location.href="mailto:?subject="+encodeURIComponent(sub)+"&body="+encodeURIComponent(body);}break;
     case "roomjoin":if(d.r){L.roomPick=null;L.autoAct={a:"join",r:String(d.r)};enterRoom(String(d.r),"liste");}break;
     case "roompick":if(d.r){L.roomPick=L.roomPick===d.r?null:String(d.r);renderAll(true);}break;
     case "roomwait":if(d.r){L.roomPick=null;L.autoAct={a:"wait",r:String(d.r)};enterRoom(String(d.r),"liste");}break;
@@ -5036,7 +5037,7 @@ function founderWatch(){
 }
 if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js",{scope:"./"}).catch(()=>{});
 function DK_SWITCH(id,n){try{localStorage.setItem("dk_id",id);if(n)localStorage.setItem("dk_name",n);}catch(e){}location.reload();}
-const BUILD_ID="1792054964";
+const BUILD_ID="1792169828";
 function verCheck(){fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(r=>r.json()).then(j=>{if(j&&j.v&&j.v!==BUILD_ID&&!document.getElementById("upd")){const b=document.createElement("button");b.id="upd";b.textContent="✨ Neue Version da. Tippen zum Laden";b.onclick=()=>location.reload();document.body.appendChild(b);}}).catch(()=>{});}
 setInterval(verCheck,60000);document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")verCheck();});setTimeout(verCheck,5000);
 (async function boot(){
