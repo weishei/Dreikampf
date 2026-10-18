@@ -259,7 +259,7 @@ button.chip{cursor:pointer}
 .blank{color:var(--bulb);letter-spacing:1px}
 .opt .ot small{display:block;font-size:12px;font-weight:600}
 .opt.own{cursor:default}
-.jk{display:block;width:100%;border:2px dashed var(--p2);background:rgba(255,201,60,.1);color:var(--fg);border-radius:12px;padding:5px 12px;font-weight:700;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center}
+.jk{display:block;width:100%;box-sizing:border-box;max-width:100%;border:2px dashed var(--p2);background:rgba(255,201,60,.1);color:var(--fg);border-radius:12px;padding:5px 12px;font-weight:700;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center}
 .jk.on{border-style:solid;background:rgba(255,201,60,.22)}
 .x2s{font-family:var(--display);color:var(--ink);background:var(--p2);border-radius:8px;padding:1px 7px;font-size:13px;flex:none}
 .x2b{align-self:center;font-family:var(--display);color:var(--ink);background:var(--p2);border-radius:999px;padding:4px 14px;font-size:14px}
@@ -5069,7 +5069,7 @@ function founderWatch(){
 }
 if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js",{scope:"./"}).catch(()=>{});
 function DK_SWITCH(id,n){try{localStorage.setItem("dk_id",id);if(n)localStorage.setItem("dk_name",n);}catch(e){}location.reload();}
-const BUILD_ID="1792348053";
+const BUILD_ID="1792348649";
 function verCheck(){fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(r=>r.json()).then(j=>{if(j&&j.v&&j.v!==BUILD_ID&&!document.getElementById("upd")){const b=document.createElement("button");b.id="upd";b.textContent="✨ Neue Version da. Tippen zum Laden";b.onclick=()=>location.reload();document.body.appendChild(b);}}).catch(()=>{});}
 setInterval(verCheck,60000);document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")verCheck();});setTimeout(verCheck,5000);
 (async function boot(){
