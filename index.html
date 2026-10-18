@@ -2248,7 +2248,6 @@ function buildSteps(used,R){
   if(used.theme==="baby"){const nm=Math.floor(LN.mc/2),my=pick(used,BABY_MYTH,"bmy",nm).map(x=>({q:x.s,a:x.a?["Fakt","Mythos"]:["Mythos","Fakt"],f:x.f,myth:1})),mq=pick(used,BABY,"baby",LN.mc-nm+1);let hi=0;mq.forEach((q,k)=>{if((q.d||1)>(mq[hi].d||1))hi=k;});const fq=mq.splice(hi,1)[0];mc=[];for(let k=0;k<LN.mc;k++){const x=(k%2===0?my.shift():mq.shift())||my.shift()||mq.shift();if(x)mc.push(x);}fin={c:"Baby & Eltern",q:fq.q,a:fq.a.slice(),f:fq.f};}
   else if(isSP){const iq=pick(used,SPT[0],used.theme,LN.mc+1);let hi=0;iq.forEach((q,k)=>{if((q.d||1)>(iq[hi].d||1))hi=k;});const fq=iq.splice(hi,1)[0];mc=iq;fin={c:SPT[1],q:fq.q,a:fq.a.slice(),f:fq.f};}
   else{mc=pickTheme(used,MC,"mc",LN.mc,TC,THEME_MC);fin=pickTheme(used,FIN,"fin",1,TC,THEME_FIN)[0];}
-  if((!used.theme||used.theme==="mix")&&!isSP&&typeof BERGE_MC!=="undefined"&&mc&&mc.length>1&&!mc.some(q=>BERGE_MC.indexOf(q)>=0)){mc[1]=pick(used,BERGE_MC,"bgmix",1)[0];}
   const CU=SOLO?[]:CUST.filter(c=>c&&!c.del&&Array.isArray(c.a)&&c.a.length===4&&R.some(u=>u!==c.u));
   if(!isSP&&CU.length&&Math.random()<0.7){
     let uc=Array.isArray(used.cust)?used.cust.slice():[];let av=CU.filter(c=>uc.indexOf(c.id)<0);
@@ -5070,7 +5069,7 @@ function founderWatch(){
 }
 if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js",{scope:"./"}).catch(()=>{});
 function DK_SWITCH(id,n){try{localStorage.setItem("dk_id",id);if(n)localStorage.setItem("dk_name",n);}catch(e){}location.reload();}
-const BUILD_ID="1792347350";
+const BUILD_ID="1792347431";
 function verCheck(){fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(r=>r.json()).then(j=>{if(j&&j.v&&j.v!==BUILD_ID&&!document.getElementById("upd")){const b=document.createElement("button");b.id="upd";b.textContent="✨ Neue Version da. Tippen zum Laden";b.onclick=()=>location.reload();document.body.appendChild(b);}}).catch(()=>{});}
 setInterval(verCheck,60000);document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")verCheck();});setTimeout(verCheck,5000);
 (async function boot(){
