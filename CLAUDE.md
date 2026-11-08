@@ -68,7 +68,8 @@ Läuft über GitHub Pages, Spielstände und Profile liegen in Firebase (Projekt 
 ## Stand (November 2026)
 - Etwa 1.860 Auswahlfragen, 309 Finalfragen, 470 Schätzfragen. Themen: Bayern & München, Sport, Sportlerinnen,
   Geschichte & Welt, Natur & Wissen, Kultur & Unterhaltung, Essen & Alltag, Logik & IQ, Weihnachten,
-  Baby & Eltern, Berge, Biologie, Zeitgeschichte, Wirtschaft & Politik.
+  Baby & Eltern, Berge, Biologie, Zeitgeschichte, Wirtschaft & Politik, Künstliche Intelligenz (Schlüssel `kint`,
+  weil `ki` schon der Google-Prüfungsmodus ist).
 - Spielräume (mehrere Gruppenspiele gleichzeitig), Profile mit PIN, Code, Mail und Laden, Gründer-Statistik.
 
 ## Offene Punkte
