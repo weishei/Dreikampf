@@ -1,0 +1,342 @@
+<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"></head><body>
+<title>Phönix Stilseite</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;800&family=Figtree:wght@400;600;800&display=swap">
+<style>
+/* Layout: Dreikampf-Dunkel, links Erklärung, rechts klebende Handy-Vorschau; auf dem Handy Vorschau zuerst */
+:root{
+  --bg:#17133a;--bg2:#211b52;--panel:#2a2365;--line:#4a3f9a;--fg:#f6f2ff;--muted:#b9b1e6;--ink:#1a1442;
+  --gold:#ffc93c;--bulb:#ffe7a3;--flame:#ff5a1f;--ember:#c8102e;--good:#4ade80;
+  --display:"Unbounded","Arial Black",system-ui,sans-serif;--body:"Figtree",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  color-scheme:dark}
+*{box-sizing:border-box}[hidden]{display:none!important}
+body{background:var(--bg);color:var(--fg);font:15px/1.55 var(--body);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 48px}
+.w{max-width:1080px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,400px);gap:28px;align-items:start}
+@media(max-width:900px){.w{grid-template-columns:minmax(0,1fr)}.side{order:-1;position:static!important}}
+.doc{min-width:0;display:flex;flex-direction:column;gap:28px}
+h1{font:800 clamp(24px,5vw,36px)/1.1 var(--display);margin:0;color:var(--gold);text-wrap:balance}
+h2{font:800 17px/1.3 var(--display);margin:0 0 8px;text-wrap:balance}
+h3{font:600 13px/1.3 var(--display);margin:0;letter-spacing:.02em}
+p{margin:0;max-width:66ch}.muted{color:var(--muted)}.small{font-size:13px}
+.eyebrow{font:800 11px var(--body);letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.lead{display:flex;flex-direction:column;gap:10px}
+.warn{border:1px solid var(--line);border-left:4px solid var(--flame);background:var(--bg2);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:6px}
+.warn ul{margin:0;padding-left:18px}.warn li{margin:2px 0;max-width:66ch}
+.derive{display:grid;grid-template-columns:120px minmax(0,1fr);gap:16px;align-items:center}
+@media(max-width:480px){.derive{grid-template-columns:88px minmax(0,1fr)}}
+.derive img{width:100%;border-radius:22%;display:block}
+.derive ul{margin:0;padding-left:18px}.derive li{margin:2px 0}
+.sw{display:flex;flex-wrap:wrap;gap:8px}
+.sw span{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted)}
+.sw i{width:22px;height:22px;border-radius:6px;display:block;border:1px solid rgba(255,255,255,.15)}
+.type{display:flex;flex-direction:column;gap:2px}.type .d{font:800 22px var(--display)}.type .b{font:600 15px var(--body)}
+.var{display:flex;flex-direction:column;gap:10px}
+.vhead{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.vtag{font:800 12px var(--display);background:var(--gold);color:var(--ink);border-radius:8px;padding:2px 8px}
+canvas.gal{width:100%;display:block;border-radius:14px;border:1px solid var(--line)}
+canvas.lad{width:320px;max-width:100%;display:block;border-radius:12px;border:1px solid var(--line)}
+.ladrow{display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap}
+.ladrow p{flex:1 1 200px;min-width:0}
+.names{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+@media(max-width:640px){.names{grid-template-columns:minmax(0,1fr)}}
+.nm{background:var(--bg2);border:1px solid var(--line);border-radius:14px;padding:12px 14px;display:flex;flex-direction:column;gap:6px}
+.nm b{font:800 18px var(--display);color:var(--gold)}
+.nm.rec{border-color:var(--gold)}
+.side{position:sticky;top:max(12px,env(safe-area-inset-top,0px));display:flex;flex-direction:column;gap:10px;min-width:0}
+.phone{background:#0b0920;border:1px solid var(--line);border-radius:26px;padding:10px;display:flex;justify-content:center}
+#pv{display:block;border-radius:16px;touch-action:manipulation;max-width:100%}
+.stage{position:relative}
+.cover{position:absolute;inset:0;border-radius:16px;background:var(--bg2);display:flex;flex-direction:column;justify-content:center;gap:8px;padding:18px;text-align:left}
+.cover ol{margin:0;padding-left:18px}.cover li{margin:3px 0}
+.cnt{position:absolute;top:10px;right:12px;font:800 22px var(--display);color:#fff;text-shadow:0 2px 6px #000}
+.ctl{display:flex;flex-direction:column;gap:8px;background:var(--bg2);border:1px solid var(--line);border-radius:16px;padding:12px}
+.row{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.row>span{font-weight:800;font-size:13px}
+.seg{display:inline-flex;border:2px solid var(--line);border-radius:999px;overflow:hidden}
+.seg button{font:800 13px var(--body);background:transparent;color:var(--muted);border:0;padding:5px 12px;cursor:pointer;min-width:38px}
+.seg button.on{background:rgba(255,201,60,.16);color:var(--fg);box-shadow:inset 0 0 0 2px var(--gold)}
+.seg button:focus-visible,.btn:focus-visible{outline:2px solid var(--bulb);outline-offset:2px}
+.btn{font:800 15px var(--body);border:0;border-radius:14px;padding:11px 14px;background:linear-gradient(180deg,#ffd45c,#ffb52e);color:var(--ink);cursor:pointer;width:100%}
+.legend{display:flex;justify-content:space-between;font-size:12px;color:var(--muted)}
+</style>
+
+<div class="w">
+<div class="doc">
+
+<header class="lead">
+  <div class="eyebrow">Dreikampf · Geschick-Spiel · Stilvorschlag</div>
+  <h1>Der Phönix ersetzt die Dohle</h1>
+  <p class="muted">Drei Stile für Phönix, Brezn, Gold-Brezn und Hintergrund. Rechts kannst du sie frei kombinieren und in echter Handygröße ansehen. Regeln, Zielfolge, Trefferbereiche und Punkte bleiben wie im Prototyp.</p>
+</header>
+
+<section class="warn" aria-label="Wichtige Punkte">
+  <h2>Zwei Dinge vorab</h2>
+  <ul>
+    <li><b>Größe des Phönix:</b> Der Trefferbereich bleibt gleich. Deshalb darf der Phönix nicht größer wirken als die Dohle, sonst trifft man scheinbar die Flügelspitze und es zählt nicht. Alle Phönixe hier passen in den alten Umriss. Mit „Trefferbereich“ rechts siehst du das.</li>
+    <li><b>Gold-Brezn gegen Feuervogel:</b> Ein gelb-oranger Phönix und eine goldene Brezn können sich ähneln. Die Gold-Brezn ist darum heller, hat Strahlen und fliegt ganz oben. Am stärksten ist die Gefahr bei Stil C. Bitte im 5-Sekunden-Test darauf achten.</li>
+  </ul>
+</section>
+
+<section>
+  <h2>Vom App-Symbol abgeleitet</h2>
+  <div class="derive">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Dreikampf-App-Symbol: Phönix mit Flammenflügeln" style="width:100%;height:auto;border-radius:22%;display:block">
+<defs>
+<radialGradient id="bg" cx="50%" cy="45%" r="70%"><stop offset="0" stop-color="#4a1d5e"/><stop offset=".55" stop-color="#1c1240"/><stop offset="1" stop-color="#0a0718"/></radialGradient>
+<radialGradient id="glow" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#ffb347" stop-opacity=".55"/><stop offset="1" stop-color="#ff5a1f" stop-opacity="0"/></radialGradient>
+<linearGradient id="gR" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#ff7a1a"/><stop offset="1" stop-color="#c8102e"/></linearGradient>
+<linearGradient id="gO" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#ffd166"/><stop offset="1" stop-color="#ff5a1f"/></linearGradient>
+<linearGradient id="gY" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#fff3b0"/><stop offset="1" stop-color="#ffb000"/></linearGradient>
+<linearGradient id="gB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe08a"/><stop offset=".5" stop-color="#ff8c1a"/><stop offset="1" stop-color="#d7261e"/></linearGradient>
+<filter id="soft"><feGaussianBlur stdDeviation="2"/></filter>
+</defs>
+<rect role="img" aria-label="Dreikampf-App-Symbol: Phönix mit Flammenflügeln" style="width:100%;height:auto;border-radius:22%;display:block" rx="0" fill="url(#bg)"/>
+<circle cx="256" cy="250" r="230" fill="url(#glow)"/>
+<g opacity=".95"><path d="M256.0,292.0 Q236.0,362.0 256.0,492.0 Q276.0,362.0 256.0,292.0Z" fill="url(#gR)"/><path d="M256.0,292.0 Q256.4,358.1 311.6,463.2 Q294.5,345.7 256.0,292.0Z" fill="url(#gR)"/><path d="M256.0,292.0 Q217.5,345.7 200.4,463.2 Q255.6,358.1 256.0,292.0Z" fill="url(#gR)"/><path d="M256.0,292.0 Q246.0,350.6 283.8,449.6 Q285.4,343.7 256.0,292.0Z" fill="url(#gO)"/><path d="M256.0,292.0 Q226.6,343.7 228.2,449.6 Q266.0,350.6 256.0,292.0Z" fill="url(#gO)"/><path d="M256.0,292.0 Q261.4,341.4 321.0,404.6 Q296.1,321.4 256.0,292.0Z" fill="url(#gY)"/><path d="M256.0,292.0 Q215.9,321.4 191.0,404.6 Q250.6,341.4 256.0,292.0Z" fill="url(#gY)"/><path d="M256.0,292.0 Q236.0,344.5 256.0,442.0 Q276.0,344.5 256.0,292.0Z" fill="url(#gY)"/></g>
+<g><path d="M242.0,232.0 Q164.1,196.8 9.9,199.4 Q157.4,244.3 242.0,232.0Z" fill="url(#gR)"/><path d="M242.0,232.0 Q168.3,181.2 9.0,151.8 Q152.7,226.6 242.0,232.0Z" fill="url(#gR)"/><path d="M242.0,232.0 Q176.9,166.7 21.6,104.8 Q152.9,208.3 242.0,232.0Z" fill="url(#gR)"/><path d="M242.0,232.0 Q189.5,154.6 47.1,62.6 Q158.0,190.8 242.0,232.0Z" fill="url(#gR)"/><path d="M242.0,232.0 Q205.4,146.2 83.5,29.1 Q167.6,175.8 242.0,232.0Z" fill="url(#gR)"/><path d="M242.0,232.0 Q223.3,142.4 127.5,7.3 Q180.5,164.2 242.0,232.0Z" fill="url(#gR)"/><path d="M242.0,232.0 Q241.6,143.7 175.1,-1.4 Q195.5,156.9 242.0,232.0Z" fill="url(#gR)"/><path d="M242.0,232.0 Q258.9,149.8 222.0,3.2 Q211.1,154.0 242.0,232.0Z" fill="url(#gR)"/><path d="M242.0,232.0 Q273.7,160.2 264.3,19.6 Q225.9,155.1 242.0,232.0Z" fill="url(#gR)"/><path d="M242.0,232.0 Q285.0,173.6 299.1,45.1 Q239.0,159.6 242.0,232.0Z" fill="url(#gR)"/><path d="M242.0,232.0 Q292.2,188.8 324.7,76.4 Q249.8,166.3 242.0,232.0Z" fill="url(#gR)"/><path d="M242.0,232.0 Q182.0,200.1 60.3,200.0 Q174.7,241.5 242.0,232.0Z" fill="url(#gO)"/><path d="M242.0,232.0 Q186.0,187.8 60.3,161.8 Q170.8,227.0 242.0,232.0Z" fill="url(#gO)"/><path d="M242.0,232.0 Q193.6,176.7 71.7,124.7 Q171.2,212.2 242.0,232.0Z" fill="url(#gO)"/><path d="M242.0,232.0 Q204.6,167.8 94.0,92.3 Q175.8,198.4 242.0,232.0Z" fill="url(#gO)"/><path d="M242.0,232.0 Q218.1,162.5 124.9,68.2 Q183.9,186.9 242.0,232.0Z" fill="url(#gO)"/><path d="M242.0,232.0 Q232.9,161.2 161.4,54.6 Q194.7,178.6 242.0,232.0Z" fill="url(#gO)"/><path d="M242.0,232.0 Q247.5,164.3 199.4,52.4 Q206.7,174.0 242.0,232.0Z" fill="url(#gO)"/><path d="M242.0,232.0 Q260.7,171.3 235.4,61.0 Q218.7,173.0 242.0,232.0Z" fill="url(#gO)"/><path d="M242.0,232.0 Q271.2,181.5 266.0,78.4 Q229.7,175.0 242.0,232.0Z" fill="url(#gO)"/><path d="M242.0,232.0 Q278.3,193.5 289.5,101.6 Q238.9,179.2 242.0,232.0Z" fill="url(#gO)"/><path d="M242.0,232.0 Q201.1,205.9 115.2,205.0 Q194.1,239.2 242.0,232.0Z" fill="url(#gY)"/><path d="M242.0,232.0 Q205.0,196.4 116.0,174.4 Q190.8,227.3 242.0,232.0Z" fill="url(#gY)"/><path d="M242.0,232.0 Q212.4,188.3 128.2,145.8 Q191.9,215.4 242.0,232.0Z" fill="url(#gY)"/><path d="M242.0,232.0 Q222.9,183.1 150.3,123.8 Q196.9,205.1 242.0,232.0Z" fill="url(#gY)"/><path d="M242.0,232.0 Q234.9,181.9 178.7,111.6 Q204.8,197.8 242.0,232.0Z" fill="url(#gY)"/><path d="M242.0,232.0 Q246.9,185.0 209.1,110.5 Q214.1,193.9 242.0,232.0Z" fill="url(#gY)"/><path d="M242.0,232.0 Q257.2,191.9 237.0,119.6 Q223.3,193.4 242.0,232.0Z" fill="url(#gY)"/><path d="M242.0,232.0 Q264.7,201.3 258.9,136.0 Q231.2,195.4 242.0,232.0Z" fill="url(#gY)"/><path d="M270.0,232.0 Q354.6,244.3 502.1,199.4 Q347.9,196.8 270.0,232.0Z" fill="url(#gR)"/><path d="M270.0,232.0 Q359.3,226.6 503.0,151.8 Q343.7,181.2 270.0,232.0Z" fill="url(#gR)"/><path d="M270.0,232.0 Q359.1,208.3 490.4,104.8 Q335.1,166.7 270.0,232.0Z" fill="url(#gR)"/><path d="M270.0,232.0 Q354.0,190.8 464.9,62.6 Q322.5,154.6 270.0,232.0Z" fill="url(#gR)"/><path d="M270.0,232.0 Q344.4,175.8 428.5,29.1 Q306.6,146.2 270.0,232.0Z" fill="url(#gR)"/><path d="M270.0,232.0 Q331.5,164.2 384.5,7.3 Q288.7,142.4 270.0,232.0Z" fill="url(#gR)"/><path d="M270.0,232.0 Q316.5,156.9 336.9,-1.4 Q270.4,143.7 270.0,232.0Z" fill="url(#gR)"/><path d="M270.0,232.0 Q300.9,154.0 290.0,3.2 Q253.1,149.8 270.0,232.0Z" fill="url(#gR)"/><path d="M270.0,232.0 Q286.1,155.1 247.7,19.6 Q238.3,160.2 270.0,232.0Z" fill="url(#gR)"/><path d="M270.0,232.0 Q273.0,159.6 212.9,45.1 Q227.0,173.6 270.0,232.0Z" fill="url(#gR)"/><path d="M270.0,232.0 Q262.2,166.3 187.3,76.4 Q219.8,188.8 270.0,232.0Z" fill="url(#gR)"/><path d="M270.0,232.0 Q337.3,241.5 451.7,200.0 Q330.0,200.1 270.0,232.0Z" fill="url(#gO)"/><path d="M270.0,232.0 Q341.2,227.0 451.7,161.8 Q326.0,187.8 270.0,232.0Z" fill="url(#gO)"/><path d="M270.0,232.0 Q340.8,212.2 440.3,124.7 Q318.4,176.7 270.0,232.0Z" fill="url(#gO)"/><path d="M270.0,232.0 Q336.2,198.4 418.0,92.3 Q307.4,167.8 270.0,232.0Z" fill="url(#gO)"/><path d="M270.0,232.0 Q328.1,186.9 387.1,68.2 Q293.9,162.5 270.0,232.0Z" fill="url(#gO)"/><path d="M270.0,232.0 Q317.3,178.6 350.6,54.6 Q279.1,161.2 270.0,232.0Z" fill="url(#gO)"/><path d="M270.0,232.0 Q305.3,174.0 312.6,52.4 Q264.5,164.3 270.0,232.0Z" fill="url(#gO)"/><path d="M270.0,232.0 Q293.3,173.0 276.6,61.0 Q251.3,171.3 270.0,232.0Z" fill="url(#gO)"/><path d="M270.0,232.0 Q282.3,175.0 246.0,78.4 Q240.8,181.5 270.0,232.0Z" fill="url(#gO)"/><path d="M270.0,232.0 Q273.1,179.2 222.5,101.6 Q233.7,193.5 270.0,232.0Z" fill="url(#gO)"/><path d="M270.0,232.0 Q317.9,239.2 396.8,205.0 Q310.9,205.9 270.0,232.0Z" fill="url(#gY)"/><path d="M270.0,232.0 Q321.2,227.3 396.0,174.4 Q307.0,196.4 270.0,232.0Z" fill="url(#gY)"/><path d="M270.0,232.0 Q320.1,215.4 383.8,145.8 Q299.6,188.3 270.0,232.0Z" fill="url(#gY)"/><path d="M270.0,232.0 Q315.1,205.1 361.7,123.8 Q289.1,183.1 270.0,232.0Z" fill="url(#gY)"/><path d="M270.0,232.0 Q307.2,197.8 333.3,111.6 Q277.1,181.9 270.0,232.0Z" fill="url(#gY)"/><path d="M270.0,232.0 Q297.9,193.9 302.9,110.5 Q265.1,185.0 270.0,232.0Z" fill="url(#gY)"/><path d="M270.0,232.0 Q288.7,193.4 275.0,119.6 Q254.8,191.9 270.0,232.0Z" fill="url(#gY)"/><path d="M270.0,232.0 Q280.8,195.4 253.1,136.0 Q247.3,201.3 270.0,232.0Z" fill="url(#gY)"/></g>
+<path d="M256,165 C284,190 290,250 274,300 C268,322 244,322 238,300 C222,250 228,190 256,165Z" fill="url(#gB)"/>
+<path d="M238,140 Q226,96 246,60 Q246,96 258,108 Q262,70 292,48 Q276,92 284,122 Q300,100 322,96 Q296,120 282,142Z" fill="url(#gO)"/>
+<circle cx="256" cy="150" r="27" fill="url(#gB)"/>
+<path d="M276,150 L300,160 L276,166Z" fill="#ffe08a"/>
+<circle cx="264" cy="146" r="5" fill="#1a0b2e"/><circle cx="265.5" cy="144.5" r="1.6" fill="#fff"/>
+<g fill="#fff6c9" opacity=".9"><circle cx="150" cy="420" r="3"/><circle cx="360" cy="440" r="2.5"/><circle cx="390" cy="380" r="2"/><circle cx="120" cy="360" r="2"/><circle cx="210" cy="460" r="2"/><circle cx="310" cy="470" r="2.5"/></g>
+</svg>
+    <ul>
+      <li>Gleiche drei Flammenfarben: Rot außen, Orange in der Mitte, Gelb innen.</li>
+      <li>Flügel und Schwanz als Fächer aus spitzen Flammenfedern, wie im Symbol.</li>
+      <li>Tropfenförmiger Körper mit Verlauf von Gelb nach Rot, runder Kopf, Krone aus drei Flammen, gelber Schnabel, dunkles Auge mit Lichtpunkt.</li>
+      <li>Im Spiel von der Seite gezeichnet, weil er quer übers Bild fliegt.</li>
+    </ul>
+  </div>
+</section>
+
+<section class="var">
+  <h2>Farben und Schriften</h2>
+  <div class="sw">
+    <span><i style="background:#17133a"></i>Grund</span><span><i style="background:#211b52"></i>Fläche</span><span><i style="background:#4a3f9a"></i>Linie</span>
+    <span><i style="background:#ffc93c"></i>Dreikampf-Gold</span><span><i style="background:#c8102e"></i>Flamme Rot</span><span><i style="background:#ff5a1f"></i>Flamme Orange</span>
+    <span><i style="background:#ffb000"></i>Flamme Gelb</span><span><i style="background:#4a1d5e"></i>Symbol-Violett</span><span><i style="background:#a8562a"></i>Brezn</span>
+  </div>
+  <div class="type"><span class="d">+25 Treffer!</span><span class="b">Figtree für Texte und Zahlen im Spiel, Unbounded nur für große Momente.</span></div>
+</section>
+
+<section class="var" id="gA"><div class="vhead"><span class="vtag">A</span><h2>Glut-Emblem</h2></div>
+  <p class="muted">Nah am App-Symbol: weiche Farbverläufe, warmer Schein. Hintergrund: Alpenglühen über den Bergen.</p>
+  <canvas class="gal" data-v="0" aria-label="Stil A: Phönix in drei Flügelstellungen, Brezn und Gold-Brezn"></canvas>
+  <div class="ladrow"><canvas class="lad" data-v="0" aria-label="Stil A in echter Größe auf einem kleinen Handy"></canvas><p class="small muted">So groß wie auf einem kleinen Handy (320 Punkte breit): vorn 5, Mitte 10, hinten 25, Gold 50. Hinten wirkt durch leichten Dunst blasser.</p></div>
+</section>
+
+<section class="var" id="gB"><div class="vhead"><span class="vtag">B</span><h2>Sticker</h2></div>
+  <p class="muted">Kräftige Flächen mit hellem Rand wie ein Aufkleber. Am besten lesbar, wenn es klein und schnell wird. Hintergrund: Sternennacht mit aufsteigender Glut.</p>
+  <canvas class="gal" data-v="1" aria-label="Stil B: Phönix in drei Flügelstellungen, Brezn und Gold-Brezn"></canvas>
+  <div class="ladrow"><canvas class="lad" data-v="1" aria-label="Stil B in echter Größe auf einem kleinen Handy"></canvas><p class="small muted">Der helle Rand bleibt auch hinten auf dunklem Himmel sichtbar. Meine Empfehlung für die Lesbarkeit.</p></div>
+</section>
+
+<section class="var" id="gC"><div class="vhead"><span class="vtag">C</span><h2>Feuerschein</h2></div>
+  <p class="muted">Leuchtend, mit Funkenspur. Am spektakulärsten, aber am ehesten mit der Gold-Brezn zu verwechseln. Hintergrund: über den Wolken bei Abendrot.</p>
+  <canvas class="gal" data-v="2" aria-label="Stil C: Phönix in drei Flügelstellungen, Brezn und Gold-Brezn"></canvas>
+  <div class="ladrow"><canvas class="lad" data-v="2" aria-label="Stil C in echter Größe auf einem kleinen Handy"></canvas><p class="small muted">Leuchten kostet auf schwachen Handys etwas mehr Rechenzeit. Messe ich vor dem Einbau.</p></div>
+</section>
+
+<section>
+  <h2>Namensvorschläge</h2>
+  <div class="names">
+    <div class="nm rec"><b>Phönixflug</b><p class="small">Direkt passend zum App-Symbol, freundlich, keine Jagd-Wörter. Meine Empfehlung.</p></div>
+    <div class="nm"><b>Funkenregen</b><p class="small">Beschreibt, was beim Treffer passiert. Klingt nach Feuerwerk statt nach Schießen.</p></div>
+    <div class="nm"><b>Glutjagd</b><p class="small">Sagt sofort, worum es geht. Nachteil: klingt sehr ähnlich wie „Brezn-Jagd“.</p></div>
+  </div>
+</section>
+
+<section class="var">
+  <h2>Was danach kommt</h2>
+  <p class="muted">Nach deiner Wahl baue ich die spielbare Testseite: Flügelschlag, Flammenschweif, Treffer mit Glut, Funken und Asche, aufsteigendes Flämmchen, ziehende Wolken, Töne mit Aus-Schalter und Rücksicht auf „Bewegung reduzieren“. Ins echte Spiel kommt es erst nach „Phönix einbauen“.</p>
+</section>
+
+</div>
+
+<aside class="side" aria-label="Handy-Vorschau">
+  <div class="phone"><div class="stage" id="stage"><canvas id="pv" aria-label="Handy-Vorschau des Spielfelds"></canvas>
+    <div class="cover" id="cover" hidden><b style="font:800 16px var(--display)">Bild weg. Was hast du gesehen?</b>
+      <ol><li>Wie viele Ziele waren hinten (klein, oben)?</li><li>Welches Ziel bringt die meisten Punkte?</li><li>Wo war die Gold-Brezn?</li><li>Was ist das für ein Vogel?</li></ol>
+      <button class="btn" id="coverx">Bild wieder zeigen</button></div>
+    <div class="cnt" id="cnt" hidden></div></div></div>
+  <div class="legend"><span>vorn 5</span><span>Mitte 10</span><span>hinten 25</span><span>Gold 50</span></div>
+  <div class="ctl">
+    <div class="row"><span>Phönix</span><div class="seg" data-k="ph"><button>A</button><button>B</button><button>C</button></div></div>
+    <div class="row"><span>Brezn</span><div class="seg" data-k="br"><button>A</button><button>B</button><button>C</button></div></div>
+    <div class="row"><span>Hintergrund</span><div class="seg" data-k="bg"><button>A</button><button>B</button><button>C</button></div></div>
+    <div class="row"><span>Ansicht</span><div class="seg" data-k="mode"><button>Standbild</button><button>Echte Folge</button></div></div>
+    <div class="row"><span>Handy</span><div class="seg" data-k="wd"><button>klein</button><button>normal</button></div></div>
+    <div class="row"><span>Anzeigen</span><div class="seg" data-k="lab"><button>Punkte</button><button>Treffer&shy;bereich</button><button>nichts</button></div></div>
+    <div class="row"><span>Bewegung</span><div class="seg" data-k="mo"><button>an</button><button>aus</button></div></div>
+    <button class="btn" id="t5">5-Sekunden-Test starten</button>
+  </div>
+</aside>
+</div>
+
+<script>
+(function(){
+"use strict";
+/* ===== Unverändert aus docs/dohlen-prototyp.html (Zielfolge, Bahnen, Trefferradius) ===== */
+function dhRnd(seed){let s=seed>>>0;return()=>{s=(s+0x6D2B79F5)>>>0;let t=s;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return((t^t>>>14)>>>0)/4294967296;};}
+const DH_DEP=[{n:"vorn",s:1,pts:5,dur:3.0,y:[.60,.74]},{n:"Mitte",s:.62,pts:10,dur:4.0,y:[.42,.54]},{n:"hinten",s:.38,pts:25,dur:5.2,y:[.25,.35]}];
+const DH_LEN=25;
+function dhSchedule(seed){const r=dhRnd(seed),T=[];let t=.4;
+  while(t<DH_LEN-1.2){const x=r(),d=x<.45?0:x<.8?1:2;
+    T.push({t0:t,d:d,k:r()<.2?"brezn":"dohle",dir:r()<.5?1:-1,y:DH_DEP[d].y[0]+r()*(DH_DEP[d].y[1]-DH_DEP[d].y[0]),dur:DH_DEP[d].dur*(.85+r()*.3),ph:r()*6.28,amp:.012+r()*.02});
+    t+=.42+r()*.36;}
+  for(let i=0;i<2;i++)T.push({t0:4+i*10+r()*6,d:1,k:"gold",dir:r()<.5?1:-1,y:.13+r()*.1,dur:2.3,ph:r()*6.28,amp:.025});
+  T.sort((a,b)=>a.t0-b.t0);T.forEach((o,i)=>o.id=i);return T;}
+function dhPos(o,t){const p=(t-o.t0)/o.dur;if(p<0||p>1)return null;return [o.dir>0?-.07+1.14*p:1.07-1.14*p,o.y+Math.sin(p*9+o.ph)*o.amp];}
+function dhVal(o){return o.k==="gold"?50:DH_DEP[o.d].pts;}
+function dhScale(o){return o.k==="gold"?.7:DH_DEP[o.d].s;}
+function dhHitR(o,S){return Math.max(26*dhScale(o)*S*1.35,17*S);}
+
+/* ===== Farben ===== */
+function hx(c){if(c[0]!=="#")return c.match(/\d+/g).map(Number);return [1,3,5].map(i=>parseInt(c.slice(i,i+2),16));}
+const MC={};
+function mix(a,b,t){if(!t)return a;const k=a+b+t;if(MC[k])return MC[k];const A=hx(a),B=hx(b);return MC[k]="rgb("+A.map((v,i)=>Math.round(v+(B[i]-v)*t)).join(",")+")";}
+const HAZE=[0,.14,.26];
+
+/* ===== Hintergründe ===== */
+const BG=[
+ {n:"Alpenglühen",haze:"#b48ab8",sky:[[0,"#17133a"],[.38,"#4a1d5e"],[.66,"#b8437a"],[.86,"#ff9a6a"]],sun:["#ffd9a0",.78,.33],
+  mt:[["#8c6bb0",[[0,.52],[.1,.41],[.2,.46],[.33,.32],[.47,.43],[.6,.34],[.74,.42],[.88,.3],[1,.39]],"#f5c9d6"],["#5b3a86",[[0,.63],[.14,.52],[.3,.58],[.44,.47],[.58,.57],[.76,.5],[1,.6]]],["#2b1a52",[[0,.84],[.22,.77],[.46,.82],[.7,.75],[1,.8]]]],
+  cl:["rgba(255,190,200,.30)","rgba(255,170,150,.22)"],stars:0,emb:0},
+ {n:"Sternennacht",haze:"#3c3170",sky:[[0,"#0a0718"],[.5,"#1c1240"],[.85,"#3b1650"]],moon:[.2,.16],
+  mt:[["#2a2160",[[0,.55],[.12,.45],[.26,.5],[.4,.36],[.55,.47],[.7,.38],[.86,.46],[1,.4]],"#5d4f9e"],["#1b1544",[[0,.68],[.18,.58],[.34,.64],[.52,.55],[.7,.63],[1,.57]]],["#0e0b28",[[0,.86],[.25,.8],[.5,.85],[.78,.78],[1,.83]]]],
+  cl:["rgba(90,70,150,.28)","rgba(60,45,110,.30)"],stars:70,emb:16},
+ {n:"Über den Wolken",haze:"#d4c2f2",sky:[[0,"#231c5e"],[.45,"#6a4fb6"],[.8,"#ffb08a"]],sun:["#fff0c0",.24,.62],
+  mt:[["#a58ad6",[[0,.66],[.08,.58],[.16,.64],[.62,.66],[.7,.52],[.8,.6],[1,.63]],"#efe2ff"]],
+  sea:1,cl:["rgba(255,236,245,.55)","rgba(255,214,200,.45)"],stars:0,emb:0}
+];
+function rr(i){let x=Math.sin(i*127.1)*43758.5453;return x-Math.floor(x);}
+function cloud(c,x,y,w,col){c.fillStyle=col;c.beginPath();
+  c.ellipse(x,y,w*.5,w*.16,0,0,7);c.ellipse(x-w*.18,y-w*.08,w*.2,w*.15,0,0,7);c.ellipse(x+w*.12,y-w*.11,w*.24,w*.18,0,0,7);c.fill();}
+function drawBg(c,W,H,v,t){const b=BG[v];const g=c.createLinearGradient(0,0,0,H);b.sky.forEach(s=>g.addColorStop(s[0],s[1]));c.fillStyle=g;c.fillRect(0,0,W,H);
+  if(b.stars){for(let i=0;i<b.stars;i++){const tw=.45+.55*Math.abs(Math.sin(t*1.3+i));c.fillStyle="rgba(255,246,220,"+(.35+.5*rr(i+9)*tw).toFixed(2)+")";const r=rr(i+3)<.12?1.6:.9;c.fillRect(rr(i)*W,rr(i+1)*H*.62,r,r);}}
+  if(b.sun){const [col,sx,sy]=b.sun,rg=c.createRadialGradient(sx*W,sy*H,0,sx*W,sy*H,W*.32);rg.addColorStop(0,col);rg.addColorStop(.18,col);rg.addColorStop(.2,"rgba(255,220,160,.35)");rg.addColorStop(1,"rgba(255,180,120,0)");c.fillStyle=rg;c.fillRect(0,0,W,H);}
+  if(b.moon){const mx=b.moon[0]*W,my=b.moon[1]*H,mr=W*.05;c.fillStyle="#fff1c9";c.beginPath();c.arc(mx,my,mr,0,7);c.fill();c.fillStyle=b.sky[0][1];c.beginPath();c.arc(mx+mr*.45,my-mr*.2,mr*.9,0,7);c.fill();}
+  const sp=[6,11];
+  b.mt.forEach((m,i)=>{c.fillStyle=m[0];c.beginPath();c.moveTo(0,H);m[1].forEach(p=>c.lineTo(p[0]*W,p[1]*H));c.lineTo(W,H);c.closePath();c.fill();
+    if(m[2]){c.fillStyle=m[2];m[1].forEach((p,k)=>{if(k&&k<m[1].length-1&&p[1]<m[1][k-1][1]&&p[1]<m[1][k+1][1]){const px=p[0]*W,py=p[1]*H;c.beginPath();c.moveTo(px,py);c.lineTo(px-W*.035,py+H*.035);c.lineTo(px-W*.01,py+H*.028);c.lineTo(px+W*.012,py+H*.04);c.lineTo(px+W*.03,py+H*.03);c.closePath();c.fill();}});}
+    if(i===0&&b.cl){for(let k=0;k<3;k++){const w=W*(.42+.12*k),x=((rr(k+20)*W+t*sp[0]*(1+k*.3))%(W+w))-w/2,y=H*(.2+.12*k);cloud(c,x,y,w,b.cl[0]);}}});
+  if(b.sea){for(let k=0;k<5;k++){const w=W*.7,x=((rr(k+40)*W*1.6+t*sp[1]*(k%2?1:.7))%(W+w))-w/2;cloud(c,x,H*(.8+.05*(k%3)),w,k%2?b.cl[0]:b.cl[1]);}
+    c.fillStyle=b.cl[0];c.fillRect(0,H*.88,W,H*.12);}
+  else if(b.cl){const w=W*.6,x=((rr(31)*W+t*sp[1])%(W+w))-w/2;cloud(c,x,H*.72,w,b.cl[1]);}
+  if(b.emb){for(let i=0;i<b.emb;i++){const life=(t*.22+rr(i+50))%1,x=rr(i+60)*W+Math.sin(t*1.7+i)*8,y=H*(1-life*.7);c.fillStyle="rgba(255,"+(120+Math.round(rr(i)*90))+",60,"+((1-life)*.8).toFixed(2)+")";c.beginPath();c.arc(x,y,1.1+rr(i+70)*1.4,0,7);c.fill();}}}
+
+/* ===== Phönix (Seitenansicht, schaut nach rechts, passt in den alten Dohlen-Umriss) ===== */
+function fea(p,bx,by,a,len,w){const tx=bx+Math.cos(a)*len,ty=by+Math.sin(a)*len,mx=(bx+tx)/2,my=(by+ty)/2,nx=-Math.sin(a)*w,ny=Math.cos(a)*w;
+  p.moveTo(bx,by);p.quadraticCurveTo(mx+nx,my+ny,tx,ty);p.quadraticCurveTo(mx-nx,my-ny,bx,by);}
+function fan(cx,cy,c,spread,n,len,w,jit,t){const p=new Path2D();for(let i=0;i<n;i++){const f=n>1?i/(n-1)-.5:0;fea(p,cx,cy,c+f*spread,len*(1-.12*Math.abs(f)*2)*(1+jit*Math.sin(t*17+i*2.1)),w);}return p;}
+const PAL={A:{R:["#ff7a1a","#c8102e"],O:["#ffd166","#ff5a1f"],Y:["#fff3b0","#ffb000"],B:["#ffe08a","#ff8c1a","#d7261e"]},
+  B:{R:"#e8322a",O:"#ff8a1f",Y:"#ffd23c",B:"#ffad2e",L:"#fff4dc"},
+  C:{R:["#ff8a2a","#ff3d1f"],O:["#ffe28a","#ff7a1a"],Y:["#fffbe0","#ffd24a"],B:["#fffbe6","#ffc23a","#ff5a1f"]}};
+function phoenix(c,x,y,u,t,dir,ph,sty,haze,hz,motion){
+  c.save();c.translate(x,y);c.scale(dir*u,u);
+  const fl=motion?Math.sin(t*11+ph):.55,wc=-1.75-(1-fl)/2*1.95,wl=.86+.14*Math.abs(fl);
+  const P=PAL["ABC"[sty]],m=col=>mix(col,haze,hz);
+  const lg=(cols,y0,y1)=>{if(typeof cols==="string")return m(cols);const g=c.createLinearGradient(0,y0,0,y1);cols.forEach((cc,i)=>g.addColorStop(i/(cols.length-1),m(cc)));return g;};
+  const R=lg(P.R,18,-28),O=lg(P.O,14,-22),Y=lg(P.Y,10,-16),B=lg(P.B,-14,10);
+  // Glut-Schein hinter dem Vogel
+  if(sty!==1){const rg=c.createRadialGradient(0,-2,2,0,-2,sty===2?40:32);rg.addColorStop(0,sty===2?"rgba(255,200,90,.55)":"rgba(255,179,71,.35)");rg.addColorStop(1,"rgba(255,90,31,0)");c.fillStyle=rg;c.beginPath();c.arc(0,-2,sty===2?40:32,0,7);c.fill();}
+  // Funkenspur (nur Stil C)
+  if(sty===2&&motion){for(let i=0;i<7;i++){const k=(t*2.2+i/7)%1,px=-14-k*30,py=3+Math.sin(t*9+i*1.7)*4*k;c.fillStyle="rgba(255,"+(200-Math.round(k*120))+",80,"+(1-k).toFixed(2)+")";c.beginPath();c.arc(px,py,(1-k)*2.4+.6,0,7);c.fill();}}
+  const sh=[];
+  const bw=fan(1,-3,wc+.28,1.25,5,23*wl,3.2,0,t);sh.push([bw,m(sty===1?"#a8241c":"#9e1a24"),1]);
+  sh.push([fan(-11,2,Math.PI+.12,.85,5,18,3.1,.07,t),R],[fan(-11,2,Math.PI+.1,.6,4,14,2.7,.07,t),O],[fan(-11,2,Math.PI+.08,.35,3,9,2.3,.07,t),Y]);
+  const body=new Path2D();body.ellipse(1,1,14,8.5,-.12,0,7);sh.push([body,B]);
+  const head=new Path2D();head.arc(15,-7,7,0,7);sh.push([head,B]);
+  const cr=new Path2D();[[5,-21],[10,-23],[15,-20]].forEach((q,i)=>{cr.moveTo(11+i*1.5,-11);cr.quadraticCurveTo(q[0]-3,q[1]+6,q[0],q[1]);cr.quadraticCurveTo(q[0]+2,q[1]+7,14+i*1.2,-10);});sh.push([cr,O]);
+  const bk=new Path2D();bk.moveTo(21,-9);bk.lineTo(28,-6);bk.lineTo(21,-3.5);bk.closePath();sh.push([bk,m("#ffe08a")]);
+  sh.push([fan(1,-3,wc,1.35,6,26*wl,3.4,0,t),R],[fan(1,-3,wc+.04,1.05,5,19*wl,3,0,t),O],[fan(1,-3,wc+.08,.7,4,12*wl,2.6,0,t),Y]);
+  if(sty===1){c.lineJoin="round";c.strokeStyle=m(P.L);c.lineWidth=4;sh.forEach(s=>c.stroke(s[0]));}
+  if(sty===2){c.globalCompositeOperation="source-over";}
+  sh.forEach(s=>{c.fillStyle=s[1];c.fill(s[0]);});
+  if(sty===2){c.globalCompositeOperation="lighter";c.globalAlpha=.25;c.fillStyle="#ffcf6a";sh.slice(-3).forEach(s=>c.fill(s[0]));c.globalAlpha=1;c.globalCompositeOperation="source-over";}
+  c.fillStyle="#1a0b2e";c.beginPath();c.arc(17.2,-8,1.9,0,7);c.fill();c.fillStyle="#fff";c.beginPath();c.arc(17.8,-8.6,.7,0,7);c.fill();
+  c.restore();}
+
+/* ===== Brezn und Gold-Brezn ===== */
+function breznPath(){const p=new Path2D();p.ellipse(0,5,20,13,0,0,Math.PI);p.moveTo(-20,5);p.bezierCurveTo(-24,-12,-6,-16,-2,-4);p.lineTo(6,10);p.moveTo(20,5);p.bezierCurveTo(24,-12,6,-16,2,-4);p.lineTo(-6,10);return p;}
+const BP=breznPath();
+function star(c,r1,r2,n){c.beginPath();for(let i=0;i<n*2;i++){const r=i%2?r2:r1,a=i/(n*2)*Math.PI*2-Math.PI/2;c.lineTo(Math.cos(a)*r,Math.sin(a)*r);}c.closePath();}
+function brezn(c,x,y,u,t,gold,sty,haze,hz,motion){
+  c.save();c.translate(x,y);c.scale(u,u);c.rotate(motion?Math.sin(t*3)*.25:.1);c.lineCap="round";c.lineJoin="round";
+  const m=col=>mix(col,haze,gold?0:hz);
+  if(gold){
+    const rot=motion?t*1.6:0;c.save();c.rotate(rot);c.strokeStyle="rgba(255,248,214,.9)";c.lineWidth=2.4;
+    for(let i=0;i<12;i++){const a=i/12*Math.PI*2,r0=27,r1=i%2?36:42;c.beginPath();c.moveTo(Math.cos(a)*r0,Math.sin(a)*r0);c.lineTo(Math.cos(a)*r1,Math.sin(a)*r1);c.stroke();}c.restore();
+    const rg=c.createRadialGradient(0,0,4,0,0,32);rg.addColorStop(0,"rgba(255,250,220,.55)");rg.addColorStop(1,"rgba(255,230,140,0)");c.fillStyle=rg;c.beginPath();c.arc(0,0,32,0,7);c.fill();}
+  if(sty===1){c.strokeStyle=gold?"#ffffff":m("#fff4dc");c.lineWidth=11;c.stroke(BP);}
+  const g=c.createLinearGradient(0,-14,0,18);
+  if(gold){g.addColorStop(0,"#fff6c8");g.addColorStop(.45,"#ffd84a");g.addColorStop(1,"#e09a00");}
+  else if(sty===2){g.addColorStop(0,m("#e0954f"));g.addColorStop(1,m("#7a3410"));}
+  else{g.addColorStop(0,m("#c97a3c"));g.addColorStop(1,m("#8a4318"));}
+  c.strokeStyle=g;c.lineWidth=7.5;c.stroke(BP);
+  c.save();c.translate(-.6,-1.4);c.strokeStyle=gold?"rgba(255,255,255,.8)":(sty===2?"rgba(255,210,150,.55)":"rgba(255,220,180,.35)");c.lineWidth=2.2;c.stroke(BP);c.restore();
+  if(gold){c.fillStyle="#fff";c.save();c.translate(0,1);star(c,6.5,2.8,5);c.fillStyle="#7a4a00";c.fill();c.restore();
+    const tw=motion?(Math.sin(t*6)+1)/2:1;c.fillStyle="rgba(255,255,255,"+(.5+.5*tw).toFixed(2)+")";[[-17,-13,3],[18,-11,2.4],[14,14,2]].forEach(s=>{c.save();c.translate(s[0],s[1]);star(c,s[2]*(.7+.5*tw),s[2]*.25,4);c.fill();c.restore();});}
+  else{c.fillStyle=m("#ffffff");[[-14,-6],[10,-9],[0,15],[-17,8],[16,6],[-6,-11],[7,13]].forEach(p=>{c.fillRect(p[0]-.9,p[1]-.9,1.8,1.8);});}
+  c.restore();}
+
+/* ===== Gemeinsamer Zustand ===== */
+const RM=matchMedia("(prefers-reduced-motion: reduce)");
+const S={ph:1,br:1,bg:0,mode:0,wd:0,lab:0,mo:RM.matches?1:0};
+function setupCanvas(cv,w,h){const d=Math.min(2,window.devicePixelRatio||1);cv.width=Math.round(w*d);cv.height=Math.round(h*d);cv.style.width=w+"px";cv.style.height=h+"px";const c=cv.getContext("2d");c.setTransform(d,0,0,d,0,0);return c;}
+
+/* Standbild: feste Beispiel-Szene in den echten Bahnen */
+const STILL=[{d:2,k:"dohle",x:.36,y:.29,dir:1,ph:0},{d:2,k:"dohle",x:.84,y:.31,dir:-1,ph:2},{d:2,k:"brezn",x:.12,y:.27},
+  {d:1,k:"dohle",x:.64,y:.48,dir:-1,ph:1},{d:1,k:"brezn",x:.2,y:.5},{k:"gold",d:1,x:.52,y:.17},
+  {d:0,k:"dohle",x:.27,y:.68,dir:1,ph:3},{d:0,k:"brezn",x:.76,y:.72}];
+const SEQ=dhSchedule(7);
+
+function drawTarget(c,o,x,y,W,t,motion){const sc=dhScale(o),u=W/360*sc,b=BG[S.bg],hz=o.k==="gold"?0:HAZE[o.d];
+  if(o.k==="dohle")phoenix(c,x,y,u,t,o.dir||1,o.ph||0,S.ph,b.haze,hz,motion);else brezn(c,x,y,u,t,o.k==="gold",S.br,b.haze,hz,motion);}
+
+const pv=document.getElementById("pv");let pc=null,PW=320,PH=427;
+function sizePv(){const avail=Math.min(pv.parentElement.parentElement.clientWidth-20,S.wd?390:320);PW=Math.max(240,Math.floor(S.wd?avail:Math.min(320,avail)));PH=Math.round(PW*4/3);pc=setupCanvas(pv,PW,PH);}
+function drawPv(now){const t=now/1000,motion=!S.mo,c=pc,W=PW,H=PH;drawBg(c,W,H,S.bg,motion?t:0);
+  let list=[];
+  if(S.mode===0)list=STILL.map(o=>({o:o,x:o.x*W,y:o.y*H}));
+  else{const tt=(motion?t:6)%DH_LEN;SEQ.forEach(o=>{const p=dhPos(o,tt);if(p)list.push({o:o,x:p[0]*W,y:p[1]*H});});}
+  const ord=[2,1,"gold",0];
+  ord.forEach(l=>list.forEach(e=>{const o=e.o;if(l==="gold"?o.k!=="gold":(o.k==="gold"||o.d!==l))return;drawTarget(c,o,e.x,e.y,W,t,motion);}));
+  if(S.lab===1){c.setLineDash([4,3]);c.lineWidth=1.5;list.forEach(e=>{c.strokeStyle="rgba(255,255,255,.85)";c.beginPath();c.arc(e.x,e.y,dhHitR(e.o,W/360),0,7);c.stroke();});c.setLineDash([]);}
+  if(S.lab===0){c.font="800 "+Math.round(W/24)+"px Figtree,system-ui";c.textAlign="center";c.lineWidth=3;list.forEach(e=>{const s=String(dhVal(e.o)),yy=e.y+dhHitR(e.o,W/360)*.95+6;c.strokeStyle="rgba(10,7,24,.85)";c.strokeText(s,e.x,yy);c.fillStyle="#fff";c.fillText(s,e.x,yy);});}}
+
+/* Galerie: große Figuren + Größenleiter in echter Kleinhandy-Größe */
+const gals=[...document.querySelectorAll("canvas.gal")],lads=[...document.querySelectorAll("canvas.lad")];let gctx=[],lctx=[];
+function sizeGal(){gctx=gals.map(cv=>{const w=cv.parentElement.clientWidth;return [setupCanvas(cv,w,Math.round(Math.min(220,w*.42))),w,Math.round(Math.min(220,w*.42))];});
+  lctx=lads.map(cv=>{const w=Math.min(320,cv.parentElement.clientWidth);return [setupCanvas(cv,w,110),w,110];});}
+function drawGal(now){const t=now/1000,motion=!S.mo;
+  gctx.forEach((g,i)=>{const [c,W,H]=g;drawBg(c,W,H,i,0);c.fillStyle="rgba(10,7,24,.35)";c.fillRect(0,0,W,H);
+    const u=Math.min(W/5/60,H/70),cy=H*.52;
+    [0,1,2].forEach(k=>{const ff=[1,0,-1][k],tt=motion?t+k*.19:Math.asin(ff)/11;phoenix(c,W*(.11+k*.2),cy,u,motion?t+k*.19:tt,1,0,i,"#000",0,true);});
+    brezn(c,W*.71,cy,u*.95,t,false,i,"#000",0,motion);brezn(c,W*.9,cy,u*.95,t,true,i,"#000",0,motion);});
+  lctx.forEach((g,i)=>{const [c,W,H]=g,save=S.bg,sp=S.ph,sb=S.br;S.bg=i;S.ph=i;S.br=i;c.save();c.translate(0,-H*1.6);drawBg(c,W,H*4,i,0);c.restore();
+    const items=[{d:0,k:"dohle",dir:1,ph:1},{d:1,k:"dohle",dir:1,ph:2},{d:2,k:"dohle",dir:1,ph:3},{k:"gold",d:1}];
+    items.forEach((o,k)=>drawTarget(c,o,W*(.14+k*.24),H*.48,W,t,motion));
+    c.font="800 12px Figtree,system-ui";c.textAlign="center";c.fillStyle="#fff";["5","10","25","50"].forEach((s,k)=>c.fillText(s,W*(.14+k*.24),H*.93));
+    S.bg=save;S.ph=sp;S.br=sb;});}
+
+function loop(now){drawPv(now);drawGal(now);if(!S.mo)requestAnimationFrame(loop);}
+function redraw(){if(S.mo)loop(performance.now());}
+
+/* Bedienung */
+document.querySelectorAll(".seg").forEach(sg=>{const k=sg.dataset.k,bs=[...sg.querySelectorAll("button")];
+  const paint=()=>bs.forEach((b,i)=>{b.classList.toggle("on",i===S[k]);b.setAttribute("aria-pressed",i===S[k]);});
+  bs.forEach((b,i)=>b.addEventListener("click",()=>{const was=S.mo;S[k]=i;paint();if(k==="wd")sizePv();if(k==="mo"&&was&&!S.mo){requestAnimationFrame(loop);return;}redraw();}));paint();});
+const cover=document.getElementById("cover"),cnt=document.getElementById("cnt");let t5=null;
+document.getElementById("t5").addEventListener("click",()=>{clearInterval(t5);cover.hidden=true;const keep=S.lab;S.lab=2;
+  document.querySelectorAll('.seg[data-k="lab"] button').forEach((b,i)=>b.classList.toggle("on",i===2));redraw();
+  let n=5;cnt.hidden=false;cnt.textContent=n;t5=setInterval(()=>{n--;if(n>0){cnt.textContent=n;return;}clearInterval(t5);cnt.hidden=true;cover.hidden=false;S.lab=keep;
+    document.querySelectorAll('.seg[data-k="lab"] button').forEach((b,i)=>b.classList.toggle("on",i===keep));},1000);});
+document.getElementById("coverx").addEventListener("click",()=>{cover.hidden=true;redraw();});
+let rz=0;addEventListener("resize",()=>{cancelAnimationFrame(rz);rz=requestAnimationFrame(()=>{sizePv();sizeGal();redraw();});});
+sizePv();sizeGal();loop(performance.now());
+})();
+</script>
+
+</body></html>

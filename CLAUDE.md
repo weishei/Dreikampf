@@ -75,23 +75,33 @@ Läuft über GitHub Pages, Spielstände und Profile liegen in Firebase (Projekt 
 ## Offene Punkte
 - **Sicherheit** der Datenbank-Regeln und der Profil-Anmeldung überarbeiten. Details bei Basti erfragen,
   nicht ins öffentliche Projekt schreiben.
-- **„Dohlen-Schützenfest“** (Moorhuhn-artiges Minispiel): Einbau erst, wenn Basti „Dohlen einbauen“ sagt.
+- **Phönix-Spiel** (Geschick-Minispiel, früher „Dohlen-Schützenfest“; Name noch offen, Vorschläge:
+  Phönixflug, Funkenregen, Glutjagd): Einbau ins echte Spiel erst, wenn Basti „Phönix einbauen“ sagt.
   Details im Abschnitt unten.
 - **Anfang 2027** die zeitgebundenen Fragen prüfen (Mindestlohn, Deutschlandticket, Haushalt, Euro-Länder,
   Bundespräsident usw. in „Wirtschaft & Politik“).
 - Ton-Problem auf manchen Handys: Ursache noch offen, Details von Basti abwarten.
 
-## Dohlen-Schützenfest (geplantes Geschick-Minispiel)
-Spielbarer Prototyp mit Konzept: `docs/dohlen-prototyp.html` (eigenständige Testseite, nicht Teil des Spiels).
-Spielablauf und Logik von dort übernehmen (Funktionen `dh…`), nicht neu erfinden.
+## Phönix-Spiel (geplantes Geschick-Minispiel, früher „Dohlen-Schützenfest“)
+**Umbenennung (Basti, 08.11.2026):** Statt Alpendohlen fliegt ein Phönix, abgeleitet vom App-Symbol `icon.svg`
+(Flammenfarben Rot/Orange/Gelb, Fächer aus Flammenfedern, Krone aus drei Flammen). Brezn und Gold-Brezn bleiben.
+Treffer-Effekt neu: Glut und Funken, der Phönix zerfällt kurz zu Asche und steigt als Flämmchen davon.
+Regeln, Zielfolge, Trefferbereiche und Punkte bleiben **unverändert** (Funktionen `dh…` nicht anfassen).
+Im Code heißt die Zielart weiter `"dohle"`, damit die Zielfolge gleich bleibt.
+
+- Spielbarer Prototyp mit Konzept (noch mit Dohlen): `docs/dohlen-prototyp.html`.
+- Stilseite mit drei Varianten für Phönix, Brezn, Gold-Brezn und Hintergrund: `docs/phoenix-stil.html`.
+  Wahl von Basti steht noch aus. Danach spielbare Testseite bauen, erst nach „Phönix einbauen“ ins Spiel.
+- Phönix muss in den alten Dohlen-Umriss passen (etwa 30 Einheiten Radius), sonst wirkt der Trefferbereich unfair.
+- Spielablauf und Logik aus dem Prototyp übernehmen (Funktionen `dh…`), nicht neu erfinden.
 
 **Regeln laut Prototyp**
-- 25 s, Alpendohlen und Brezn fliegen quer über ein Bergpanorama. Antippen = Schuss.
+- 25 s, Phönixe (früher Alpendohlen) und Brezn fliegen quer über den Himmel. Antippen = Schuss.
 - Drei Tiefen, erkennbar an der Größe: vorn 5, Mitte 10, hinten 25 Punkte. Zweimal pro Runde goldene Brezn: 50.
 - 6 Schuss, dann Nachladen (0,6 s, Knopf oder Antippen der Patronen).
 - Alle Spieler bekommen dieselbe Zielfolge über dieselbe Startzahl wie die anderen Minispiele (`dhSchedule(seed)`).
 - Trefferbereich 35 % größer als die Figur, mindestens fingerbreit, das vorderste Ziel zählt.
-- Kein Blut, keine Waffe im Bild. Getroffene Dohlen verlieren Federn und fliegen weg.
+- Kein Blut, keine Waffe im Bild. Getroffene Phönixe zerfallen zu Glut und steigen als Flämmchen auf.
 - Wertung im Dreikampf wie bei den anderen Geschick-Spielen über die Platzierung.
 
 **Testergebnis (Basti, 08.11.2026)**
