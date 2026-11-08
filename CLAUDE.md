@@ -74,8 +74,35 @@ Läuft über GitHub Pages, Spielstände und Profile liegen in Firebase (Projekt 
 ## Offene Punkte
 - **Sicherheit** der Datenbank-Regeln und der Profil-Anmeldung überarbeiten. Details bei Basti erfragen,
   nicht ins öffentliche Projekt schreiben.
-- **„Dohlen-Schützenfest“** (Moorhuhn-artiges Minispiel): Konzept und Prototyp existieren, Einbau erst,
-  wenn Basti „Dohlen einbauen“ sagt.
+- **„Dohlen-Schützenfest“** (Moorhuhn-artiges Minispiel): Einbau erst, wenn Basti „Dohlen einbauen“ sagt.
+  Details im Abschnitt unten.
 - **Anfang 2027** die zeitgebundenen Fragen prüfen (Mindestlohn, Deutschlandticket, Haushalt, Euro-Länder,
   Bundespräsident usw. in „Wirtschaft & Politik“).
 - Ton-Problem auf manchen Handys: Ursache noch offen, Details von Basti abwarten.
+
+## Dohlen-Schützenfest (geplantes Geschick-Minispiel)
+Spielbarer Prototyp mit Konzept: `docs/dohlen-prototyp.html` (eigenständige Testseite, nicht Teil des Spiels).
+Spielablauf und Logik von dort übernehmen (Funktionen `dh…`), nicht neu erfinden.
+
+**Regeln laut Prototyp**
+- 25 s, Alpendohlen und Brezn fliegen quer über ein Bergpanorama. Antippen = Schuss.
+- Drei Tiefen, erkennbar an der Größe: vorn 5, Mitte 10, hinten 25 Punkte. Zweimal pro Runde goldene Brezn: 50.
+- 6 Schuss, dann Nachladen (0,6 s, Knopf oder Antippen der Patronen).
+- Alle Spieler bekommen dieselbe Zielfolge über dieselbe Startzahl wie die anderen Minispiele (`dhSchedule(seed)`).
+- Trefferbereich 35 % größer als die Figur, mindestens fingerbreit, das vorderste Ziel zählt.
+- Kein Blut, keine Waffe im Bild. Getroffene Dohlen verlieren Federn und fliegen weg.
+- Wertung im Dreikampf wie bei den anderen Geschick-Spielen über die Platzierung.
+
+**Testergebnis (Basti, 08.11.2026)**
+- Ohne Erklärung verstanden: ja.
+- 205 Punkte, 16 Treffer bei 18 Schuss (vorn 5, Mitte 8, hinten 2, Gold 1). Er schießt also genau, aber wenig.
+- Die simulierten Werte (Gelegenheit 115, normal 280, Profi 470) sind damit vermutlich zu hoch.
+  Solo-Gegner nach echten Ergebnissen einstellen, nicht nach der Simulation. Basti nach weiteren Testrunden fragen.
+- Auf der Testseite überlappt am Handy der Nachladen-Knopf den Text (nur Layout der Testseite).
+
+**Vor dem Einbau mit Basti klären**
+- **Optik:** Basti will, dass es „noch schöner“ wird. Erst fragen, was genau (z. B. Figuren, Hintergrund,
+  Treffer-Effekte, Animationen, Ton). Vorschläge zeigen, bevor gebaut wird.
+- Dauer (25 s ist deutlich länger als Treffsicher ~7 s und Brezn-Jagd 10 s), Häufigkeit, Name.
+- Ablauf, wenn die Zeit der Runde endet, während jemand noch spielt (wie bei den anderen Zeitspielen werten).
+- Auf echten Handys testen, vor allem iPhone.
