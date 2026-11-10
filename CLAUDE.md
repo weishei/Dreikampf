@@ -75,8 +75,8 @@ Läuft über GitHub Pages, Spielstände und Profile liegen in Firebase (Projekt 
 ## Offene Punkte
 - **Sicherheit** der Datenbank-Regeln und der Profil-Anmeldung überarbeiten. Details bei Basti erfragen,
   nicht ins öffentliche Projekt schreiben.
-- **Phönix-Spiel** (Geschick-Minispiel, früher „Dohlen-Schützenfest“; Name noch offen, Vorschläge:
-  Phönixflug, Funkenregen, Glutjagd): Einbau ins echte Spiel erst, wenn Basti „Phönix einbauen“ sagt.
+- **Phönixflug** (Geschick-Minispiel, früher „Dohlen-Schützenfest“; Arbeitstitel „Phönixflug“, Basti kann
+  noch ändern): Einbau ins echte Spiel erst, wenn Basti „Phönix einbauen“ sagt.
   Details im Abschnitt unten.
 - **Anfang 2027** die zeitgebundenen Fragen prüfen (Mindestlohn, Deutschlandticket, Haushalt, Euro-Länder,
   Bundespräsident usw. in „Wirtschaft & Politik“).
@@ -90,8 +90,16 @@ Regeln, Zielfolge, Trefferbereiche und Punkte bleiben **unverändert** (Funktion
 Im Code heißt die Zielart weiter `"dohle"`, damit die Zielfolge gleich bleibt.
 
 - Spielbarer Prototyp mit Konzept (noch mit Dohlen): `docs/dohlen-prototyp.html`.
-- Stilseite mit drei Varianten für Phönix, Brezn, Gold-Brezn und Hintergrund: `docs/phoenix-stil.html`.
-  Wahl von Basti steht noch aus. Danach spielbare Testseite bauen, erst nach „Phönix einbauen“ ins Spiel.
+- Stilseite mit drei Varianten: `docs/phoenix-stil.html`. **Gewählt (10.11.2026): Variante B** (Sticker-Stil
+  mit hellem Rand, Sternennacht), weil am leichtesten erkennbar.
+- Spielbare Testseite mit neuer Optik: `docs/phoenixflug-test.html` (enthält auch „Alte Dohlen“ zum Vergleich,
+  5-Sekunden-Standbild, Checkliste). Zeichnung als vorbereitete Bilder (Sprites), Hintergrund als ein Bild
+  plus Wolken, damit es auf schwachen Handys flüssig bleibt. `#fps` an die Adresse hängen zeigt die Bildrate.
+- Geprüft: `dh…`-Funktionen Zeichen für Zeichen gleich wie im Prototyp, Zielfolge und Treffer für 300 Folgen gleich,
+  kein sichtbares Pixel von Phönix, Brezn oder Gold-Strahlen liegt außerhalb des Trefferbereichs.
+- Treffer-Stopp friert nur den getroffenen Phönix kurz ein, nicht das ganze Bild (sonst würde die Runde länger).
+- Ton: Web Audio, startet erst nach Tippen, `navigator.audioSession.type="playback"` wie im Hauptspiel
+  (ab iOS 17 Ton trotz Stumm-Schalter, Musik anderer Apps pausiert). Nicht auf echtem iPhone geprüft.
 - Phönix muss in den alten Dohlen-Umriss passen (etwa 30 Einheiten Radius), sonst wirkt der Trefferbereich unfair.
 - Spielablauf und Logik aus dem Prototyp übernehmen (Funktionen `dh…`), nicht neu erfinden.
 
