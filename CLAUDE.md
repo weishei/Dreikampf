@@ -78,6 +78,11 @@ Läuft über GitHub Pages, Spielstände und Profile liegen in Firebase (Projekt 
 - **Phönixflug** (Geschick-Minispiel, früher „Dohlen-Schützenfest“): **eingebaut (12.11.2026)**. Offen:
   Test auf echten Handys (vor allem iPhone), Computer-Gegner nach echten Ergebnissen nachstellen.
   Details im Abschnitt unten.
+- **Kreativität** (neue Säule, Idee 12.11.2026): zwei Gruppen-Spiele „Kritzel-Raten“ ✏️ und „Lacher der Runde“ 😂.
+  Entschieden: als **Überraschungsrunden** (wie Bluff, Mehrheit), ab 3 Spielern, **nur bei Normal und Lang**, nie im Solo.
+  Bluff-Runde bleibt unverändert. Stand: Design-Entwürfe A/B und Listen (150 Begriffe, 80 Lückensätze) in
+  `docs/kreativ-entwurf.html` zur Freigabe. Nächster Schritt: Testseite `docs/kreativ-prototyp.html`.
+  Ins echte Spiel erst, wenn Basti „Kreativität einbauen“ sagt.
 - **Anfang 2027** die zeitgebundenen Fragen prüfen (Mindestlohn, Deutschlandticket, Haushalt, Euro-Länder,
   Bundespräsident usw. in „Wirtschaft & Politik“).
 - Ton-Problem auf manchen Handys: Ursache noch offen, Details von Basti abwarten.
