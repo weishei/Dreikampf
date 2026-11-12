@@ -177,7 +177,7 @@ function brDraw(c,gold,hz){const m=col=>mix(col,HZC,gold?0:hz);c.lineCap="round"
   else{c.fillStyle=m("#ffffff");[[-14,-6],[10,-9],[0,15],[-17,8],[16,6],[-6,-11],[7,13]].forEach(p=>c.fillRect(p[0]-.9,p[1]-.9,1.8,1.8));}}
 /* Strahlen bleiben innerhalb des Trefferbereichs der Gold-Brezn (26 * 1,35 = 35 Einheiten) */
 function raysDraw(c){const rg=c.createRadialGradient(0,0,4,0,0,30);rg.addColorStop(0,"rgba(255,250,220,.55)");rg.addColorStop(1,"rgba(255,230,140,0)");c.fillStyle=rg;c.beginPath();c.arc(0,0,30,0,7);c.fill();
-  c.strokeStyle="rgba(255,248,214,.95)";c.lineCap="round";c.lineWidth=2.4;for(let i=0;i<12;i++){const a=i/12*Math.PI*2,r0=26,r1=i%2?30:34;c.beginPath();c.moveTo(Math.cos(a)*r0,Math.sin(a)*r0);c.lineTo(Math.cos(a)*r1,Math.sin(a)*r1);c.stroke();}}
+  c.strokeStyle="rgba(255,248,214,.95)";c.lineCap="round";c.lineWidth=2.4;for(let i=0;i<12;i++){const a=i/12*Math.PI*2,r0=25,r1=i%2?29:32;c.beginPath();c.moveTo(Math.cos(a)*r0,Math.sin(a)*r0);c.lineTo(Math.cos(a)*r1,Math.sin(a)*r1);c.stroke();}}
 function flameDraw(c){c.lineJoin="round";const o=new Path2D("M0,-13 C7,-5 8,2 0,7 C-8,2 -7,-5 0,-13Z"),i=new Path2D("M0,-6 C4,-1 4,3 0,6 C-4,3 -4,-1 0,-6Z");
   c.strokeStyle="#fff4dc";c.lineWidth=3;c.stroke(o);c.fillStyle="#ff6a1f";c.fill(o);c.fillStyle="#ffd23c";c.fill(i);}
 

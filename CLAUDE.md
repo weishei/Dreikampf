@@ -75,14 +75,22 @@ Läuft über GitHub Pages, Spielstände und Profile liegen in Firebase (Projekt 
 ## Offene Punkte
 - **Sicherheit** der Datenbank-Regeln und der Profil-Anmeldung überarbeiten. Details bei Basti erfragen,
   nicht ins öffentliche Projekt schreiben.
-- **Phönixflug** (Geschick-Minispiel, früher „Dohlen-Schützenfest“; Arbeitstitel „Phönixflug“, Basti kann
-  noch ändern): Einbau ins echte Spiel erst, wenn Basti „Phönix einbauen“ sagt.
+- **Phönixflug** (Geschick-Minispiel, früher „Dohlen-Schützenfest“): **eingebaut (12.11.2026)**. Offen:
+  Test auf echten Handys (vor allem iPhone), Computer-Gegner nach echten Ergebnissen nachstellen.
   Details im Abschnitt unten.
 - **Anfang 2027** die zeitgebundenen Fragen prüfen (Mindestlohn, Deutschlandticket, Haushalt, Euro-Länder,
   Bundespräsident usw. in „Wirtschaft & Politik“).
 - Ton-Problem auf manchen Handys: Ursache noch offen, Details von Basti abwarten.
 
-## Phönix-Spiel (geplantes Geschick-Minispiel, früher „Dohlen-Schützenfest“)
+## Phönixflug (Geschick-Minispiel, früher „Dohlen-Schützenfest“)
+**Im Spiel (seit 12.11.2026):** Schlüssel `phx` in `SKILLS`/`SKG`, kommt so oft dran wie die anderen 11 Geschick-Spiele.
+Code-Block `const PHX=(function(){…})();` direkt vor `/* ========== Ende GESCHICK ========== */`, darin die
+`dh…`-Funktionen wörtlich aus dem Prototyp. Anbindung: `skStage` (Spielfeld), `skTap` (Start, `data-sk="rl"` = Nachladen),
+`skTick` (`PHX.tick`, nach 25 s `skFinish(Punkte)`), `skAfter` (`PHX.bind` nach jedem Neuzeichnen), `skDeadline`,
+`skFmt`. Zustand liegt in `SK`. Wertung: mehr Punkte = besser (Standardzweig in `skMetric`), 0 Punkte = nicht platziert.
+Ton über `ac`/`soundOn` des Hauptspiels, Effekte nach `fxAllowed()`. Startzahl = `st.seed` der Geschick-Runde.
+Computer-Gegner `BOT_SK.phx=[100,190,300]` sind geschätzt (nur ein echtes Ergebnis: 205), nach Tests anpassen.
+
 **Umbenennung (Basti, 08.11.2026):** Statt Alpendohlen fliegt ein Phönix, abgeleitet vom App-Symbol `icon.svg`
 (Flammenfarben Rot/Orange/Gelb, Fächer aus Flammenfedern, Krone aus drei Flammen). Brezn und Gold-Brezn bleiben.
 Treffer-Effekt neu: Glut und Funken, der Phönix zerfällt kurz zu Asche und steigt als Flämmchen davon.
