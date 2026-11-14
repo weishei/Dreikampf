@@ -1,0 +1,3 @@
+# Exportdateien aus „Statistik → Daten exportieren“ enthalten Namen: nie committen
+dreikampf-daten*.json
+*.export.json
