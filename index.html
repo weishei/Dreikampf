@@ -3271,7 +3271,36 @@ function vStats(){
   o+='<div class="card"><div class="eyebrow">Gespeicherte Spiele</div><p class="muted small">Zeitraum: '+(ats.length?dd(Math.min.apply(null,ats))+' bis '+dd(Math.max.apply(null,ats)):'keine Daten')+'</p><div class="rows">'+row("Gruppenspiele",grp.length)+Object.keys(byN).sort((a,b)=>a-b).map(n=>row("· mit "+n+" Leuten",byN[n])).join('')+row("Solo-Spiele",solo.length)+(grp.length+solo.length?row("Solo-Anteil",Math.round(100*solo.length/(grp.length+solo.length))+" %"):'')+'</div></div>';
   o+='<div class="card"><div class="eyebrow">Räume (erst seit 14.10.)</div><div class="rows">'+row("Räume gesamt",rooms.length)+row("mit gestartetem Spiel",started.length)+row("nie gestartet, verlassen",never.length)+row("warten gerade",waitLive.length)+(tts.length?row("Zeit bis Spielstart (Median)",Math.round(med(tts)*10)/10+" Min."):row("Zeit bis Spielstart","noch keine Daten"))+'</div><p class="muted small">Räume vor dieser Messung haben keine Start-Zeit und zählen als „nie gestartet“, wenn kein Spiel lief.</p></div>';
   o+='<div class="card"><div class="eyebrow">Ereignisse seit Messstart'+(evFirst?' ('+dd(evFirst)+')':'')+'</div>'+(EVS.length?'<div class="rows">'+Object.keys(ev).sort().map(k=>row(h(k),ev[k])).join('')+'</div>':'<p class="muted">Noch keine. Die Messung läuft ab jetzt.</p>')+'<p class="muted small">„· neu“ heißt: nach dem Umbau der Räume (15.10. mittags).</p></div>';
+  o+='<div class="card"><div class="eyebrow">Daten für die Auswertung</div><p class="muted small">Lädt alle Messdaten als Datei herunter: Spiele, Räume, Ereignisse, Fehler und Meldungen. Profil-Kennungen werden durch Namen ersetzt, PINs sind nicht enthalten. Die Datei trotzdem nicht in Gruppen teilen.</p><button class="btn" data-act="statsx"'+(L.xBusy?' disabled':'')+'>📥 Daten exportieren</button>'+(L.xMsg?'<p class="muted small">'+h(L.xMsg)+'</p>':'')+'</div>';
   return o+'<button class="btn alt" data-act="boardclose">Zurück</button>';
+}
+/* Export der Messdaten (nur Gründer). Profil-IDs sind Zugangsschlüssel und werden durch Namen ersetzt. */
+function statsOnce(c){return new Promise(res=>{let un=null,done=false;const fin=v=>{if(done)return;done=true;try{un&&un();}catch(e){}res(v);};const t=setTimeout(()=>fin([]),9000);try{un=DB.collection(c).onSnapshot(x=>{clearTimeout(t);fin(x.docs.filter(d=>d.exists).map(d=>d.data()));},()=>{clearTimeout(t);fin([]);});}catch(e){clearTimeout(t);fin([]);}});}
+async function statsExport(){
+  if(ME!==FOUNDER||L.xBusy)return;L.xBusy=true;L.xMsg="Sammle Daten …";renderAll(true);
+  try{
+    const errs=await statsOnce("errors"),evs=EVS.length?EVS:await statsOnce("ev");
+    const idRe=/^[A-Za-z0-9_-]{10,40}$/,ids={};
+    const add=x=>{if(typeof x==="string"&&idRe.test(x))ids[x]=1;};
+    Object.keys(P).forEach(add);Object.keys(ALIAS).forEach(k=>{add(k);add(ALIAS[k]);});
+    const scan=o=>{if(Array.isArray(o))o.forEach(scan);else if(o&&typeof o==="object")Object.keys(o).forEach(k=>{const v=o[k];if(["u","host","to","by"].indexOf(k)>=0)add(v);if(k==="roster"&&Array.isArray(v))v.forEach(add);scan(v);});};
+    const rooms=Object.values(ROOMS_ALL).map(r=>({code:r.code,createdAt:r.createdAt||null,startedAt:r.startedAt||null,at:r.at||null,phase:r.phase||null,host:r.host||null,n:Array.isArray(r.roster)?r.roster.length:null,steps:Array.isArray(r.steps)?r.steps.length:null,theme:r.used&&r.used.theme||null,len:r.used&&r.used.len||null}));
+    const raw={results:RAW.res,solo:RAW.solo,daily:RAW.daily,rooms:rooms,events:evs,errors:errs,reports:REPS};
+    scan(raw);
+    const nm={},used={};let k=0;
+    Object.keys(ids).forEach(id=>{const pid=P[id]?id:ALIAS[id];let n=(P[pid]&&typeof P[pid].name==="string"&&P[pid].name.trim())||("Spieler "+(++k));if(used[n]){used[n]++;n=n+" #"+used[n];}else used[n]=1;nm[id]=n;});
+    const drop=/pin|hash|salt|secret|token|key/i;
+    const walk=o=>{if(typeof o==="string")return nm[o]||o;if(Array.isArray(o))return o.map(walk);if(o&&typeof o==="object"){const r={};Object.keys(o).forEach(q=>{if(drop.test(q))return;r[nm[q]||q]=walk(o[q]);});return r;}return o;};
+    const out={exportiert:new Date().toISOString(),version:BUILD_ID,hinweis:"Profil-IDs durch Namen ersetzt, PINs entfernt.",anzahl:{results:RAW.res.length,solo:RAW.solo.length,daily:RAW.daily.length,rooms:rooms.length,events:evs.length,errors:errs.length,reports:REPS.length},daten:walk(raw)};
+    const txt=JSON.stringify(out),name="dreikampf-daten-"+new Date().toISOString().slice(0,10)+".json";
+    const file=(typeof File==="function")?new File([txt],name,{type:"application/json"}):null;
+    let ok=false;
+    if(file&&navigator.canShare&&navigator.canShare({files:[file]})){try{await navigator.share({files:[file],title:name});ok=true;}catch(e){if(e&&e.name==="AbortError"){L.xMsg="Abgebrochen.";L.xBusy=false;renderAll(true);return;}}}
+    if(!ok){const url=URL.createObjectURL(new Blob([txt],{type:"application/json"}));const a=document.createElement("a");a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);}
+    L.xMsg="Fertig: "+name+" ("+Math.round(txt.length/1024)+" KB). "+out.anzahl.results+" Gruppenspiele, "+out.anzahl.solo+" Solo, "+out.anzahl.events+" Ereignisse, "+out.anzahl.errors+" Fehler.";
+    logEv("daten_export",{kb:Math.round(txt.length/1024)});
+  }catch(e){L.xMsg="Export fehlgeschlagen: "+(e&&e.message||e);try{logErr("export",e&&e.message,e&&e.stack);}catch(x){}}
+  L.xBusy=false;renderAll(true);
 }
 function sameRoom(u){if(!G||!P[u])return false;return P[u].g===G.v||roster().indexOf(u)>=0||P[u].wait===G.v;}
 function roomCount(r){if(!r)return 0;if(r.phase==="play")return Array.isArray(r.roster)?r.roster.length:0;return Object.keys(P).filter(u=>P[u]&&P[u].g===r.v&&isActive(u)).length;}
@@ -4044,6 +4073,7 @@ function act(a,d){
     case "kilang":L.kiLang=d.l==="en"?"en":"de";try{localStorage.setItem("dk_kilang",L.kiLang);}catch(e){}renderAll(true);break;
     case "solostart":soloStart();break;
     case "stats":if(ME===FOUNDER){if(!logEv.sub){logEv.sub=1;DB.collection("ev").onSnapshot(s=>{EVS=s.docs.filter(d=>d.exists).map(d=>d.data());if(L.view==="stats")renderAll(true);},()=>{});}L.view="stats";L.menu=false;renderAll(true);window.scrollTo(0,0);}break;
+    case "statsx":statsExport();break;
     case "merge":if(ME===FOUNDER){L.view="merge";L.mA=null;L.mB=null;L.menu=false;renderAll(true);window.scrollTo(0,0);}break;
     case "mpick":if(ME===FOUNDER&&d.u){if(L.mA===d.u)L.mA=null;else if(L.mB===d.u)L.mB=null;else if(!L.mA)L.mA=d.u;else L.mB=d.u;renderAll(true);}break;
     case "mdo":if(ME===FOUNDER&&L.mA&&L.mB&&L.mA!==L.mB){if(L.confirm!=="mdo"){L.confirm="mdo";renderAll(true);break;}L.confirm=null;const dd=mergeDir(L.mA,L.mB),a=dd[0],b=dd[1];ALIAS[a]=b;L.mA=null;L.mB=null;meWrite(()=>DB.doc("alias/"+a).set({to:b,at:Date.now()}));applyAlias();}break;
@@ -5349,7 +5379,7 @@ function founderWatch(){
 }
 if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js",{scope:"./"}).catch(()=>{});
 function DK_SWITCH(id,n){try{localStorage.setItem("dk_id",id);if(n)localStorage.setItem("dk_name",n);}catch(e){}location.reload();}
-const BUILD_ID="1794670758";
+const BUILD_ID="1794691450";
 function verCheck(){fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(r=>r.json()).then(j=>{if(j&&j.v&&j.v!==BUILD_ID&&!document.getElementById("upd")){const b=document.createElement("button");b.id="upd";b.textContent="✨ Neue Version da. Tippen zum Laden";b.onclick=()=>location.reload();document.body.appendChild(b);}}).catch(()=>{});}
 setInterval(verCheck,60000);document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")verCheck();});setTimeout(verCheck,5000);
 (async function boot(){
