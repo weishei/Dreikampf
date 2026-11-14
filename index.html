@@ -3338,7 +3338,7 @@ function startGame(){
 }
 function rematch(){
   const R0=roster().filter(u=>!isOut(u)).concat(waiters()).slice(0,MAXP);if(R0.length<2&&!SOLO){toLobby();return;}
-  const R=R0,used=JSON.parse(JSON.stringify(G.used||{})),ki=!!used.ki,steps=ki?kiSteps(used):buildSteps(used,R),v=rid(),hc=ki?{}:computeHC(R),tm=(!ki&&used.teams&&R.length>=4)?makeTeams(R):null,kt=ki?kiLen(used.len).min*60000:null;
+  const R=R0,used=JSON.parse(JSON.stringify(G.used||{})),ki=SOLO&&used.kiMode===true,steps=ki?kiSteps(used):buildSteps(used,R),v=rid(),hc=ki?{}:computeHC(R),tm=(!ki&&used.teams&&R.length>=4)?makeTeams(R):null,kt=ki?kiLen(used.len).min*60000:null;
   gWrite(()=>gRef().set(Object.assign({v:v,phase:"play",host:ME,roster:R,steps:steps,idx:0,reveal:false,used:used,hc:hc,teams:tm},ki?{solo:true,kt:kt,kl:kt}:{})));saveMetaUsed(used);
 }
 function toLobby(){
@@ -5015,7 +5015,7 @@ function soloStart(){logEv("solo_gestartet");
   soloBots=ki?[]:D.map(d=>BOTS[d][cnt[d]++].id);
   SOLO=true;LDB=makeLDB();soloSch={};
   const R=[ME].concat(soloBots),v=rid(),base=JSON.parse(JSON.stringify(META_USED||(RG&&RG.used)||{}));
-  const used=Object.assign(base,{off:Array.isArray(L.soloOff)?L.soloOff.slice():[],len:LENS[L.soloLen]?L.soloLen:"normal",theme:THEMES[L.soloTheme]?L.soloTheme:"mix",teams:false,ki:ki});
+  const used=Object.assign(base,{off:Array.isArray(L.soloOff)?L.soloOff.slice():[],len:LENS[L.soloLen]?L.soloLen:"normal",theme:THEMES[L.soloTheme]?L.soloTheme:"mix",teams:false,kiMode:ki});
   const kt=ki?kiLen(used.len).min*60000:null;
   const steps=ki?kiSteps(used):buildSteps(used,R);
   const t=Date.now();
@@ -5050,7 +5050,7 @@ MODES.ki={t:"KI-Prüfungstraining",r:"Übungsfragen im Stil der Google-Prüfung 
    Lang = ganze Prüfung, Normal = die Hälfte, Kurz = etwa 10 Minuten. Die Zeit gilt für die ganze Runde. */
 const KI_LENS={kurz:{n:6,min:10},normal:{n:28,min:45},lang:{n:55,min:90}};
 function kiLen(l){return KI_LENS[l]||KI_LENS.normal;}
-function kiGame(){return !!(G&&G.phase==="play"&&G.used&&G.used.ki);}
+function kiGame(){return !!(G&&G.phase==="play"&&G.solo&&G.used&&G.used.kiMode===true);}
 try{L.kiLang=localStorage.getItem("dk_kilang")==="en"?"en":"de";}catch(e){L.kiLang="de";}
 function kiEn(){return L.kiLang==="en";}
 function kiT(de,en){return kiEn()?en:de;}
@@ -5349,7 +5349,7 @@ function founderWatch(){
 }
 if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js",{scope:"./"}).catch(()=>{});
 function DK_SWITCH(id,n){try{localStorage.setItem("dk_id",id);if(n)localStorage.setItem("dk_name",n);}catch(e){}location.reload();}
-const BUILD_ID="1794474335";
+const BUILD_ID="1794670758";
 function verCheck(){fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(r=>r.json()).then(j=>{if(j&&j.v&&j.v!==BUILD_ID&&!document.getElementById("upd")){const b=document.createElement("button");b.id="upd";b.textContent="✨ Neue Version da. Tippen zum Laden";b.onclick=()=>location.reload();document.body.appendChild(b);}}).catch(()=>{});}
 setInterval(verCheck,60000);document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")verCheck();});setTimeout(verCheck,5000);
 (async function boot(){
