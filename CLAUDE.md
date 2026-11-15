@@ -72,6 +72,38 @@ Läuft über GitHub Pages, Spielstände und Profile liegen in Firebase (Projekt 
   weil `ki` schon der Google-Prüfungsmodus ist).
 - Spielräume (mehrere Gruppenspiele gleichzeitig), Profile mit PIN, Code, Mail und Laden, Gründer-Statistik.
 
+## Messung und Verbesserungen (seit 15.11.2026)
+**Vorgehen:** erst Daten (Export „📊 Statistik → 📥 Daten exportieren“), dann kurze Entscheidungsliste, gebaut wird nur nach Bastis
+„Freigabe“. Exportdateien enthalten Namen: nie ins Projekt legen oder committen (`.gitignore`), nur außerhalb ablegen.
+Erfolgszahlen rechnet `python3 -I tools/auswertung.py <export.json>` (Spiele, Räume pro Spiel, nie gestartete Räume je Woche).
+
+**Vorher-Werte (Export 14.11.2026):** Gruppenspiele je Woche KW40–46: 15, 44, 15, 1, 6, 0, 4. Verschiedene Spieler KW41: 14,
+danach 2–6. Räume pro fertigem Spiel seit 15.10.: 1,14 (KW46: 2,0). Nie gestartete Räume: 13 von 25. Leitung verlässt
+Raum allein: 11-mal. Meldungen mit Grund: 0 von 5. Quiz 62 % richtig, Finale 49 %. 9 überzählige Profile, alle vor dem 12.10.
+entstanden. Start bis Startseite bedienbar (eigene Messung, langsames Netz, 4× langsamer Prozessor): 5,3 s.
+
+**Freigegeben und gebaut (15.11.2026):**
+1. Spielende: Leitung „🔁 Nochmal spielen“ (Revanche) und „⚙️ Thema oder Länge ändern“. Diese Lobby nimmt alle aus dem
+   letzten Spiel automatisch mit (`G.carry`, Auto-Beitritt in `onChange`). Mitspieler sehen „✋ Ich will nochmal“
+   (`P.again`), die Leitung sieht „✋ x von y wollen nochmal“. „Raum schließen“ nur noch im Menü mit Rückfrage.
+2. Ereignis `app_geoeffnet` mit `via` (start/link/homescreen) und `dev` (ios/android/computer). Neu gezählt außerdem:
+   `revanche`, `neue_runde`, `nochmal_signal`, `raum_gewechselt`, `beitritt` mit `via:"weiter"`.
+3. Vor „Neuen Raum eröffnen“: Hinweis auf einen frisch eröffneten Raum anderer (`freshRoom`). Zwei gleichzeitig eröffnet:
+   der später eröffnete Raum bekommt „Dorthin wechseln“ (`twinRoom`, `roomswitch`).
+5. „Frage melden“ fragt den Grund (falsch, unklar, zu schwer, Tippfehler), Feld `g` in `reports`.
+8. Firebase-Dateien mit `defer`, `fbInit` wartet auf `fbReady()`. Messung: Startseite bedienbar 5,3 → 5,1 s (kleiner Effekt;
+   die eigentliche Bremse ist die Größe von `index.html`).
+Nach 1–2 Wochen: neuen Export mit `tools/auswertung.py` gegen die Vorher-Werte vergleichen und hier eintragen.
+
+**Offener Befund:** Im Firebase-Nachbau (Emulator) lädt beim gleichzeitigen Eröffnen zweier Räume bei etwa 1–3 von 16
+Versuchen der eigene neue Raum auf dem Handy des Eröffners nicht (Raum existiert in der Datenbank, Handy zeigt Startseite).
+Kommt auch in der Version vor dem 15.11. vor. Ob es im echten Firebase passiert, ist unbekannt.
+
+**Testen mit mehreren Spielern:** Firebase-Emulator (`firebase-tools`, Firestore + Auth) außerhalb des Projekts starten,
+eine Kopie von `index.html` lädt Firebase aus `node_modules/firebase` statt gstatic und ruft `auth.useEmulator(...)` sowie
+`fs.settings({host:"127.0.0.1:8085",ssl:false})` auf. Dann mehrere Playwright-Fenster als getrennte Spieler.
+Vor jedem Lauf die Test-Datenbank leeren (sonst fragt die PIN-Abfrage nach bekannten Namen).
+
 ## Offene Punkte
 - **Sicherheit** der Datenbank-Regeln und der Profil-Anmeldung überarbeiten. Details bei Basti erfragen,
   nicht ins öffentliche Projekt schreiben.
