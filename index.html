@@ -3016,7 +3016,7 @@ function rdp(pts,eps){if(pts.length<3)return pts;const a=pts[0],b=pts[pts.length
 function key(){return G?G.v+"_"+G.idx:"";}
 function sendDoc(i,seq,o){meWrite(()=>myRef().update({kz:{[G.v+"_"+i]:{["c"+String(seq).padStart(4,"0")]:o}}}));}
 function send(i,seq,ops){const o=JSON.stringify(ops),db=fs();
-  if(colOK!==false&&db){db.doc("kz/"+G.v+"/s/"+i+"_"+String(seq).padStart(4,"0")).set({i:i,s:seq,o:o,at:Date.now()}).then(()=>{colOK=true;},()=>{colOK=false;sendDoc(i,seq,o);});}
+  if(colOK!==false&&db){db.doc("kzs/"+G.v+"_"+i+"_"+String(seq).padStart(4,"0")).set({g:G.v,i:i,s:seq,o:o,at:Date.now()}).then(()=>{colOK=true;},()=>{colOK=false;sendDoc(i,seq,o);});}
   else sendDoc(i,seq,o);}
 function flush(){if(!G||DR.key!==key())return;const st=step();if(!st||st.t!=="kz"||st.drawer!==ME)return;
   if(DR.cur&&DR.pend.length){const seg=rdp([DR.last].concat(DR.pend),2).slice(1),flat=[];seg.forEach(p=>flat.push(Math.round(p[0]),Math.round(p[1])));if(flat.length)DR.ops.push(["p",DR.cur.id].concat(flat));DR.last=DR.pend[DR.pend.length-1];DR.pend=[];}
@@ -3024,7 +3024,7 @@ function flush(){if(!G||DR.key!==key())return;const st=step();if(!st||st.t!=="kz
 function ensureSub(){const has=G&&G.phase==="play"&&!SOLO&&Array.isArray(G.steps)&&G.steps.some(s=>s.t==="kz");
   if(!has){if(sub){try{sub();}catch(e){}sub=null;subV=null;}return;}if(subV===G.v)return;if(sub){try{sub();}catch(e){}}
   Object.keys(CH).forEach(k=>delete CH[k]);subV=G.v;const db=fs();if(!db)return;
-  try{sub=db.collection("kz/"+G.v+"/s").onSnapshot(q=>{q.docChanges().forEach(c=>{if(c.type!=="added")return;const d=c.doc.data();if(!d)return;(CH[d.i]=CH[d.i]||[]).push({s:d.s,o:d.o});});},()=>{colOK=false;});}catch(e){colOK=false;}}
+  try{sub=db.collection("kzs").where("g","==",G.v).onSnapshot(q=>{q.docChanges().forEach(c=>{if(c.type!=="added")return;const d=c.doc.data();if(!d)return;(CH[d.i]=CH[d.i]||[]).push({s:d.s,o:d.o});});},()=>{colOK=false;});}catch(e){colOK=false;}}
 function chunks(i){const m={};(CH[i]||[]).forEach(c=>{m[c.s]=c.o;});const st=G.steps[i],p=st&&P[st.drawer],dc=p&&p.kz&&p.kz[G.v+"_"+i];if(dc)Object.keys(dc).forEach(k=>{m[Number(k.slice(1))]=dc[k];});
   return Object.keys(m).map(Number).sort((a,b)=>a-b).map(s=>{try{return JSON.parse(m[s]);}catch(e){return [];}});}
 function strokes(i){const m=new Map();chunks(i).forEach(ops=>ops.forEach(op=>{if(!Array.isArray(op))return;if(op[0]==="s")m.set(op[1],{c:op[2]|0,w:op[3]|0,p:[[op[4],op[5]]]});else if(op[0]==="p"){const s=m.get(op[1]);if(s)for(let k=2;k<op.length;k+=2)s.p.push([op[k],op[k+1]]);}else if(op[0]==="u")m.delete(op[1]);else if(op[0]==="c")m.clear();}));return Array.from(m.values());}
