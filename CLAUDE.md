@@ -105,7 +105,7 @@ eine Kopie von `index.html` lädt Firebase aus `node_modules/firebase` statt gst
 Vor jedem Lauf die Test-Datenbank leeren (sonst fragt die PIN-Abfrage nach bekannten Namen).
 
 ## Offene Punkte
-- **Sicherheit:** Stufe A (strengere Datenbank-Regeln, 17.11.2026) im Nachbau getestet, Basti trägt sie in Firebase ein.
+- **Sicherheit:** Stufe A (strengere Datenbank-Regeln, 17.11.2026) im Nachbau getestet, seit 17.11.2026 in Firebase aktiv.
   Neue Bereiche in der Datenbank brauchen ab dann eine eigene Regel, sonst wird das Schreiben abgelehnt.
   Stufe B (Profile wirklich schützen, braucht Firebase-Tarif Blaze) später. Details nicht ins öffentliche Projekt schreiben.
 - **Phönixflug** (Geschick-Minispiel, früher „Dohlen-Schützenfest“): **eingebaut (12.11.2026)**. Offen:
@@ -217,5 +217,5 @@ Zeichnungs-Speicher):** Auswahl (nie Kurz, nie Solo, nie unter 3), live zeichnen
 Punkte inkl. Tempo, alle Handys rechnen gleich, Zeit läuft ab, Zeichner verlässt das Spiel, Schreibfeld bleibt beim Neuzeichnen
 offen, leere Antwort, HTML-Code nur als Text, Gleichstand, Ausblenden, Spiel läuft bis zum Ende, keine Fehler.
 **Offen:** Test mit Freunden auf echten Handys (vor allem iPhone: Zeichnen mit dem Finger, Tastatur beim Lacher).
-Ob die echten Datenbank-Regeln den Zeichnungs-Speicher erlauben, ist unbekannt (Ersatzweg funktioniert, ist aber langsamer).
+Die Regeln (Stufe A) erlauben `kzs` nur zum Anlegen, max. 20.000 Zeichen pro Paket. Ersatzweg bleibt als Absicherung im Code.
 
