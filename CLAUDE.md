@@ -110,11 +110,7 @@ Vor jedem Lauf die Test-Datenbank leeren (sonst fragt die PIN-Abfrage nach bekan
 - **Phönixflug** (Geschick-Minispiel, früher „Dohlen-Schützenfest“): **eingebaut (12.11.2026)**. Offen:
   Test auf echten Handys (vor allem iPhone), Computer-Gegner nach echten Ergebnissen nachstellen.
   Details im Abschnitt unten.
-- **Kreativität** (neue Säule, Idee 12.11.2026): zwei Gruppen-Spiele „Kritzel-Raten“ ✏️ und „Lacher der Runde“ 😂.
-  Entschieden: als **Überraschungsrunden** (wie Bluff, Mehrheit), ab 3 Spielern, **nur bei Normal und Lang**, nie im Solo.
-  Bluff-Runde bleibt unverändert. Stand: Design-Entwürfe A/B und Listen (150 Begriffe, 80 Lückensätze) in
-  `docs/kreativ-entwurf.html` zur Freigabe. Nächster Schritt: Testseite `docs/kreativ-prototyp.html`.
-  Ins echte Spiel erst, wenn Basti „Kreativität einbauen“ sagt.
+- **Kreativität**: Testseite fertig, Einbau ins echte Spiel erst nach „Kreativität einbauen“. Details im Abschnitt unten.
 - **Anfang 2027** die zeitgebundenen Fragen prüfen (Mindestlohn, Deutschlandticket, Haushalt, Euro-Länder,
   Bundespräsident usw. in „Wirtschaft & Politik“).
 - Ton-Problem auf manchen Handys: Ursache noch offen, Details von Basti abwarten.
@@ -170,3 +166,41 @@ Im Code heißt die Zielart weiter `"dohle"`, damit die Zielfolge gleich bleibt.
 - Dauer (25 s ist deutlich länger als Treffsicher ~7 s und Brezn-Jagd 10 s), Häufigkeit, Name.
 - Ablauf, wenn die Zeit der Runde endet, während jemand noch spielt (wie bei den anderen Zeitspielen werten).
 - Auf echten Handys testen, vor allem iPhone.
+
+## Kreativ-Runden (geplant, Testseite seit 17.11.2026)
+**Idee:** neue Säule „Kreativität“ mit zwei Gruppen-Spielen. Entschieden (Basti): als **Überraschungsrunden** wie Bluff und
+Mehrheit, **nur ab 3 echten Spielern, nur bei Normal und Lang, nie im Solo, nie mit Computer-Gegnern** (in `SOLO_NO`
+und `MIN3`). Bluff-Runde bleibt unverändert. Design: **gemischt** – Entwurf A (Notizzettel, Antworten A–D) für
+Kritzel-Raten, Entwurf B (bunte Zettel, 😂-Stempel) für Lacher der Runde. Entwürfe: `docs/kreativ-entwurf.html`.
+
+**Kritzel-Raten ✏️:** 3 Zeichnungen pro Runde (reihum, niemand doppelt). Der Zeichner sieht geheim einen Begriff,
+3 s Countdown, 45 s zeichnen (6 Farben, 2 Stiftdicken, Zurück, Löschen, keine Buchstaben/Zahlen). Die anderen sehen die
+Zeichnung live und tippen eine von 4 Antworten (3 falsche aus derselben Gruppe), nur ein Tipp. Punkte: richtig 100 plus
+Tempo-Bonus bis 100 (`100*(1-t/45s)`), Zeichner 50 pro richtigem Tipp, höchstens 300, falsch 0.
+Begriffe (freigegeben): 150 in 6 Gruppen zu je 25 – Tiere, Essen, Bayern, Sport, **Tätigkeiten** (statt Berufen, damit
+nichts gegendert werden muss), Gegenstände.
+
+**Lacher der Runde 😂:** 2 Aufgaben pro Runde. Alle schreiben in 60 s eine Antwort (max. 60 Zeichen), dann anonyme
+Abstimmung (40 s), eigene nicht wählbar, leere Antworten werden nicht gezeigt, die Leitung kann eine Antwort ausblenden
+(zählt dann 0). Punkte: 100 pro Stimme plus 100 für die meisten Stimmen (bei Gleichstand alle Besten, nur wenn > 0).
+Lückensätze (freigegeben): 80 Stück. Spielertexte immer mit `h()` als Text, nie als HTML.
+
+**Testseite `docs/kreativ-prototyp.html`:** beide Spiele komplett, gleiche Bausteine und CSS wie `index.html`.
+Mehrere Fenster im selben Browser spielen zusammen (gemeinsamer Speicher im Browser statt Firebase, Raum über
+`?room=NAME`, Name über `&name=`). Datenaufbau wie im Spiel: Spielstand mit `steps`, `idx`, `reveal`, Antworten-Schnappschuss
+`A`, Spieler-Einträge mit `ans`. Testhilfen: weiteres Fenster, schlechtes Netz (1,5 s Verzögerung), Fenster verlassen.
+Zeichnung: Striche vereinfacht (Ramer-Douglas-Peucker, 1000er-Raster) und alle 300 ms als eigenes kleines Paket gesendet
+(im Spiel: eigene Firestore-Dokumente pro Paket, damit Zuschauer nur Neues bekommen).
+
+**Geprüft (17.11.2026, 4–5 Fenster, 30 Prüfungen bestanden):** Punkte beider Spiele inkl. Tempo-Bonus und Gleichstand,
+Zeichner verlässt das Spiel (Runde übersprungen, niemand bekommt oder verliert Punkte), Zeit läuft ab, später Gast schaut zu,
+zwei Räume gleichzeitig getrennt, schlechtes Netz, eingeschleuster HTML-Code wird nur als Text gezeigt, Leitungsübergabe.
+Datenmenge pro Zeichnung: normal ~2,3 KB in ~45 Paketen, ungünstigster Fall (41 s Dauerkritzeln) ~12 KB in ~160 Paketen
+(nur Nutzdaten, Firebase-Zuschlag pro Paket kommt dazu). Kleines iPhone (375×667): kein seitliches Scrollen,
+Werkzeuge und Antworten ohne Scrollen sichtbar.
+Beim Test gefunden und behoben: Wiederbeitreten muss den Spieler-Eintrag neu anlegen (sonst wandern alte Antworten mit),
+Zeichner gilt erst nach Verlassen oder 20 s ohne Lebenszeichen als weg (kurzer App-Wechsel erlaubt).
+
+**Offen beim Einbau:** Firebase statt Browser-Speicher, Auswahl über `POOL_MODES`/`MIN3`/`SOLO_NO` plus Sperre bei „Kurz“,
+Test auf echten Handys mit Freunden (die Testseite verbindet nur Fenster auf demselben Gerät).
+
