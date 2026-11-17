@@ -110,7 +110,7 @@ Vor jedem Lauf die Test-Datenbank leeren (sonst fragt die PIN-Abfrage nach bekan
 - **Phönixflug** (Geschick-Minispiel, früher „Dohlen-Schützenfest“): **eingebaut (12.11.2026)**. Offen:
   Test auf echten Handys (vor allem iPhone), Computer-Gegner nach echten Ergebnissen nachstellen.
   Details im Abschnitt unten.
-- **Kreativität**: Testseite fertig, Einbau ins echte Spiel erst nach „Kreativität einbauen“. Details im Abschnitt unten.
+- **Kreativität**: ins Spiel eingebaut (17.11.2026, Basti: „Bau ein“), im Nachbau getestet. Offen: Test mit Freunden auf echten Handys. Details im Abschnitt unten.
 - **Anfang 2027** die zeitgebundenen Fragen prüfen (Mindestlohn, Deutschlandticket, Haushalt, Euro-Länder,
   Bundespräsident usw. in „Wirtschaft & Politik“).
 - Ton-Problem auf manchen Handys: Ursache noch offen, Details von Basti abwarten.
@@ -167,7 +167,7 @@ Im Code heißt die Zielart weiter `"dohle"`, damit die Zielfolge gleich bleibt.
 - Ablauf, wenn die Zeit der Runde endet, während jemand noch spielt (wie bei den anderen Zeitspielen werten).
 - Auf echten Handys testen, vor allem iPhone.
 
-## Kreativ-Runden (geplant, Testseite seit 17.11.2026)
+## Kreativ-Runden (eingebaut 17.11.2026)
 **Idee:** neue Säule „Kreativität“ mit zwei Gruppen-Spielen. Entschieden (Basti): als **Überraschungsrunden** wie Bluff und
 Mehrheit, **nur ab 3 echten Spielern, nur bei Normal und Lang, nie im Solo, nie mit Computer-Gegnern** (in `SOLO_NO`
 und `MIN3`). Bluff-Runde bleibt unverändert. Design: **gemischt** – Entwurf A (Notizzettel, Antworten A–D) für
@@ -201,6 +201,20 @@ Werkzeuge und Antworten ohne Scrollen sichtbar.
 Beim Test gefunden und behoben: Wiederbeitreten muss den Spieler-Eintrag neu anlegen (sonst wandern alte Antworten mit),
 Zeichner gilt erst nach Verlassen oder 20 s ohne Lebenszeichen als weg (kurzer App-Wechsel erlaubt).
 
-**Offen beim Einbau:** Firebase statt Browser-Speicher, Auswahl über `POOL_MODES`/`MIN3`/`SOLO_NO` plus Sperre bei „Kurz“,
-Test auf echten Handys mit Freunden (die Testseite verbindet nur Fenster auf demselben Gerät).
+**Im Spiel (seit 17.11.2026):** Block `const KR=(function(){…})();` direkt vor `/* ========== Ende GESCHICK ========== */`,
+darin Begriffe und Lückensätze. Modus-Schlüssel `kz` (Kritzel-Raten) und `lach` (Lacher), Schritt-Arten `kz`, `lw` (schreiben),
+`lv` (abstimmen). Angebunden über `POOL_MODES`, `MODES`, `MIN3`, `SOLO_NO`, `fits` (Sperre bei „Kurz“), `buildSteps`
+(`KR.steps`), `STEP_T` (sonst wird der Spielstand als kaputt verworfen!), `QTYPES`, `NOBONUS`, `extraPoints` (`KR.points`),
+`expired`, `myWindow` (`KR.total`), `hostTick` (`KR.timing`, `KR.hostCheck`, „skip“ setzt `G.skip[idx]`), `vMain` (`KR.view`),
+`mainKey` (`KR.viewKey`), `afterMain` (`KR.after`), `act` (kzguess, kzcol, kzwid, kzundo, kzclr, lwsend, lvvote, lvhide).
+Ausblenden durch die Leitung: `G.hid[idx][uid]`. Zeichnung: eigene Dokumente `kz/{G.v}/s/{idx}_{seq}` (Feld `o` = JSON-Text);
+sperren die Datenbank-Regeln das, schickt das Handy die Pakete im eigenen Spieler-Eintrag (`kz.{v_idx}.cNNNN`, etwa jede Sekunde).
+Zeichner-Lebenszeichen: `seen` alle 5 s während der eigenen Zeichnung. Häufigkeit: in etwa jedem 9. Normal-/Lang-Spiel mit
+≥ 3 Leuten je eine der beiden Runden (Messung mit `buildSteps`, 300 Spiele).
+**Geprüft im Firebase-Nachbau (17.11.2026, 4 Spieler + Gast, 45 Prüfungen, zweimal: offene Regeln und gesperrter
+Zeichnungs-Speicher):** Auswahl (nie Kurz, nie Solo, nie unter 3), live zeichnen inkl. Zurück, später Gast schaut zu,
+Punkte inkl. Tempo, alle Handys rechnen gleich, Zeit läuft ab, Zeichner verlässt das Spiel, Schreibfeld bleibt beim Neuzeichnen
+offen, leere Antwort, HTML-Code nur als Text, Gleichstand, Ausblenden, Spiel läuft bis zum Ende, keine Fehler.
+**Offen:** Test mit Freunden auf echten Handys (vor allem iPhone: Zeichnen mit dem Finger, Tastatur beim Lacher).
+Ob die echten Datenbank-Regeln den Zeichnungs-Speicher erlauben, ist unbekannt (Ersatzweg funktioniert, ist aber langsamer).
 
