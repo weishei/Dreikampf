@@ -105,8 +105,9 @@ eine Kopie von `index.html` lädt Firebase aus `node_modules/firebase` statt gst
 Vor jedem Lauf die Test-Datenbank leeren (sonst fragt die PIN-Abfrage nach bekannten Namen).
 
 ## Offene Punkte
-- **Sicherheit** der Datenbank-Regeln und der Profil-Anmeldung überarbeiten. Details bei Basti erfragen,
-  nicht ins öffentliche Projekt schreiben.
+- **Sicherheit:** Stufe A (strengere Datenbank-Regeln, 17.11.2026) im Nachbau getestet, Basti trägt sie in Firebase ein.
+  Neue Bereiche in der Datenbank brauchen ab dann eine eigene Regel, sonst wird das Schreiben abgelehnt.
+  Stufe B (Profile wirklich schützen, braucht Firebase-Tarif Blaze) später. Details nicht ins öffentliche Projekt schreiben.
 - **Phönixflug** (Geschick-Minispiel, früher „Dohlen-Schützenfest“): **eingebaut (12.11.2026)**. Offen:
   Test auf echten Handys (vor allem iPhone), Computer-Gegner nach echten Ergebnissen nachstellen.
   Details im Abschnitt unten.
@@ -207,8 +208,8 @@ darin Begriffe und Lückensätze. Modus-Schlüssel `kz` (Kritzel-Raten) und `lac
 (`KR.steps`), `STEP_T` (sonst wird der Spielstand als kaputt verworfen!), `QTYPES`, `NOBONUS`, `extraPoints` (`KR.points`),
 `expired`, `myWindow` (`KR.total`), `hostTick` (`KR.timing`, `KR.hostCheck`, „skip“ setzt `G.skip[idx]`), `vMain` (`KR.view`),
 `mainKey` (`KR.viewKey`), `afterMain` (`KR.after`), `act` (kzguess, kzcol, kzwid, kzundo, kzclr, lwsend, lvvote, lvhide).
-Ausblenden durch die Leitung: `G.hid[idx][uid]`. Zeichnung: eigene Dokumente `kz/{G.v}/s/{idx}_{seq}` (Feld `o` = JSON-Text);
-sperren die Datenbank-Regeln das, schickt das Handy die Pakete im eigenen Spieler-Eintrag (`kz.{v_idx}.cNNNN`, etwa jede Sekunde).
+Ausblenden durch die Leitung: `G.hid[idx][uid]`. Zeichnung: eigene Dokumente `kzs/{G.v}_{idx}_{seq}` mit Feld `g`=G.v (Abfrage `where("g","==",G.v)`, `o` = JSON-Text,
+nur anlegen, nicht ändern); sperren die Datenbank-Regeln das, schickt das Handy die Pakete im eigenen Spieler-Eintrag (`kz.{v_idx}.cNNNN`, etwa jede Sekunde).
 Zeichner-Lebenszeichen: `seen` alle 5 s während der eigenen Zeichnung. Häufigkeit: in etwa jedem 9. Normal-/Lang-Spiel mit
 ≥ 3 Leuten je eine der beiden Runden (Messung mit `buildSteps`, 300 Spiele).
 **Geprüft im Firebase-Nachbau (17.11.2026, 4 Spieler + Gast, 45 Prüfungen, zweimal: offene Regeln und gesperrter
