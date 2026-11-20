@@ -4340,7 +4340,7 @@ case "roomswitch":if(d.r){const c=String(d.r);logEv("raum_gewechselt");leaveRoom
     case "pinsave":{const v=((document.getElementById("pinset")||{}).value||"").trim();if(!/^\d{4}$/.test(v)){L.pinMsg="Bitte genau 4 Ziffern.";renderAll(true);break;}PINS[ME]={h:pinHash(ME,v),at:Date.now()};meWrite(()=>DB.doc("pins/"+ME).set(PINS[ME]));L.pinMsg="✓ PIN gespeichert. Merk sie dir gut!";renderAll(true);}break;
     case "pinlater":try{localStorage.setItem("dk_pinlater",String(Date.now()));}catch(e){}renderAll(true);break;
     case "pinview":L.view="pin";L.pinMsg="";L.menu=false;renderAll(true);window.scrollTo(0,0);break;
-    case "pindel":if(ME===FOUNDER&&L.mA){const u=L.mA;delete PINS[u];meWrite(()=>DB.doc("pins/"+u).delete());L.mA=null;renderAll(true);}break;
+    case "pindel":if(ME===FOUNDER&&L.mA){const u=L.mA;delete PINS[u];meWrite(()=>DB.doc("pins/"+u).set({h:"",at:Date.now()}));L.mA=null;renderAll(true);}break;
     case "join":if(G&&G.phase==="lobby"&&lobbyPlayers().length>=MAXP&&!(P[ME]&&P[ME].g===G.v)){renderAll(true);break;}join(G.v);break;
     case "waitjoin":if(G&&G.phase==="play"&&!inGame()){const n=saveName();if(n){logEv("angemeldet_naechstes_spiel",{via:L.roomVia||"unbekannt"});}if(n)meWrite(()=>myRef().set({name:n,g:"",wait:G.v,waitRoom:ROOM||"",t:Date.now(),seen:Date.now(),ans:{}}));}break;
     case "devmail":if(ME){const url=location.origin+location.pathname,sub="Mein Dreikampf-Profil-Code",body="Mein Profil-Code für Dreikampf:\n\n"+ME+"\n\nSo holst du dein Profil auf ein anderes Handy:\n1. Dreikampf öffnen: "+url+"\n2. Menü → „📥 Laden“\n3. Diesen Code einfügen\n\nWichtig: Code nicht weitergeben. Wer ihn hat, kann dein Profil übernehmen.";logEv("code_mail");location.href="mailto:?subject="+encodeURIComponent(sub)+"&body="+encodeURIComponent(body);}break;
@@ -4427,9 +4427,9 @@ case "again":if(G&&atEnd()&&!SOLO&&inGame()&&!amHost()&&!(P[ME]&&P[ME].again===G
     case "mdo":if(ME===FOUNDER&&L.mA&&L.mB&&L.mA!==L.mB){if(L.confirm!=="mdo"){L.confirm="mdo";renderAll(true);break;}L.confirm=null;const dd=mergeDir(L.mA,L.mB),a=dd[0],b=dd[1];ALIAS[a]=b;L.mA=null;L.mB=null;meWrite(()=>DB.doc("alias/"+a).set({to:b,at:Date.now()}));applyAlias();}break;
     case "migr":if(ME===FOUNDER){L.migMsg="Lade …";renderAll(true);fetch("migr.json?t="+Date.now(),{cache:"no-store"}).then(r=>r.json()).then(j=>{let n=0;["results","daily"].forEach(c=>{const m=j&&j[c]||{};Object.keys(m).forEach(id=>{meWrite(()=>DB.doc(c+"/"+id).set(m[id]));n++;});});L.migMsg="✓ "+n+" alte Einträge übernommen. Jetzt oben jeweils alt → neu zusammenführen.";renderAll(true);}).catch(()=>{L.migMsg="Geht nur in der Web-Version.";renderAll(true);});}break;
     case "mauto":if(ME===FOUNDER){if(L.confirm!=="mauto"){L.confirm="mauto";renderAll(true);break;}L.confirm=null;doAuto();renderAll(true);}break;
-    case "mundo":if(ME===FOUNDER&&d.u){delete ALIAS[d.u];meWrite(()=>DB.doc("alias/"+d.u).delete());applyAlias();}break;
+    case "mundo":if(ME===FOUNDER&&d.u){delete ALIAS[d.u];meWrite(()=>DB.doc("alias/"+d.u).set({to:"",at:Date.now()}));applyAlias();}break;
     case "reports":if(ME===FOUNDER){L.view="reports";L.menu=false;renderAll(true);window.scrollTo(0,0);}break;
-    case "repdel":if(ME===FOUNDER&&d.id){REPS=REPS.filter(r=>r.id!==d.id);repSig+="x";meWrite(()=>DB.doc("reports/"+d.id).delete());renderAll(true);}break;
+    case "repdel":if(ME===FOUNDER&&d.id){REPS=REPS.filter(r=>r.id!==d.id);repSig+="x";meWrite(()=>DB.doc("reports/"+d.id).update({done:1}));renderAll(true);}break;
     case "guide":L.view="guide";L.menu=false;renderAll(true);window.scrollTo(0,0);break;
     case "gask":gAsk();break;
     case "soloki":L.soloKI=!L.soloKI;renderAll(true);break;
@@ -5169,7 +5169,7 @@ function pinSetCard(force){
   return '<div class="card"><div class="eyebrow">🔐 '+(PINS[ME]?'PIN ändern':'PIN festlegen')+'</div><p class="small" style="margin-top:4px">Damit findest du dein Profil auf einem anderen Handy oder Browser wieder: einfach deinen Namen und die PIN eingeben.</p><input id="pinset" class="gq" type="tel" inputmode="numeric" maxlength="4" autocomplete="off" placeholder="4 Ziffern" style="text-align:center;letter-spacing:8px;font-size:22px">'+(L.pinMsg?'<p class="center"><b>'+h(L.pinMsg)+'</b></p>':'')+'<button class="btn" data-act="pinsave">PIN speichern</button>'+(force?'':'<button class="linkbtn" style="display:block;margin:4px auto 0" data-act="pinlater">Später</button>')+'</div>';
 }
 function doAuto(){
-  Object.keys(ALIAS).forEach(k=>meWrite(()=>DB.doc("alias/"+k).delete()));ALIAS={};
+  Object.keys(ALIAS).forEach(k=>meWrite(()=>DB.doc("alias/"+k).set({to:"",at:Date.now()})));ALIAS={};
   const all=mergeList(),norm=x=>(x||"").trim().toLowerCase(),msg=[],bad={"":1,"?":1,"mitspieler":1};
   const set=(a,b)=>{ALIAS[a]=b;meWrite(()=>DB.doc("alias/"+a).set({to:b,at:Date.now(),auto:1}));};
   const cur=all.filter(x=>!(OLD_IDS[x.u]&&x.u!==ME)),groups={};
@@ -5739,7 +5739,7 @@ function founderWatch(){
 }
 if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js",{scope:"./"}).catch(()=>{});
 function DK_SWITCH(id,n){try{localStorage.setItem("dk_id",id);if(n)localStorage.setItem("dk_name",n);}catch(e){}location.reload();}
-const BUILD_ID="1795180154";
+const BUILD_ID="1795210899";
 function verCheck(){fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(r=>r.json()).then(j=>{if(j&&j.v&&j.v!==BUILD_ID&&!document.getElementById("upd")){const b=document.createElement("button");b.id="upd";b.textContent="✨ Neue Version da. Tippen zum Laden";b.onclick=()=>location.reload();document.body.appendChild(b);}}).catch(()=>{});}
 setInterval(verCheck,60000);document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")verCheck();});setTimeout(verCheck,5000);
 (async function boot(){
@@ -5758,12 +5758,12 @@ setInterval(verCheck,60000);document.addEventListener("visibilitychange",()=>{if
   DB.doc("meta/used").onSnapshot(s=>{const x=s.exists?s.data():null;if(x&&x.used)META_USED=x.used;else if(!META_USED&&!metaSeed){metaSeed=1;const un=DB.doc("game/state").onSnapshot(o=>{try{un&&un();}catch(e){}const g=o.exists?o.data():null;if(g&&g.used&&!META_USED)saveMetaUsed(g.used);});}},()=>{});
   let resSig="",profSig="";
   DB.collection("results").onSnapshot(s=>{const r=s.docs.filter(d=>d.exists).map(d=>d.data()),sig=JSON.stringify(r);if(sig===resSig)return;resSig=sig;RAW.res=r;applyAlias();},()=>{});
-  DB.collection("pins").onSnapshot(s=>{const m={};s.docs.forEach(d=>{if(d.exists&&d.data())m[d.id]=d.data();});PINS=m;renderAll();},()=>{});
-  DB.collection("alias").onSnapshot(s=>{const m={};s.docs.forEach(d=>{if(d.exists&&d.data()&&typeof d.data().to==="string")m[d.id]=d.data().to;});const nm2=normAlias(m);if(ME===FOUNDER)nm2.fix.forEach(f=>{meWrite(()=>DB.doc("alias/"+f[0]).delete());meWrite(()=>DB.doc("alias/"+f[1]).set({to:f[2],at:Date.now(),fixed:1}));});if(JSON.stringify(nm2.m)===JSON.stringify(ALIAS))return;ALIAS=nm2.m;applyAlias();},()=>{});
+  DB.collection("pins").onSnapshot(s=>{const m={};s.docs.forEach(d=>{if(d.exists&&d.data()&&d.data().h)m[d.id]=d.data();});PINS=m;renderAll();},()=>{});
+  DB.collection("alias").onSnapshot(s=>{const m={};s.docs.forEach(d=>{if(d.exists&&d.data()&&typeof d.data().to==="string"&&d.data().to)m[d.id]=d.data().to;});const nm2=normAlias(m);if(ME===FOUNDER)nm2.fix.forEach(f=>{meWrite(()=>DB.doc("alias/"+f[0]).set({to:"",at:Date.now()}));meWrite(()=>DB.doc("alias/"+f[1]).set({to:f[2],at:Date.now(),fixed:1}));});if(JSON.stringify(nm2.m)===JSON.stringify(ALIAS))return;ALIAS=nm2.m;applyAlias();},()=>{});
   DB.collection("profiles").onSnapshot(s=>{const m={};s.docs.forEach(d=>{if(d.exists)m[d.id]=cln(d.data());});const sig=JSON.stringify(m);if(sig===profSig)return;profSig=sig;PROFS=m;profVer++;renderAll();},()=>{});
   DB.collection("solo").onSnapshot(s=>{RAW.solo=s.docs.filter(d=>d.exists).map(d=>d.data());applyAlias();},()=>{});
   DB.collection("daily").onSnapshot(s=>{RAW.daily=s.docs.filter(d=>d.exists).map(d=>d.data());applyAlias();},()=>{});
-  DB.collection("reports").onSnapshot(s=>{const r=s.docs.filter(d=>d.exists).map(d=>Object.assign({id:d.id},d.data())).sort((a,b)=>(b.at||0)-(a.at||0)),sig=JSON.stringify(r.map(x=>x.id));if(sig===repSig)return;repSig=sig;REPS=r;renderAll();},()=>{});
+  DB.collection("reports").onSnapshot(s=>{const r=s.docs.filter(d=>d.exists&&!(d.data()||{}).done).map(d=>Object.assign({id:d.id},d.data())).sort((a,b)=>(b.at||0)-(a.at||0)),sig=JSON.stringify(r.map(x=>x.id));if(sig===repSig)return;repSig=sig;REPS=r;renderAll();},()=>{});
   DB.collection("custom").onSnapshot(s=>{CUST=s.docs.filter(d=>d.exists).map(d=>Object.assign({id:d.id},d.data()));progVer++;renderAll();},()=>{});
   DB.collection("players").onSnapshot(s=>{const m={};s.docs.forEach(d=>{if(d.exists)m[d.id]=cln(d.data());});RP=m;if(SOLO)return;P=m;gotPlayers=true;checkEmos();onChange();},()=>{dbState="nodb";renderAll(true);});
 })();

@@ -107,6 +107,8 @@ Vor jedem Lauf die Test-Datenbank leeren (sonst fragt die PIN-Abfrage nach bekan
 ## Offene Punkte
 - **Sicherheit:** Stufe A (strengere Datenbank-Regeln, 17.11.2026) im Nachbau getestet, seit 17.11.2026 in Firebase aktiv.
   Neue Bereiche in der Datenbank brauchen ab dann eine eigene Regel, sonst wird das Schreiben abgelehnt.
+  Gründer-Aufräumen löscht nichts mehr (20.11.2026), weil Bastis Handy-Anmeldung nicht zum Gründer-Eintrag passt: Meldungen bekommen
+  `done:1` (ausgeblendet), PIN wird `{h:""}`, Zusammenführung `{to:""}`; beim Einlesen werden leere/erledigte Einträge übergangen.
   Stufe B (Profile wirklich schützen, braucht Firebase-Tarif Blaze) später. Details nicht ins öffentliche Projekt schreiben.
 - **Phönixflug** (Geschick-Minispiel, früher „Dohlen-Schützenfest“): **eingebaut (12.11.2026)**. Offen:
   Test auf echten Handys (vor allem iPhone), Computer-Gegner nach echten Ergebnissen nachstellen.
