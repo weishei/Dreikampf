@@ -112,6 +112,7 @@ Vor jedem Lauf die Test-Datenbank leeren (sonst fragt die PIN-Abfrage nach bekan
   Test auf echten Handys (vor allem iPhone), Computer-Gegner nach echten Ergebnissen nachstellen.
   Details im Abschnitt unten.
 - **Kreativität**: ins Spiel eingebaut (17.11.2026, Basti: „Bau ein“), im Nachbau getestet. Offen: Test mit Freunden auf echten Handys. Details im Abschnitt unten.
+- **Fortschritt 21–30 und Weihnachts-Avatare**: eingebaut 20.11.2026, Details im Abschnitt unten.
 - **Anfang 2027** die zeitgebundenen Fragen prüfen (Mindestlohn, Deutschlandticket, Haushalt, Euro-Länder,
   Bundespräsident usw. in „Wirtschaft & Politik“).
 - Ton-Problem auf manchen Handys: Ursache noch offen, Details von Basti abwarten.
@@ -219,3 +220,23 @@ offen, leere Antwort, HTML-Code nur als Text, Gleichstand, Ausblenden, Spiel lä
 **Offen:** Test mit Freunden auf echten Handys (vor allem iPhone: Zeichnen mit dem Finger, Tastatur beim Lacher).
 Die Regeln (Stufe A) erlauben `kzs` nur zum Anlegen, max. 20.000 Zeichen pro Paket. Ersatzweg bleibt als Absicherung im Code.
 
+
+## Fortschritt: Levels 21–30 und Weihnachts-Avatare (eingebaut 20.11.2026)
+**Freigegeben (Basti, 19./20.11.2026):** Liste `docs/fortschritt-liste.html`, Vorschau `docs/avatar-vorschau.html` (je Figur Entwurf A gewählt).
+- **Levels:** `LEVELS` hat 30 Stufen, Abstand wächst um 200 XP (Level 21 bei 28.200 … Level 30 „Quizgott²“ bei 66.000). Alles, was früher fest
+  mit 20 rechnete (`levelTitle`, `levelSpan`, `nextReward`), nutzt jetzt `LEVELS.length`. Figurgröße in `avatarSVG` auf Level-20-Größe begrenzt.
+  Figur-Stufen bleiben 5 (`stageOf`, letzte Stufe ab Level 17).
+- **Neuer Code-Block `const AVN=(function(){…})();`** direkt vor `/* ---------- Level, XP, Abzeichen ---------- */`: Figuren `santa`, `reindeer`,
+  `xbaum`, `birne` (Geistesblitz), neue Gegenstände, Hintergründe, Effekte, Rahmen. Die alten Zeichenfunktionen (`hatSvg`, `glSvg`, `handSvg`,
+  `neckSvg`, `petSvg`, `fxSvg`, `frameSvg`) werden direkt danach umhüllt: zuerst AVN, sonst alt. `avatarSVG` ruft `F.d(s,eq)` auf, damit
+  Weihnachtsmütze, Geweih, Stern und Rentier-Halsband verschwinden, wenn ein anderer Hut bzw. ein anderes Hals-Teil getragen wird.
+- **Belohnungen** in `LEVEL_ITEMS`/`LEVEL_ITEMS2` (21–30), neue Bedingungen in `UNLOCKS`, Figuren in `FIG_LOCK`, Jubel in `cheerFx`
+  (`goldregen`, `schneegestoeber`, `schneeball` mit eigenem CSS `.fx-sb`/`.fx-splat`), Figuren-Sprüche in `FIGFX`.
+- **Weihnachten:** `buildProg` zählt `xmG`/`xmW` (Gruppe) und `xmS`/`xmWS` (Solo, zählt halb) nur für Ergebnisse mit `xm` **und** Datum
+  im Weihnachtszeitraum (`xmasOn(g.at)`, ohne Datum zählt nicht). Freischaltung bleibt, weil die Ergebnisse gespeichert bleiben.
+  Nichts Neues in der Datenbank, Stufe-A-Regeln unverändert.
+- **Schneefall/Fragezeichen** bewegen sich per CSS (`.avn-snow`, `.avn-spin`), stehen still bei „Bewegung reduzieren“ und ohne Effekte.
+- **Geprüft (20.11.2026):** echte Daten (Export 14.11.) alt gegen neu: niemand verliert etwas, XP/Level unverändert; Testprofile 0/10.000/25.000/
+  40.000/66.000 XP; Level-Grenzen; Weihnachtsspiele im/außerhalb des Zeitraums, ohne Datum, Solo halb; alle 34 Gegenstände gezeichnet und mit
+  Bedingung; Lobby, Rangliste, Profil, Garderobe auf 375×667 ohne seitliches Scrollen, keine Fehler.
+- **Offen:** Schneefall auf alten Handys ungeprüft. Rentier ohne rote Nase lassen (geschützte Figur).
