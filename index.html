@@ -5335,7 +5335,7 @@ function themeWheelInit(){
 }
 const THEMES={mix:["Gemischt",null],bayern:["Bayern & München",["bayern"]],sport:["Sport",["sport","sportlerinnen"]],sportlerinnen:["Sportlerinnen",["sportlerinnen"]],welt:["Geschichte & Welt",["geschichte","geo"]],natur:["Natur & Wissen",["natur","wissen"]],kultur:["Kultur & Unterhaltung",["kultur"]],alltag:["Essen & Alltag",["essen","alltag"]],iq:["Logik & IQ",["iq"]],xmas:["Weihnachten",["xmas"]],baby:["Baby & Eltern",["baby"]],berge:["Berge",["berge"]],bio:["Biologie",["bio"]],zeit:["Zeitgeschichte",["zeit"]],wipo:["Wirtschaft & Politik",["wipo"]],kint:["Künstliche Intelligenz",["kint"]]};
 /* Weihnachtsspecial: sichtbar vom 1. Dezember bis 6. Januar */
-function xmasOn(t){const d=t?new Date(t):new Date(),m=d.getMonth();return m===11||(m===0&&d.getDate()<=6);}
+function xmasOn(t){const d=t?new Date(t):new Date(),m=d.getMonth();return m===11||(m===10&&d.getDate()>=20)||(m===0&&d.getDate()<=6);}
 function themeKeys(){const k=Object.keys(THEMES).filter(t=>t!=="xmas");if(xmasOn())k.splice(1,0,"xmas");return k;}
 function xmasGame(){if(!G||!G.used)return false;if(G.phase==="play")return G.used.theme==="xmas";return G.phase==="lobby"&&themeOf()==="xmas";}
 function uHash(u){let n=0;const t=String(u);for(let i=0;i<t.length;i++)n=(n*31+t.charCodeAt(i))>>>0;return n;}
@@ -5739,7 +5739,7 @@ function founderWatch(){
 }
 if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js",{scope:"./"}).catch(()=>{});
 function DK_SWITCH(id,n){try{localStorage.setItem("dk_id",id);if(n)localStorage.setItem("dk_name",n);}catch(e){}location.reload();}
-const BUILD_ID="1795180041";
+const BUILD_ID="1795180154";
 function verCheck(){fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(r=>r.json()).then(j=>{if(j&&j.v&&j.v!==BUILD_ID&&!document.getElementById("upd")){const b=document.createElement("button");b.id="upd";b.textContent="✨ Neue Version da. Tippen zum Laden";b.onclick=()=>location.reload();document.body.appendChild(b);}}).catch(()=>{});}
 setInterval(verCheck,60000);document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")verCheck();});setTimeout(verCheck,5000);
 (async function boot(){

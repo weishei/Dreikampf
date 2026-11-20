@@ -35,7 +35,7 @@ Läuft über GitHub Pages, Spielstände und Profile liegen in Firebase (Projekt 
 - **Themen** `THEMES`: `schlüssel:["Name",[Kategorien]]`. `mix` (Gemischt) nimmt alles außer `xmas`.
   `sport` enthält `sportlerinnen`. Symbole in `THEME_ICON`.
 - Eigene Stapel: `IQ` (Logik), `BABY`/`BABY_MYTH`/`BABY_EST` (Baby & Eltern), `KI_MC` (KI-Prüfungstraining).
-  Weihnachten (`xmas`) nur vom 1.12. bis 6.1. (`xmasOn`).
+  Weihnachten (`xmas`) nur vom 20.11. bis 6.1. (`xmasOn`, seit 20.11.2026 auf Bastis Wunsch, vorher ab 1.12.).
 - **Neue Fragenblöcke** stehen als eigener Block **direkt vor** der Zeile
   `(function(){const m=[{"q":"In welchem Land entstand das Lied`. Muster (so sind Berge, Biologie,
   Zeitgeschichte und Wirtschaft & Politik eingebaut):
@@ -233,7 +233,7 @@ Die Regeln (Stufe A) erlauben `kzs` nur zum Anlegen, max. 20.000 Zeichen pro Pak
 - **Belohnungen** in `LEVEL_ITEMS`/`LEVEL_ITEMS2` (21–30), neue Bedingungen in `UNLOCKS`, Figuren in `FIG_LOCK`, Jubel in `cheerFx`
   (`goldregen`, `schneegestoeber`, `schneeball` mit eigenem CSS `.fx-sb`/`.fx-splat`), Figuren-Sprüche in `FIGFX`.
 - **Weihnachten:** `buildProg` zählt `xmG`/`xmW` (Gruppe) und `xmS`/`xmWS` (Solo, zählt halb) nur für Ergebnisse mit `xm` **und** Datum
-  im Weihnachtszeitraum (`xmasOn(g.at)`, ohne Datum zählt nicht). Freischaltung bleibt, weil die Ergebnisse gespeichert bleiben.
+  im Weihnachtszeitraum 20.11.–6.1. (`xmasOn(g.at)`, ohne Datum zählt nicht). Freischaltung bleibt, weil die Ergebnisse gespeichert bleiben.
   Nichts Neues in der Datenbank, Stufe-A-Regeln unverändert.
 - **Schneefall/Fragezeichen** bewegen sich per CSS (`.avn-snow`, `.avn-spin`), stehen still bei „Bewegung reduzieren“ und ohne Effekte.
 - **Geprüft (20.11.2026):** echte Daten (Export 14.11.) alt gegen neu: niemand verliert etwas, XP/Level unverändert; Testprofile 0/10.000/25.000/
