@@ -1,0 +1,635 @@
+<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Avatar-Vorschau</title><style>
+:root{--bg:#17133a;--panel:#231d55;--line:#3a3280;--fg:#f4f1ff;--mu:#b9b2e6;--hi:#ffe7a3;--warn:#ff9f1c}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.45 system-ui,-apple-system,sans-serif;padding:16px;max-width:980px;margin-inline:auto;overflow-x:hidden}
+h1{font-size:23px;margin:6px 0 2px}h2{font-size:19px;margin:28px 0 8px;color:var(--hi)}h3{font-size:16px;margin:16px 0 6px}.mu{color:var(--mu);font-size:13px}
+.box{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin:10px 0}.warn{border-color:var(--warn)}.warn b{color:var(--warn)}
+.row{display:flex;flex-wrap:wrap;gap:10px}.draft{background:rgba(255,255,255,.04);border-radius:12px;padding:8px;margin:6px 0 12px}.dl{font-weight:700;margin:0 0 6px}
+.av{margin:0;width:96px;text-align:center}.av svg{width:96px;height:96px;display:block;border-radius:50%}.av figcaption{font-size:12px;line-height:1.25;margin-top:3px}.av small{display:block;color:var(--mu);font-size:11px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(76px,1fr));gap:8px}.grid .av{width:auto}.grid .av svg{width:100%;height:auto;aspect-ratio:1}
+.grid.big{grid-template-columns:repeat(auto-fill,minmax(96px,1fr))}
+.title .tt{width:96px;height:96px;border-radius:50%;background:#2a2466;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;padding:8px;color:var(--hi)}
+.cheer{width:96px;height:96px;border-radius:50%;border:2px dashed var(--line);background:#2a2466;color:var(--fg);font:700 12px system-ui;cursor:pointer}
+select,label{font:15px system-ui}select{background:#2a2466;color:var(--fg);border:1px solid var(--line);border-radius:8px;padding:6px;max-width:100%}
+.avn-snow{animation:avnSnow 7s linear infinite}@keyframes avnSnow{to{transform:translateY(100px)}}
+.avn-spin{transform-box:view-box;transform-origin:50% 50%;animation:avnSpin 14s linear infinite}@keyframes avnSpin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.avn-snow,.avn-spin{animation:none}}body.rm .avn-snow,body.rm .avn-spin{animation:none}
+#fxlayer{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:9}.p{position:absolute;font-size:28px;will-change:transform}
+.p.fall{animation:pfall var(--d) ease-in forwards}@keyframes pfall{to{transform:translateY(115vh) rotate(260deg)}}
+.p.swirl{animation:pswirl var(--d) ease-in-out forwards}@keyframes pswirl{30%{transform:translate(30px,35vh) rotate(90deg)}60%{transform:translate(-25px,70vh) rotate(200deg)}to{transform:translate(15px,112vh) rotate(320deg)}}
+.p .sb{display:block;width:30px;height:30px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#fff,#dfe9f5 60%,#b9c8dc)}
+.p.throw.fromL{animation:pthrowL var(--d) ease-out forwards}.p.throw.fromR{animation:pthrowR var(--d) ease-out forwards}
+@keyframes pthrowL{to{transform:translate(42vw,-6vh) scale(1.25)}}@keyframes pthrowR{to{transform:translate(-42vw,-6vh) scale(1.25)}}
+.p .splat{display:block;width:56px;height:46px;background:#fff;opacity:.95;clip-path:polygon(50% 0,62% 26%,92% 12%,76% 42%,100% 58%,70% 64%,78% 96%,50% 74%,22% 96%,30% 64%,0 58%,24% 42%,8% 12%,38% 26%)}
+.p.splat{animation:psplat var(--d) ease-out forwards}@keyframes psplat{from{transform:scale(.3)}30%{transform:scale(1)}to{transform:scale(1.05);opacity:0}}
+.p.still{font-size:60px;animation:pstill var(--d) ease forwards}@keyframes pstill{to{opacity:0}}
+</style></head><body>
+<div id="fxlayer"></div>
+<h1>Avatar-Vorschau</h1><p class="mu">Stand 20.11.2026 · Schritt 2 von 3 · noch nichts im Spiel · gezeichnet mit den echten Zeichenfunktionen des Spiels</p>
+<div class="box warn"><b>Unsicher – bitte zuerst lesen</b><ul>
+<li><b>Mütze, Geweih und Stern</b> der neuen Figuren erscheinen nur, wenn kein anderer Hut getragen wird. Sonst würden sie sich überlappen. Mit Hut sieht man z. B. das Rentier ohne Geweih.</li>
+<li><b>Rentier-Halsband und Schal</b> verschwinden, wenn ein anderes Hals-Teil getragen wird. Aus demselben Grund.</li>
+<li><b>Größe ab Level 21:</b> Das Spiel lässt die Figur mit jedem Level etwas wachsen und würde sie ab Level 21 über den Rand ziehen. Ich begrenze das auf die Größe von Level 20. Auf dieser Seite ist das schon eingerechnet.</li>
+<li><b>Schneefall und kreisende Fragezeichen</b> bewegen sich. Bei „Bewegung reduzieren“ (Handy-Einstellung) stehen sie still. Ob das auf sehr alten Handys flüssig läuft, habe ich nicht auf echten Geräten geprüft.</li>
+<li><b>Jubel-Effekte</b> sind hier nachgebaut. Im Spiel nutze ich den vorhandenen Jubel-Baustein, Details können leicht abweichen.</li>
+</ul><label><input type="checkbox" id="rm"> „Bewegung reduzieren“ hier ausprobieren</label></div>
+
+<h2>1. Neue Figuren: 5 Stufen, je 2 Entwürfe</h2><p class="mu">Bitte je Figur A oder B wählen. Rote Umhänge (ab Level 13) und der goldene Schein (ab Level 17) kommen wie bei allen Figuren vom Spiel.</p>
+<div id="figs"></div>
+
+<h2>2. Sitzen die bestehenden Sachen? (Raster)</h2>
+<div class="box"><select id="rfig"></select> <select id="rlv"><option value="1">Stufe 1</option><option value="9" selected>Stufe 3</option><option value="17">Stufe 5</option></select>
+<p class="mu">Alle Hüte, Brillen, Hand- und Hals-Teile, die es gibt (bestehende und neue).</p></div><div id="raster"></div>
+
+<h2>3. Alle neuen Gegenstände</h2><p class="mu">🎄 = nur über Weihnachtsspiele freischaltbar. Jubel-Knöpfe antippen zum Abspielen.</p>
+<h3>Auf einer bestehenden Figur (Pinguin)</h3><div id="items"></div>
+<h3>Auf dem Weihnachtsmann</h3><div id="items2"></div>
+
+<h2>4. Komplett angezogen</h2><div id="outfit"></div>
+<script>/* Aus index.html übernommen (Avatare), unverändert bis auf zwei Stellen: Figur bekommt die Ausrüstung mitgeteilt, Größe höchstens wie Level 20 */
+const AV_COLS=["#ff7a59","#3ed6c0","#ffc93c","#ff8fd8","#6cb8ff","#b8f06a","#b69cff","#f6f2ff"];
+// a: Kopf-Oberkante für Hüte, e: Augen [x1,x2,y], m: Mund [x,y] oder null, p: Hand [x,y]
+const FIGS={
+ brezn:{n:"Brezn",st:["Teigling","Laugenbrezn","Butterbrezn","Wiesn-Riesenbrezn","Goldene Brezn"],a:[50,30],e:[44,56,71],m:[50,77],p:[82,62],
+  d:()=>'<path d="M50 84C22 84 10 62 22 46C32 32 48 38 50 52C52 38 68 32 78 46C90 62 78 84 50 84Z" fill="none" stroke="#a45a22" stroke-width="10" stroke-linejoin="round"/><path d="M50 52L38 74M50 52L62 74" stroke="#a45a22" stroke-width="8" stroke-linecap="round"/><ellipse cx="50" cy="74" rx="17" ry="10" fill="#b8692a"/>'+[[30,44],[70,44],[24,62],[76,62],[42,40],[58,40]].map(p=>'<circle cx="'+p[0]+'" cy="'+p[1]+'" r="1.6" fill="#fff"/>').join('')},
+ wurst:{n:"Weißwurst",st:["Brät","Weißwurst","Weißwurst mit Senf","Wurstbaron","Wurstkaiser"],a:[50,24],e:[44,56,46],m:[50,54],p:[70,62],
+  d:(s)=>'<path d="M47 20q3-6 6 0" stroke="#cbb89a" stroke-width="3" fill="none"/><rect x="34" y="21" width="32" height="68" rx="16" fill="#f2ebdd" stroke="#d6c6aa" stroke-width="2"/><path d="M40 70q10 6 20 0" stroke="#e6d9c2" stroke-width="2" fill="none"/>'+(s>=2?'<path d="M36 30q14 10 28 0" stroke="#d9a520" stroke-width="4" fill="none" stroke-linecap="round"/>':'')},
+ dackel:{n:"Dackel",st:["Welpe","Dackel","Rauhaardackel","Oberdackel","Dackel-Majestät"],a:[72,38],e:[68,77,49],m:[80,60],p:[26,64],
+  d:()=>'<path d="M18 66q-8-8-4-14" stroke="#8a4f22" stroke-width="4" fill="none" stroke-linecap="round"/><ellipse cx="44" cy="70" rx="28" ry="12" fill="#9b5a2b"/>'+[24,34,54,64].map(x=>'<rect x="'+x+'" y="76" width="6" height="12" rx="3" fill="#8a4f22"/>').join('')+'<circle cx="72" cy="52" r="15" fill="#a8652f"/><ellipse cx="84" cy="57" rx="8" ry="6" fill="#c07a3d"/><circle cx="91" cy="55" r="2.6" fill="#2b1a10"/><ellipse cx="62" cy="59" rx="5" ry="11" fill="#7a431c"/>'},
+ taube:{n:"Stadttaube",st:["Brotkrumen-Sucher","Bahnhofs-Taube","Brieftaube","Friedenstaube","Götterbote"],a:[57,29],e:[53,62,38],m:null,p:[28,66],
+  d:()=>'<path d="M40 84l-3 6M46 84l0 7M58 84l3 6" stroke="#e08a3a" stroke-width="3" stroke-linecap="round"/><ellipse cx="48" cy="66" rx="25" ry="19" fill="#9aa3ad"/><path d="M26 64q10 16 30 10" fill="#7f8893"/><ellipse cx="56" cy="50" rx="11" ry="6" fill="#5f9c82"/><circle cx="57" cy="40" r="12" fill="#aab2bb"/><path d="M67 40l9 3l-9 3z" fill="#e3a14a"/>'},
+ waschbaer:{n:"Waschbär",st:["Tonnenkind","Mülltonnen-Mogul","Hinterhof-Philosoph","Mitternachts-Genie","König der Tonnen"],a:[50,26],e:[43,57,45],m:[50,59],p:[74,70],
+  d:()=>'<g transform="rotate(-30 76 74)"><rect x="66" y="56" width="12" height="34" rx="6" fill="#9ca1a8"/><rect x="66" y="64" width="12" height="5" fill="#34363b"/><rect x="66" y="75" width="12" height="5" fill="#34363b"/></g><ellipse cx="50" cy="74" rx="20" ry="15" fill="#8a8f96"/><path d="M32 34l4-12l10 8zM68 34l-4-12l-10 8z" fill="#7c8188"/><circle cx="50" cy="46" r="20" fill="#a3a8af"/><rect x="31" y="39" width="38" height="13" rx="6.5" fill="#2d2f33"/><ellipse cx="50" cy="56" rx="9" ry="6" fill="#eceff2"/><circle cx="50" cy="53" r="2.4" fill="#222"/>'},
+ faultier:{n:"Faultier",st:["Schlafmütze","Chiller","Zen-Meister","Gemächlicher Weiser","Erleuchtetes Faultier"],a:[50,30],e:[44,56,50],m:[50,58],p:[78,70],
+  d:()=>'<ellipse cx="50" cy="64" rx="25" ry="27" fill="#8b6f4e"/><path d="M26 66q-6 10 2 16M74 66q6 10-2 16" stroke="#7a5f40" stroke-width="7" fill="none" stroke-linecap="round"/><ellipse cx="50" cy="52" rx="16" ry="13" fill="#dbc6a2"/><ellipse cx="43" cy="51" rx="6" ry="3.5" fill="#5a4330" transform="rotate(20 43 51)"/><ellipse cx="57" cy="51" rx="6" ry="3.5" fill="#5a4330" transform="rotate(-20 57 51)"/><ellipse cx="50" cy="55" rx="2.6" ry="1.8" fill="#3a2a1c"/>'},
+ nacktmull:{n:"Nacktmull",st:["Nacktmüllchen","Tunnelgräber","Untergrund-Denker","Graf von Unterwelt","Nackter Kaiser"],a:[50,30],e:[43,57,48],m:null,p:[74,66],
+  d:()=>'<ellipse cx="50" cy="62" rx="23" ry="30" fill="#f0b1a6"/><path d="M34 70q16 5 32 0M36 78q14 4 28 0M38 40q12-3 24 0" stroke="#dc8f84" stroke-width="1.6" fill="none"/><ellipse cx="50" cy="58" rx="7" ry="5" fill="#e79c91"/><rect x="45.5" y="61" width="4" height="9" rx="1" fill="#fffbe8"/><rect x="50.5" y="61" width="4" height="9" rx="1" fill="#fffbe8"/>'},
+ axolotl:{n:"Axolotl",st:["Axolotlchen","Teichlächler","Kiemenwunder","Regenerations-Guru","Axolotl-Gottheit"],a:[50,34],e:[41,59,50],m:[50,58],p:[72,76],
+  d:()=>'<ellipse cx="50" cy="76" rx="18" ry="13" fill="#f5a3c0"/>'+[-1,1].map(sd=>[0,1,2].map(i=>'<path d="M'+(50+sd*20)+' '+(44+i*6)+'q'+(sd*10)+' '+(-6+i*4)+' '+(sd*16)+' '+(-2+i*5)+'" stroke="#e0527f" stroke-width="4" fill="none" stroke-linecap="round"/>').join('')).join('')+'<ellipse cx="50" cy="51" rx="23" ry="17" fill="#f7aec8"/><circle cx="38" cy="57" r="3" fill="#f38bb0"/><circle cx="62" cy="57" r="3" fill="#f38bb0"/>'},
+ pinguin:{n:"Pinguin",st:["Küken","Frackträger","Eisschollen-Gentleman","Butler der Antarktis","Kaiserpinguin"],a:[50,32],e:[44,56,42],m:null,p:[76,64],
+  d:()=>'<ellipse cx="42" cy="91" rx="7" ry="3" fill="#e8973a"/><ellipse cx="58" cy="91" rx="7" ry="3" fill="#e8973a"/><ellipse cx="50" cy="62" rx="23" ry="30" fill="#23262e"/><ellipse cx="50" cy="68" rx="15" ry="22" fill="#f8f8f4"/><path d="M45 48l5 6l5-6z" fill="#f0a23c"/><path d="M42 58l8 4l-8 4zM58 58l-8 4l8 4z" fill="#d6344d"/><circle cx="50" cy="62" r="2.2" fill="#a8233a"/>'},
+ kaktus:{n:"Kaktus",st:["Setzling","Stachelkopf","Wüstenweiser","Blühender Kaktus","Kaktus-Pharao"],a:[50,30],e:[45,55,48],m:[50,57],p:[80,52],
+  d:(s)=>'<path d="M34 80h32l-4 14H38z" fill="#c8693a"/><rect x="32" y="76" width="36" height="6" rx="2" fill="#b35a2f"/><path d="M38 60q-12 0-12-12" stroke="#4caf6a" stroke-width="9" fill="none" stroke-linecap="round"/><path d="M62 52q12 0 12-12" stroke="#4caf6a" stroke-width="9" fill="none" stroke-linecap="round"/><rect x="38" y="30" width="24" height="50" rx="12" fill="#56b873"/>'+[[40,40],[60,44],[42,66],[58,70],[50,74]].map(p=>'<path d="M'+p[0]+' '+p[1]+'l-3-2" stroke="#2f7a45" stroke-width="1.4"/>').join('')+(s>=3?'<circle cx="62" cy="32" r="5" fill="#ff6fae"/><circle cx="62" cy="32" r="2" fill="#ffd34d"/>':'')},
+ toast:{n:"Toastbrot",st:["Weißbrot","Toast","Croque Monsieur","Sandwich-Tower","Toast of Fame"],a:[50,17],e:[43,57,50],m:[50,60],p:[78,66],
+  d:(s)=>'<path d="M26 88V44C16 44 16 20 33 21C37 10 63 10 67 21C84 20 84 44 74 44V88Z" fill="#c98a45"/><path d="M31 84V41C23 40 24 25 36 26C40 16 60 16 64 26C76 25 77 40 69 41V84Z" fill="'+(s>=2?'#f0c96a':'#f6dca6')+'"/>'+(s>=2?'<path d="M31 70q6 8 10 0q5 10 10 0q5 8 10 0q4 7 8 0" fill="#ffd34d"/>':'')},
+ oktopus:{n:"Oktopus",st:["Tintenklecks","Achtarmiger","Tentakel-Professor","Tiefsee-Genie","Kraken-Kaiser"],a:[50,22],e:[43,57,44],m:[50,54],p:[84,74],
+  d:()=>[[-26,1],[-16,-1],[-6,1],[6,-1],[16,1],[26,-1]].map(t=>'<path d="M'+(50+t[0]*0.6)+' 58q'+(t[0]*0.5)+' 16 '+(t[0])+' 24q'+(t[1]*6)+' 6 '+(t[1]*2)+' 8" stroke="#8e5fd0" stroke-width="7" fill="none" stroke-linecap="round"/>').join('')+'<ellipse cx="50" cy="44" rx="23" ry="22" fill="#9b6bd6"/><circle cx="38" cy="32" r="3" fill="#b690e6"/><circle cx="62" cy="30" r="2.4" fill="#b690e6"/>'}
+};
+const FIG_IDS=Object.keys(FIGS);
+const FIG_HASH=FIG_IDS.slice();
+FIGS.ferkel={n:"Ferkel",st:["Ferkelchen","Schweinchen","Glücksschwein","Prachtsau","Goldene Sau"],a:[50,30],e:[44,56,43],m:[50,59.5],p:[78,66],
+  d:(s)=>{
+    const B=s>=4?"#ffd36b":"#f7a8b8",H=s>=4?"#ffdc85":"#f9b4c3",D=s>=4?"#e0a83a":"#ee8aa2";
+    let o='<path d="M73 66q9-2 7 5q-2 5-6 1" stroke="'+D+'" stroke-width="2.5" fill="none" stroke-linecap="round"/>';
+    o+=[34,43,55,64].map(x=>'<rect x="'+x+'" y="76" width="7" height="12" rx="3" fill="'+D+'"/>').join('');
+    o+='<ellipse cx="50" cy="68" rx="25" ry="17" fill="'+B+'"/>';
+    o+='<path d="M35 36l-2-14l12 8zM65 36l2-14l-12 8z" fill="'+D+'"/>';
+    o+='<circle cx="50" cy="46" r="17" fill="'+H+'"/><circle cx="38" cy="52" r="3.2" fill="'+D+'" opacity=".55"/><circle cx="62" cy="52" r="3.2" fill="'+D+'" opacity=".55"/>';
+    o+='<ellipse cx="50" cy="53" rx="8" ry="5.5" fill="'+D+'"/><ellipse cx="47" cy="53" rx="1.6" ry="2.2" fill="#9c4a5c"/><ellipse cx="53" cy="53" rx="1.6" ry="2.2" fill="#9c4a5c"/>';
+    if(s>=2)o+='<g transform="translate(66 30)">'+[[0,-3],[3,0],[0,3],[-3,0]].map(p=>'<circle cx="'+p[0]+'" cy="'+p[1]+'" r="2.6" fill="#4caf6a"/>').join('')+'<path d="M0 0l3 7" stroke="#3f8f4f" stroke-width="1.2"/></g>';
+    return o;
+  }};
+FIG_IDS.push("ferkel");
+/* Spezialfigur nur für den Gründer */
+let FOUNDER=null;
+FIGS.phoenix={n:"Phönix",st:["Glutküken","Funkenvogel","Feuervogel","Flammenphönix","Sonnenphönix"],a:[50,25],e:[45.5,54.5,40],p:[80,56],
+  top:(s)=>s>=1?'<path d="M40 34.5L48 37.5M60 34.5L52 37.5" stroke="#4a0a00" stroke-width="2.4" stroke-linecap="round"/>':'',
+  d:(s)=>{
+    const P=[["#b8321a","#e0592a","#ffb347"],["#c22a12","#ff5a1f","#ffc24d"],["#b01e0c","#ff4a14","#ffd34d"],["#9c1406","#ff3d0a","#ffe066"],["#c24a00","#ff8a00","#fff3a0"]][s];
+    const dk=P[0],md=P[1],lt=P[2],id="phx"+s;
+    const k=.62+s*.12;
+    let o='<defs><linearGradient id="'+id+'b" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="'+md+'"/><stop offset="1" stop-color="'+dk+'"/></linearGradient>'+
+      '<linearGradient id="'+id+'f" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="'+dk+'"/><stop offset=".55" stop-color="'+md+'"/><stop offset="1" stop-color="'+lt+'"/></linearGradient>'+
+      '<radialGradient id="'+id+'g"><stop offset="0" stop-color="'+lt+'" stop-opacity=".75"/><stop offset=".6" stop-color="'+md+'" stop-opacity=".25"/><stop offset="1" stop-color="'+md+'" stop-opacity="0"/></radialGradient></defs>';
+    if(s>=1)o+='<circle cx="50" cy="48" r="'+(28+s*5)+'" fill="url(#'+id+'g)" class="phx-gl"/>';
+    if(s>=4)o+='<circle cx="50" cy="38" r="17" fill="none" stroke="#ffe066" stroke-width="2.5" opacity=".9"/>';
+    // Feuer hinter dem Körper
+    if(s>=2){const f=.7+s*.1;o+='<g class="phx-ft"><g transform="translate(50 84) scale('+f+') translate(-50 -84)"><path d="M50 86C28 82 24 58 34 42q2 10 6 12q-2-15 6-28q2 15 5 17q4-15 0-27q13 13 10 32q4-4 4-11q9 15 3 30C66 82 62 86 50 86z" fill="'+lt+'" opacity=".9"/><path d="M50 86C38 82 36 66 42 56q2 7 5 8q0-10 5-17q2 10 3 11q3-6 2-12q7 10 5 22C62 80 58 86 50 86z" fill="'+md+'" opacity=".9"/></g></g>';}
+    // Schweif aus Flammenfedern
+    if(s>=1){o+='<g class="phx-tl">';
+      const n=3+Math.min(s,2),len=16+s*5,w=3+s*.5;
+      for(let i=0;i<n;i++){
+        const a=62+i*(56/(n-1));
+        o+='<path d="M0 0Q'+(len*.5)+' '+(-w)+' '+len+' 0Q'+(len*.5)+' '+w+' 0 0z" transform="translate(50 70) rotate('+a.toFixed(1)+')" fill="url(#'+id+'f)" stroke="'+dk+'" stroke-width=".6"/>';
+      }
+      o+='</g>';
+    }
+    // Flügel aus Federn
+    const feathers=(dir)=>{
+      let g='<g transform="translate(50 0) scale('+dir+' 1) translate(-50 0)">';
+      const n=4+Math.min(s,3),base=20+s*6.5,w=3.2+s*.45;
+      for(let i=0;i<n;i++){
+        const t=i/(n-1),a=-62+t*78,len=base*(1-.38*t);
+        g+='<path d="M0 0Q'+(len*.5).toFixed(1)+' '+(-w)+' '+len.toFixed(1)+' 0Q'+(len*.5).toFixed(1)+' '+w+' 0 0z" transform="translate(60 50) rotate('+a.toFixed(1)+')" fill="url(#'+id+'f)" stroke="'+dk+'" stroke-width=".6"/>';
+      }
+      for(let i=0;i<n-1;i++){
+        const t=i/(n-2||1),a=-50+t*60,len=base*.5*(1-.3*t);
+        g+='<path d="M0 0Q'+(len*.5).toFixed(1)+' -3.4 '+len.toFixed(1)+' 0Q'+(len*.5).toFixed(1)+' 3.4 0 0z" transform="translate(59 51) rotate('+a.toFixed(1)+')" fill="'+md+'" stroke="'+dk+'" stroke-width=".5"/>';
+      }
+      return g+'</g>';
+    };
+    o+=s>=1?'<g class="phx-wr">'+feathers(1)+'</g><g class="phx-wl">'+feathers(-1)+'</g>':feathers(1)+feathers(-1);
+    // Krallen
+    o+='<path d="M46 80v7M54 80v7M42 89l4-2l4 2M50 89l4-2l4 2" stroke="#d99a12" stroke-width="2.2" stroke-linecap="round" fill="none"/>';
+    // Körper
+    o+='<path d="M50 30C62 30 66 46 64 60C62 74 56 82 50 82C44 82 38 74 36 60C34 46 38 30 50 30Z" fill="url(#'+id+'b)"/>';
+    o+='<path d="M50 50q7 8 6 18q-2 8-6 10q-4-2-6-10q-1-10 6-18z" fill="'+lt+'" opacity=".85"/>';
+    o+='<path d="M46 60q4-4 8 0M45 66q5-4 10 0M46 72q4-3 8 0" stroke="'+md+'" stroke-width="1.2" fill="none"/>';
+    // Federkrone
+    const cr=.5+s*.07;
+    o+='<g class="phx-fl"><g transform="translate(50 31) scale('+cr+') translate(-50 -31)"><path d="M41 32q-8-12-4-24q3 9 7 12q-2-13 4-22q0 12 3 16q2-14 9-19q-3 13 0 18q4-9 11-10q-6 8-6 15q5-4 9-3q-6 5-9 17z" fill="'+lt+'" stroke="'+md+'" stroke-width="1"/><path d="M45 31q-3-7 0-12q1 5 3 6q1-7 4-10q0 7 2 9q2-4 5-5q-3 5-3 12z" fill="#fff3b0"/></g></g>';
+    // Kopf und Schnabel
+    o+='<circle cx="50" cy="40" r="11" fill="'+md+'"/>';
+    o+='<path d="M46.5 45q3.5-2 7 0q0 5-3.5 9q-1-4-3.5-5z" fill="#ffd34d" stroke="#b37a00" stroke-width=".9"/>';
+    // Funken
+    if(s>=2)[[22,26],[80,22],[16,58],[86,62],[30,90],[72,88]].slice(0,s+1).forEach(p=>{o+='<path d="M'+p[0]+' '+p[1]+'q-3-5 0-9q3 4 0 9z" fill="'+lt+'" opacity=".95"/>';});
+    // aufsteigende Glut
+    if(s>=1)[[30,70],[70,72],[40,62],[62,60],[24,52],[78,50],[50,90]].slice(0,3+s).forEach((q,i)=>{o+='<circle cx="'+q[0]+'" cy="'+q[1]+'" r="'+(1.2+(i%3)*.4)+'" fill="'+lt+'" class="phx-em" style="animation-delay:'+(i*.37).toFixed(2)+'s"/>';});
+    return o;
+  }};
+
+const ITEMS={
+ party:{s:"hat",n:"Partyhut"},seppl:{s:"hat",n:"Sepplhut"},doktor:{s:"hat",n:"Doktorhut"},wikinger:{s:"hat",n:"Wikingerhelm"},zauber:{s:"hat",n:"Zauberhut"},alu:{s:"hat",n:"Aluhut"},halo:{s:"hat",n:"Heiligenschein"},lorbeer:{s:"hat",n:"Lorbeerkranz"},schlafmuetze:{s:"hat",n:"Schlafmütze"},nikolaus:{s:"hat",n:"Nikolausmütze"},rentier:{s:"hat",n:"Rentiergeweih"},
+ nerd:{s:"gl",n:"Nerdbrille"},sonne:{s:"gl",n:"Sonnenbrille"},monokel:{s:"gl",n:"Monokel"},brille3d:{s:"gl",n:"3D-Brille"},laser:{s:"gl",n:"Laser-Visier"},
+ stift:{s:"hand",n:"Bleistift"},mass:{s:"hand",n:"Maßkrug"},buch:{s:"hand",n:"Lexikon"},rechner:{s:"hand",n:"Taschenrechner"},mikro:{s:"hand",n:"Mikrofon"},zepter:{s:"hand",n:"Zepter"},pokal:{s:"hand",n:"Goldener Pokal"},fernglas:{s:"hand",n:"Fernglas"},dart:{s:"hand",n:"Dartpfeil"},kugel:{s:"hand",n:"Kristallkugel"},chips:{s:"hand",n:"Pokerchips"},laterne:{s:"hand",n:"Rote Laterne"},
+ cap:{s:"hat",n:"Basecap"},cowboy:{s:"hat",n:"Cowboyhut"},koch:{s:"hat",n:"Kochmütze"},pirat:{s:"hat",n:"Piratenhut"},blumen:{s:"hat",n:"Blumenkranz"},zylinder:{s:"hat",n:"Zylinder"},
+ herz:{s:"gl",n:"Herzbrille"},runde:{s:"gl",n:"Hippie-Brille"},klappe:{s:"gl",n:"Augenklappe"},ski:{s:"gl",n:"Skibrille"},stern:{s:"gl",n:"Sternbrille"},
+ brezn:{s:"hand",n:"Brezn"},ball:{s:"hand",n:"Fußball"},pizza:{s:"hand",n:"Pizzastück"},kaffee:{s:"hand",n:"Kaffeetasse"},lupe:{s:"hand",n:"Lupe"},schirm:{s:"hand",n:"Regenschirm"},
+ sterne:{s:"fx",n:"Sternenglitzer"},herzen:{s:"fx",n:"Herzchen"},
+ wolke:{s:"fx",n:"Eigene Regenwolke"},flammen:{s:"fx",n:"Phönix-Flammen"},konfetti:{s:"fx",n:"Dauer-Konfetti"}
+};
+const SLOTS=[["hat","Hut"],["gl","Brille"],["hand","In der Hand"],["fx","Effekt"]];
+const LEVEL_ITEMS={2:"party",3:"nerd",4:"stift",5:"seppl",6:"sonne",7:"mass",8:"doktor",9:"monokel",10:"buch",11:"wikinger",12:"rechner",13:"zauber",14:"brille3d",15:"mikro",16:"alu",17:"laser",18:"zepter",19:"halo",20:"pokal"};
+const LEVEL_ITEMS2={2:"cap",3:"brezn",4:"herz",5:"ball",6:"cowboy",7:"sterne",8:"pizza",9:"runde",10:"koch",11:"kaffee",12:"klappe",13:"pirat",14:"lupe",15:"ski",16:"blumen",17:"herzen",18:"schirm",19:"stern",20:"zylinder"};
+const BADGE_ITEMS={first_win:"lorbeer",adlerauge:"fernglas",punktlandung:"dart",schaetzkoenig:"kugel",allin:"chips",pechvogel:"wolke",rote_laterne:"laterne",nachteule:"schlafmuetze",comeback:"flammen",hundertschaft:"konfetti",xmas:"nikolaus",xmaswin:"rentier"};
+
+/* ========== EXTRAS (Okt 2026): Hintergrund, Haustier, Hals, Rahmen, Titel, Jubel ========== */
+Object.assign(ITEMS,{
+ biergarten:{s:"bg",n:"Biergarten"},alpen:{s:"bg",n:"Alpen"},strand:{s:"bg",n:"Strand"},wiesn:{s:"bg",n:"Festzelt"},arena:{s:"bg",n:"Stadion"},mond:{s:"bg",n:"Mondbasis"},
+ ente:{s:"pet",n:"Ente"},katze:{s:"pet",n:"Katze"},igel:{s:"pet",n:"Igel"},drache:{s:"pet",n:"Mini-Drache"},
+ schal:{s:"neck",n:"Roter Schal"},fliege:{s:"neck",n:"Fliege"},medaille:{s:"neck",n:"Medaille"},kette:{s:"neck",n:"Goldkette"},fanschal:{s:"neck",n:"Fanschal"},
+ fr_neon:{s:"frame",n:"Neon"},fr_gold:{s:"frame",n:"Gold"},fr_eis:{s:"frame",n:"Eis"},fr_feuer:{s:"frame",n:"Feuer"},fr_bunt:{s:"frame",n:"Regenbogen"},
+ t_brezn:{s:"title",n:"Brezn-Jäger"},t_hand:{s:"title",n:"Ruhige Hand"},t_merk:{s:"title",n:"Elefantengedächtnis"},t_blitz:{s:"title",n:"Blitzfinger"},t_punkt:{s:"title",n:"Punktlander"},t_tipp:{s:"title",n:"Dauertipper"},t_joker:{s:"title",n:"Joker-Ass"},t_under:{s:"title",n:"Underdog"},t_stamm:{s:"title",n:"Stammgast"},t_serie:{s:"title",n:"Seriensieger"},
+ propeller:{s:"hat",n:"Propellermütze"},sombrero:{s:"hat",n:"Sombrero"},bart:{s:"gl",n:"Schnurrbart"},rose:{s:"hand",n:"Rose"},handy:{s:"hand",n:"Handy"},
+ wasser:{s:"bg",n:"Unterwasser"},dschungel:{s:"bg",n:"Dschungel"},abend:{s:"bg",n:"Sonnenuntergang"},schnee:{s:"bg",n:"Winterwald"},disco:{s:"bg",n:"Disco"},
+ papagei:{s:"pet",n:"Papagei"},kroete:{s:"pet",n:"Schildkröte"},maus:{s:"pet",n:"Maus"},geist:{s:"pet",n:"Gespenst"},
+ krawatte:{s:"neck",n:"Krawatte"},perlen:{s:"neck",n:"Perlenkette"},lei:{s:"neck",n:"Blumenkette"},
+ fr_pink:{s:"frame",n:"Pink"},fr_galaxie:{s:"frame",n:"Galaxie"},fr_wiesn:{s:"frame",n:"Weiß-Blau"},
+ t_lex:{s:"title",n:"Lexikon auf Beinen"},t_boss:{s:"title",n:"Final-Boss"},t_adler:{s:"title",n:"Adlerauge"},t_glueck:{s:"title",n:"Glückspilz"},t_wolf:{s:"title",n:"Wolf im Schafspelz"},t_gejagt:{s:"title",n:"Gejagte Legende"},t_finger:{s:"title",n:"Fingerakrobat"},t_ur:{s:"title",n:"Urgestein"},
+ herzregen:{s:"cheer",n:"Herzregen"},breznregen:{s:"cheer",n:"Brezn-Regen"},geldregen:{s:"cheer",n:"Geldregen"},
+ phxsturm:{s:"cheer",n:"Phönix-Feuersturm",only:1},t_monat:{s:"title",n:"Monatschampion"},
+ kanone:{s:"cheer",n:"Konfetti-Kanone"},bier:{s:"cheer",n:"Bierdusche"},feuerwerk:{s:"cheer",n:"Feuerwerk"}
+});
+SLOTS.push(["bg","Hintergrund"],["pet","Haustier"],["neck","Um den Hals"],["frame","Rahmen"],["title","Titel"],["cheer","Jubel bei Punkten"]);
+function skBest(a,g){return a.skB&&a.skB[g]!==undefined?a.skB[g]:1e9;}
+const UNLOCKS={
+ biergarten:["nach 3 Spielen",a=>a.games>=3],alpen:["nach 8 Spielen",a=>a.games>=8],strand:["nach 15 Spielen",a=>a.games>=15],wiesn:["nach 25 Spielen",a=>a.games>=25],arena:["nach 3 Siegen",a=>a.wins>=3],mond:["nach 8 Siegen",a=>a.wins>=8],
+ ente:["1 Geschicklichkeitsspiel gewinnen",a=>(a.skW||0)>=1],katze:["nach 12 Spielen",a=>a.games>=12],igel:["nach 2 Siegen",a=>a.wins>=2],drache:["5 Geschicklichkeitsspiele gewinnen",a=>(a.skW||0)>=5],
+ schal:["nach 5 Spielen",a=>a.games>=5],fliege:["nach 5 Siegen",a=>a.wins>=5],medaille:["3 Geschicklichkeitsspiele gewinnen",a=>(a.skW||0)>=3],kette:["3-mal mit Joker gepunktet",a=>(a.jk||0)>=3],fanschal:["nach 20 Spielen",a=>a.games>=20],
+ fr_neon:["nach 10 Spielen",a=>a.games>=10],fr_gold:["nach 7 Siegen",a=>a.wins>=7],fr_eis:["Stoppuhr: höchstens 0,05 s daneben",a=>skBest(a,"stop")<=50],fr_feuer:["als Gejagter gewinnen",a=>(a.hcW||0)>=1],fr_bunt:["5-mal Underdog-Bonus",a=>(a.ud||0)>=5],
+ t_brezn:["Brezn-Jagd: 12 Punkte",a=>skBest(a,"hunt")<=-12],t_hand:["Kreis: 90 % rund",a=>skBest(a,"circle")<=-90],t_merk:["Merk-Folge von 8",a=>skBest(a,"simon")<=-8],t_blitz:["Reaktion unter 250 ms",a=>skBest(a,"react")<250],t_punkt:["Punktlandung: höchstens 1 % daneben",a=>skBest(a,"bar")<=1],t_tipp:["Tipp-Sprint: 35 Tipps",a=>skBest(a,"tap")<=-35],t_joker:["1-mal mit Joker gepunktet",a=>(a.jk||0)>=1],t_under:["1-mal Underdog-Bonus",a=>(a.ud||0)>=1],t_stamm:["nach 18 Spielen",a=>a.games>=18],t_serie:["nach 12 Siegen",a=>a.wins>=12],
+ propeller:["nach 2 Spielen",a=>a.games>=2],sombrero:["nach 6 Siegen",a=>a.wins>=6],bart:["nach 14 Spielen",a=>a.games>=14],rose:["nach 1 Sieg",a=>a.wins>=1],handy:["nach 7 Spielen",a=>a.games>=7],
+ wasser:["nach 11 Spielen",a=>a.games>=11],dschungel:["nach 30 Spielen",a=>a.games>=30],abend:["nach 5 Siegen",a=>a.wins>=5],schnee:["nach 40 Spielen",a=>a.games>=40],disco:["4 Geschicklichkeitsspiele gewinnen",a=>(a.skW||0)>=4],
+ papagei:["nach 22 Spielen",a=>a.games>=22],kroete:["nach 4 Spielen",a=>a.games>=4],maus:["nach 9 Siegen",a=>a.wins>=9],geist:["2-mal als Gejagter gewinnen",a=>(a.hcW||0)>=2],
+ krawatte:["nach 9 Spielen",a=>a.games>=9],perlen:["nach 10 Siegen",a=>a.wins>=10],lei:["3-mal Underdog-Bonus",a=>(a.ud||0)>=3],
+ fr_pink:["nach 16 Spielen",a=>a.games>=16],fr_galaxie:["nach 15 Siegen",a=>a.wins>=15],fr_wiesn:["nach 35 Spielen",a=>a.games>=35],
+ t_lex:["100 Fragen richtig",a=>a.mcR>=100],t_boss:["5 Finalfragen richtig",a=>a.finOk>=5],t_adler:["10-mal Größe höchstens 10 % daneben",a=>a.szHit>=10],t_glueck:["5-mal mit Joker gepunktet",a=>(a.jk||0)>=5],t_wolf:["10-mal Underdog-Bonus",a=>(a.ud||0)>=10],t_gejagt:["3-mal als Gejagter gewinnen",a=>(a.hcW||0)>=3],t_finger:["8 Geschicklichkeitsspiele gewinnen",a=>(a.skW||0)>=8],t_ur:["nach 45 Spielen",a=>a.games>=45],
+ herzregen:["nach 13 Spielen",a=>a.games>=13],breznregen:["6 Geschicklichkeitsspiele gewinnen",a=>(a.skW||0)>=6],geldregen:["nach 11 Siegen",a=>a.wins>=11],
+ phxsturm:["nur für den Gründer",a=>a.u===FOUNDER],t_monat:["einen Monat in der Liga gewinnen",a=>!!monthChampions()[a.u]],
+ kanone:["nach 6 Spielen",a=>a.games>=6],bier:["nach 4 Siegen",a=>a.wins>=4],feuerwerk:["2 Geschicklichkeitsspiele gewinnen",a=>(a.skW||0)>=2]
+};
+/* Freischaltbare Figuren (Anreiz für starke Spieler) */
+const FIG_LOCK={
+ loewe:["Siegquote ab 50 % (mind. 10 Gruppenspiele)",a=>a.games>=10&&a.wins/a.games>=0.5],
+ tiger:["5 Gruppenspiele in Folge gewinnen",a=>!!(a.badges&&a.badges.serienkiller)],
+ hase:["3 Gruppenspiele in Folge gewinnen",a=>!!(a.badges&&a.badges.hattrick)],
+ schildkroete:["nur Solo: 10 Solo-Spiele",a=>(a.soloG||0)>=10]
+};
+function figOk(f,a){return !FIG_LOCK[f]||!!FIG_LOCK[f][1](a||{});}
+const BGX={
+ biergarten:'<rect width="100" height="100" fill="#9fd8ff"/><rect x="15" y="40" width="5" height="44" fill="#6b4a2e"/><rect x="80" y="40" width="5" height="44" fill="#6b4a2e"/><circle cx="18" cy="28" r="20" fill="#3f8f4f"/><circle cx="82" cy="24" r="22" fill="#4aa35c"/><path d="M0 12q50 16 100 0" stroke="#555" stroke-width=".8" fill="none"/>'+[[20,17,"#ff5a78"],[35,20,"#ffc93c"],[50,21,"#3ed6c0"],[65,20,"#ff8fd8"],[80,17,"#ffc93c"]].map(c=>'<ellipse cx="'+c[0]+'" cy="'+(c[1]+3)+'" rx="3" ry="4" fill="'+c[2]+'"/>').join('')+'<rect y="84" width="100" height="16" fill="#d9c49a"/>',
+ alpen:'<rect width="100" height="100" fill="#a8dcff"/><path d="M-5 84L25 30L45 62L65 22L105 84z" fill="#7d8ea3"/><path d="M25 30l-7 13l7-3l6 4zM65 22l-8 14l8-4l8 5z" fill="#fff"/><rect y="84" width="100" height="16" fill="#5aa14f"/>',
+ strand:'<rect width="100" height="100" fill="#8fd8ff"/><circle cx="82" cy="18" r="10" fill="#ffd34d"/><rect y="58" width="100" height="26" fill="#3aa0d8"/><path d="M0 64q10-4 20 0t20 0t20 0t20 0t20 0" stroke="#fff" stroke-width="1.2" fill="none"/><rect y="84" width="100" height="16" fill="#f1dca0"/>',
+ wiesn:'<rect width="100" height="100" fill="#f7f1df"/>'+[0,1,2,3,4,5,6,7,8,9].map(i=>'<path d="M'+(i*10)+' 0h10l'+((i-4.5)*-1.2).toFixed(1)+' 34h-10z" fill="'+(i%2?"#fff":"#3f7bd6")+'"/>').join('')+'<path d="M0 36q25 8 50 0t50 0" stroke="#3f8f4f" stroke-width="3" fill="none"/><rect y="84" width="100" height="16" fill="#b98a55"/>',
+ arena:'<rect width="100" height="100" fill="#14213d"/><path d="M0 44q50-20 100 0v40H0z" fill="#b3202c"/>'+[52,60,68,76].map((y,r)=>[6,16,26,36,46,56,66,76,86,96].map(x=>'<circle cx="'+(x+(r%2?-3:0))+'" cy="'+y+'" r="1.6" fill="'+(((x+r)%20)?"#f3d6d6":"#fff")+'"/>').join('')).join('')+'<circle cx="10" cy="12" r="4" fill="#fff8d0"/><circle cx="90" cy="12" r="4" fill="#fff8d0"/><rect y="84" width="100" height="16" fill="#3f9a4a"/><path d="M0 91h100" stroke="#fff" stroke-width="1"/>',
+ wasser:'<rect width="100" height="100" fill="#1d6fa5"/><rect width="100" height="30" fill="#2c8cc4"/>'+[[14,20,3],[22,40,2],[80,30,3.5],[88,52,2],[60,14,2.5]].map(p=>'<circle cx="'+p[0]+'" cy="'+p[1]+'" r="'+p[2]+'" fill="none" stroke="#bfe9ff" stroke-width="1"/>').join('')+'<path d="M10 84q-6-14 0-26q6 12 0 26zM90 84q6-18 0-32q-6 14 0 32zM82 84q-4-10 0-18q4 8 0 18z" fill="#2f8a4c"/><rect y="84" width="100" height="16" fill="#d9c49a"/>',
+ dschungel:'<rect width="100" height="100" fill="#3c8f5a"/><path d="M0 0q30 20 20 50q-20-10-20-30zM100 0q-30 20-20 50q20-10 20-30z" fill="#256b3f"/><path d="M40 0q10 16 0 30q-10-14 0-30zM64 0q8 12 0 24q-8-12 0-24z" fill="#2f7d4a"/><circle cx="30" cy="14" r="3" fill="#ff5a78"/><circle cx="76" cy="40" r="3" fill="#ffc93c"/><rect y="84" width="100" height="16" fill="#5a4330"/>',
+ abend:'<rect width="100" height="100" fill="#ff7a59"/><rect width="100" height="34" fill="#c2507a"/><rect y="60" width="100" height="24" fill="#ffb36b"/><circle cx="50" cy="84" r="22" fill="#ffd34d"/><rect y="84" width="100" height="16" fill="#3b2f5c"/>',
+ schnee:'<rect width="100" height="100" fill="#cfe8ff"/><path d="M12 84l10-36l10 36zM74 84l9-30l9 30z" fill="#2f6b4a"/><path d="M22 48l-5 16h10zM83 54l-4 13h8z" fill="#fff"/>'+[[10,14],[30,26],[48,10],[66,30],[86,16],[94,40],[56,44],[40,40]].map(p=>'<circle cx="'+p[0]+'" cy="'+p[1]+'" r="1.4" fill="#fff"/>').join('')+'<rect y="84" width="100" height="16" fill="#fff"/>',
+ disco:'<rect width="100" height="100" fill="#1a0f3c"/><path d="M50 14L0 84h24zM50 14L100 84H76z" fill="rgba(255,90,170,.25)"/><path d="M50 14L34 84h32z" fill="rgba(62,214,192,.25)"/><path d="M50 0v8" stroke="#999" stroke-width="1"/><circle cx="50" cy="14" r="7" fill="#cfd6de"/><path d="M43 14h14M50 7v14M45 9l10 10M55 9l-10 10" stroke="#8a93a3" stroke-width=".8"/>'+[0,1,2,3,4].map(i=>'<rect x="'+(i*20)+'" y="84" width="20" height="16" fill="'+(i%2?"#ff5aaa":"#3b2f8f")+'"/>').join(''),
+ mond:'<rect width="100" height="100" fill="#05061a"/>'+[[60,10],[78,30],[90,12],[44,26],[8,44],[92,52],[50,6]].map(p=>'<circle cx="'+p[0]+'" cy="'+p[1]+'" r="1" fill="#fff"/>').join('')+'<circle cx="22" cy="20" r="11" fill="#3a7bd5"/><path d="M15 17q5-4 9 0q3 4-2 6q-6 1-7-6z" fill="#4caf6a"/><rect y="84" width="100" height="16" fill="#9aa3ad"/><circle cx="30" cy="92" r="4" fill="#7f8893"/><circle cx="72" cy="90" r="3" fill="#7f8893"/>'
+};
+function petSvg(id){
+  const g=b=>'<g transform="translate(21 80) scale(.9)">'+b+'</g>',eye=(x,y)=>'<circle cx="'+x+'" cy="'+y+'" r="1" fill="#1b1b1f"/>';
+  switch(id){
+    case "papagei":return g('<ellipse cx="0" cy="2" rx="5" ry="7" fill="#e0323f"/><circle cx="1" cy="-6" r="4.5" fill="#e0323f"/><path d="M5-7q4 1 2 5q-2 0-3-2z" fill="#ffc93c"/><path d="M-4 0q-3 6 0 9q3-3 2-9z" fill="#3f7bd6"/>'+eye(2,-7));
+    case "kroete":return g('<circle cx="9" cy="1" r="3.2" fill="#8fce7a"/><rect x="-7" y="6" width="3" height="3" rx="1" fill="#8fce7a"/><rect x="2" y="6" width="3" height="3" rx="1" fill="#8fce7a"/><ellipse cx="-1" cy="2" rx="8" ry="5.5" fill="#3f8f4f"/><path d="M-6 2h10M-1-3v10" stroke="#2c6b3a" stroke-width="1.2"/>'+eye(10,0.3));
+    case "maus":return g('<path d="M-7 4q-6 1-6-4" stroke="#f0b3c0" stroke-width="1.4" fill="none"/><ellipse cx="0" cy="3" rx="7" ry="5" fill="#b9bcc6"/><circle cx="6" cy="0" r="4" fill="#b9bcc6"/><circle cx="4" cy="-4" r="2.6" fill="#f0b3c0" stroke="#b9bcc6" stroke-width="1"/><circle cx="10" cy="1" r="1" fill="#f08aa0"/>'+eye(7,-1));
+    case "geist":return g('<path d="M-7 8v-10a7 7 0 0 1 14 0v10l-3.5-3l-3.5 3l-3.5-3z" fill="#fff" opacity=".92"/>'+eye(-2.5,-3)+eye(2.5,-3));
+    case "katze":return g('<path d="M7 4q5-1 4-8" stroke="#f0a23c" stroke-width="2" fill="none" stroke-linecap="round"/><ellipse cx="0" cy="3" rx="7" ry="6" fill="#f0a23c"/><circle cx="0" cy="-5" r="5" fill="#f0a23c"/><path d="M-5-8l1-5l3 3zM5-8l-1-5l-3 3z" fill="#f0a23c"/>'+eye(-2,-5.5)+eye(2,-5.5));
+    case "ente":return g('<ellipse cx="0" cy="3" rx="8" ry="5.5" fill="#ffd34d"/><circle cx="5" cy="-4" r="4.5" fill="#ffd34d"/><path d="M9-4l5 1l-5 2z" fill="#ff8a3c"/>'+eye(6,-5));
+    case "igel":return g('<path d="M-9 6q0-12 9-12q8 0 10 12z" fill="#7a5a3c"/><path d="M-8 0l-3-3M-5-4l-2-4M0-6l0-4M5-4l2-4" stroke="#5a3f28" stroke-width="1.6" stroke-linecap="round"/><path d="M5 6q6-1 8-4q-4-3-8 0z" fill="#e8c9a0"/>'+eye(9,1.5)+'<circle cx="13" cy="2.2" r="1.1" fill="#1b1b1f"/>');
+    case "drache":return g('<path d="M-6-2l-6-5l2 7z" fill="#2f8a4c"/><ellipse cx="0" cy="3" rx="7" ry="6" fill="#4caf6a"/><circle cx="4" cy="-5" r="5" fill="#4caf6a"/><path d="M1-9l1-4l2 4zM5-9l1-4l2 4z" fill="#ffc93c"/>'+eye(6,-6)+'<path d="M9-3l5-1l-3 3z" fill="#ff7a2e"/>');
+  }
+  return '';
+}
+function neckSvg(id,x,y){
+  const g=b=>'<g transform="translate('+x+' '+y+')">'+b+'</g>';
+  switch(id){
+    case "krawatte":return g('<path d="M-3-2h6l-1.5 4l3 9l-4.5 5l-4.5-5l3-9z" fill="#3f7bd6"/>');
+    case "perlen":return g([[-8,1],[-4,4],[0,5],[4,4],[8,1]].map(p=>'<circle cx="'+p[0]+'" cy="'+p[1]+'" r="1.9" fill="#fff" stroke="#cfd6de" stroke-width=".5"/>').join(''));
+    case "lei":return g([[-9,0,"#ff8fd8"],[-5,4,"#ffc93c"],[0,5.5,"#ff5a78"],[5,4,"#6cb8ff"],[9,0,"#ff8fd8"]].map(p=>'<circle cx="'+p[0]+'" cy="'+p[1]+'" r="3" fill="'+p[2]+'"/><circle cx="'+p[0]+'" cy="'+p[1]+'" r="1" fill="#fff"/>').join(''));
+    case "schal":return g('<path d="M-11-2q11 5 22 0v4q-11 5-22 0z" fill="#e0323f"/><rect x="4" y="3" width="5" height="11" rx="1" fill="#c0222e"/>');
+    case "fanschal":return g('<path d="M-11-2q11 5 22 0v4q-11 5-22 0z" fill="#e0323f"/><path d="M-6 1v4M0 2v4M6 1v4" stroke="#fff" stroke-width="2"/><rect x="4" y="3" width="5" height="11" rx="1" fill="#e0323f"/><path d="M4 8h5M4 11h5" stroke="#fff" stroke-width="1.4"/>');
+    case "fliege":return g('<path d="M0 1l-8-5v10zM0 1l8-5v10z" fill="#b3202c"/><circle cx="0" cy="1" r="2" fill="#7c1620"/>');
+    case "medaille":return g('<path d="M-6-3L0 6L6-3" stroke="#3f7bd6" stroke-width="2.5" fill="none"/><circle cx="0" cy="8" r="4.5" fill="#ffc93c" stroke="#d99a12" stroke-width="1"/>');
+    case "kette":return g('<path d="M-9-2q9 10 18 0" stroke="#ffc93c" stroke-width="2.5" fill="none" stroke-dasharray="2.5 1.5"/><circle cx="0" cy="5" r="2.6" fill="#ffc93c" stroke="#d99a12" stroke-width=".8"/>');
+  }
+  return '';
+}
+function frameSvg(id,sq){
+  const C={fr_neon:"#3ed6c0",fr_gold:"#ffc93c",fr_eis:"#bfe9ff",fr_pink:"#ff8fd8"};let defs='';
+  if(id==="fr_chrom"){defs='<defs><linearGradient id="frg-c" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f4f6fa"/><stop offset=".45" stop-color="#8d97a8"/><stop offset=".55" stop-color="#dfe4ec"/><stop offset="1" stop-color="#6b7487"/></linearGradient></defs>';C.fr_chrom="url(#frg-c)";}
+  if(id==="fr_team"){defs='<defs><linearGradient id="frg-t" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#ff5a5a"/><stop offset=".5" stop-color="#ff5a5a"/><stop offset=".5" stop-color="#4da3ff"/><stop offset="1" stop-color="#4da3ff"/></linearGradient></defs>';C.fr_team="url(#frg-t)";}
+  let stroke=C[id];
+  if(id==="fr_wiesn")return sq?'<rect x="2.5" y="2.5" width="95" height="95" fill="none" stroke="#fff" stroke-width="5"/><rect x="2.5" y="2.5" width="95" height="95" fill="none" stroke="#3f7bd6" stroke-width="5" stroke-dasharray="9.5 9.5"/>':'<circle cx="50" cy="50" r="47.5" fill="none" stroke="#fff" stroke-width="5"/><circle cx="50" cy="50" r="47.5" fill="none" stroke="#3f7bd6" stroke-width="5" stroke-dasharray="9.33 9.33"/>';
+  if(id==="fr_galaxie"){defs='<defs><linearGradient id="frg-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3d4fb8"/><stop offset=".5" stop-color="#b69cff"/><stop offset="1" stop-color="#ff8fd8"/></linearGradient></defs>';stroke="url(#frg-g)";}
+  if(id==="fr_feuer"){defs='<defs><linearGradient id="frg-f" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#ff3d1a"/><stop offset="1" stop-color="#ffd34d"/></linearGradient></defs>';stroke="url(#frg-f)";}
+  if(id==="fr_bunt"){defs='<defs><linearGradient id="frg-b" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff5a78"/><stop offset=".25" stop-color="#ffc93c"/><stop offset=".5" stop-color="#b8f06a"/><stop offset=".75" stop-color="#6cb8ff"/><stop offset="1" stop-color="#b69cff"/></linearGradient></defs>';stroke="url(#frg-b)";}
+  if(!stroke)return '';
+  return defs+(sq?'<rect x="2.5" y="2.5" width="95" height="95" fill="none" stroke="'+stroke+'" stroke-width="5"/>':'<circle cx="50" cy="50" r="47.5" fill="none" stroke="'+stroke+'" stroke-width="5"/>');
+}
+function titleOf(u){const t=profOf(u).eq.title;return t&&ITEMS[t]?ITEMS[t].n:levelTitle(progOf(u).lvl);}
+function cheerFx(id){
+  const c=id||profOf(ME).eq.cheer;
+  if(c==="roboregen")fxParticles("emo:🤖⚙️🔩");
+  else if(c==="applaus")fxParticles("emo:👏🎉🙌");
+  else if(c==="kanone")fxParticles("confetti");
+  else if(c==="bier")fxParticles("emo:🍺🍻");
+  else if(c==="feuerwerk")fxParticles("emo:🎆🎇✨");
+  else if(c==="herzregen")fxParticles("emo:💖💕");
+  else if(c==="breznregen")fxParticles("emo:🥨");
+  else if(c==="geldregen")fxParticles("money");
+  else if(c==="phxsturm"){fxParticles("rise:🔥✨🔥");fxAdd("fx-phx","<span>🐦‍🔥</span>",2400);setTimeout(()=>fxAdd("fx-phx b","<span>🔥</span>",2000),180);}
+}
+/* ========== Ende EXTRAS ========== */
+function hatSvg(id,x,y){
+  const t='translate('+x+' '+y+')';
+  const g=b=>'<g transform="'+t+'">'+b+'</g>';
+  switch(id){
+    case "nikolaus":return g('<path d="M-11 2Q-10-15 3-20Q13-22 16-9Q11-14 6-9L11 2z" fill="#d62839"/><rect x="-13" y="-1" width="26" height="6" rx="3" fill="#fff"/><circle cx="16" cy="-8" r="4" fill="#fff"/>');
+    case "rentier":return g('<path d="M-6 1q-3-10-9-14M-10-7q-5 0-8-5M-12-11q1-5-1-8M6 1q3-10 9-14M10-7q5 0 8-5M12-11q-1-5 1-8" stroke="#8a5a2b" stroke-width="2.6" fill="none" stroke-linecap="round"/>');
+    case "party":return g('<path d="M-10 2L0-24L10 2z" fill="#ff5a8a"/><path d="M-7-6L7-10M-4-14L5-17" stroke="#ffe066" stroke-width="3"/><circle cx="0" cy="-25" r="3.5" fill="#ffe066"/>');
+    case "seppl":return g('<ellipse cx="0" cy="1" rx="17" ry="4" fill="#3f6b3a"/><path d="M-10 1q0-15 10-15q10 0 10 15z" fill="#4d8046"/><rect x="-10" y="-4" width="20" height="3" fill="#7a4a24"/><path d="M8-6q10-14 4-20" stroke="#fff" stroke-width="2.4" fill="none"/>');
+    case "doktor":return g('<path d="M-16-6L0-13L16-6L0 1z" fill="#1f2230"/><rect x="-9" y="-6" width="18" height="8" fill="#2b2f40"/><path d="M12-7v10" stroke="#ffc93c" stroke-width="2"/><circle cx="12" cy="4" r="2" fill="#ffc93c"/>');
+    case "wikinger":return g('<path d="M-13 2q0-16 13-16q13 0 13 16z" fill="#9aa3ad"/><rect x="-14" y="-1" width="28" height="4" fill="#7a4a24"/><path d="M-13-4q-10-2-12-14q6 4 12 6M13-4q10-2 12-14q-6 4-12 6" fill="#f3ecd8"/>');
+    case "zauber":return g('<path d="M-12 2L2-30L12 2z" fill="#3d4fb8"/><ellipse cx="0" cy="2" rx="16" ry="3.5" fill="#2f3e96"/><circle cx="0" cy="-10" r="2" fill="#ffe066"/><circle cx="4" cy="-19" r="1.5" fill="#ffe066"/><circle cx="-4" cy="-4" r="1.4" fill="#ffe066"/>');
+    case "alu":return g('<path d="M-12 2L-8-8L-10-12L-3-18L0-28L4-18L10-14L8-6L12 2z" fill="#cfd6de" stroke="#9aa6b2" stroke-width="1"/><path d="M-4-6l6-4M0-16l3 3" stroke="#fff" stroke-width="1.4"/>');
+    case "halo":return g('<ellipse cx="0" cy="-10" rx="14" ry="4" fill="none" stroke="#ffd34d" stroke-width="3"/>');
+    case "lorbeer":return g([-14,-9,-4,4,9,14].map(dx=>'<ellipse cx="'+dx+'" cy="'+(Math.abs(dx)*0.25-1)+'" rx="3.4" ry="2" fill="#5aa14f" transform="rotate('+(dx*3)+' '+dx+' 0)"/>').join(''));
+    case "schlafmuetze":return g('<path d="M-12 2q0-16 12-16q14 0 18 14" fill="#4a6fd6"/><rect x="-13" y="-1" width="26" height="4" rx="2" fill="#fff"/><circle cx="18" cy="-1" r="4" fill="#fff"/>');
+    case "cap":return g('<path d="M-12 2q0-14 12-14q12 0 12 14z" fill="#e0323f"/><path d="M8 0q12-1 16 4q-10 1-16-1z" fill="#b3202c"/><circle cx="0" cy="-12" r="1.8" fill="#fff"/>');
+    case "cowboy":return g('<path d="M-20 2q4-5 10-3q0-13 10-13q10 0 10 13q6-2 10 3q-20 6-40 0z" fill="#9c6b3c"/><rect x="-10" y="-4" width="20" height="3" fill="#5a3a1c"/>');
+    case "koch":return g('<rect x="-9" y="-8" width="18" height="10" fill="#fff"/><circle cx="-8" cy="-12" r="6" fill="#fff"/><circle cx="0" cy="-15" r="7" fill="#fff"/><circle cx="8" cy="-12" r="6" fill="#fff"/><path d="M-9-1h18" stroke="#d8dbe2" stroke-width="1.5"/>');
+    case "pirat":return g('<path d="M-18 2q2-10 8-10q4-10 10-10q6 0 10 10q6 0 8 10z" fill="#1f2230"/><circle cx="0" cy="-8" r="3" fill="#fff"/><path d="M-4-2l8-3M-4-5l8 3" stroke="#fff" stroke-width="1.5"/>');
+    case "blumen":return g([-13,-7,0,7,13].map((dx,i)=>'<circle cx="'+dx+'" cy="'+(Math.abs(dx)*0.25-2)+'" r="3.8" fill="'+["#ff8fd8","#ffc93c","#ff5a78","#6cb8ff","#ff8fd8"][i]+'"/><circle cx="'+dx+'" cy="'+(Math.abs(dx)*0.25-2)+'" r="1.3" fill="#fff"/>').join(''));
+    case "zylinder":return g('<rect x="-10" y="-22" width="20" height="22" fill="#1f2230"/><rect x="-16" y="-1" width="32" height="4" rx="2" fill="#1f2230"/><rect x="-10" y="-6" width="20" height="4" fill="#b3202c"/>');
+    case "propeller":return g('<path d="M-11 2q0-12 11-12q11 0 11 12z" fill="#3f7bd6"/><path d="M-11 2q0-12 5-12v12zM5-10q6 0 6 12h-6z" fill="#ffc93c"/><rect x="-1" y="-15" width="2" height="6" fill="#555"/><ellipse cx="-7" cy="-15" rx="7" ry="2" fill="#e0323f"/><ellipse cx="7" cy="-15" rx="7" ry="2" fill="#e0323f"/>');
+    case "sombrero":return g('<ellipse cx="0" cy="1" rx="22" ry="5" fill="#e0b050"/><path d="M-8 0q0-18 8-18q8 0 8 18z" fill="#e8c060"/><path d="M-8-3h16" stroke="#e0323f" stroke-width="2.5"/><path d="M-20 1q20 6 40 0" stroke="#3f8f4f" stroke-width="1.5" fill="none"/>');
+    case "krone":return g('<path d="M-12 2L-12-12L-6-5L0-15L6-5L12-12L12 2z" fill="#ffc93c" stroke="#d99a12" stroke-width="1.2"/><circle cx="0" cy="-3" r="2" fill="#ff5a78"/>');
+    case "esel":return g('<path d="M-9 2q-10-18-4-26q7 10 8 24zM9 2q10-18 4-26q-7 10-8 24z" fill="#9b9ba6"/><path d="M-9 -2q-5-12-3-18M9-2q5-12 3-18" stroke="#f0b3c0" stroke-width="3"/><rect x="-11" y="0" width="22" height="3" rx="1.5" fill="#6d6d78"/>');
+  }
+  return '';
+}
+function glSvg(id,x1,x2,y){
+  const mid=(x1+x2)/2;
+  switch(id){
+    case "herz":{const hz=c=>'<path d="M'+c+' '+(y+5.5)+'l-6-6a3.3 3.3 0 0 1 6-3.4a3.3 3.3 0 0 1 6 3.4z" fill="#ff4d7a" stroke="#b3202c" stroke-width="1"/>';return hz(x1)+hz(x2)+'<path d="M'+(x1+5)+' '+y+'H'+(x2-5)+'" stroke="#b3202c" stroke-width="1.6"/>';}
+    case "runde":return '<g fill="rgba(255,150,60,.6)" stroke="#d9a520" stroke-width="1.6"><circle cx="'+x1+'" cy="'+y+'" r="5"/><circle cx="'+x2+'" cy="'+y+'" r="5"/></g><path d="M'+(x1+5)+' '+y+'H'+(x2-5)+'" stroke="#d9a520" stroke-width="1.6"/>';
+    case "klappe":return '<path d="M'+(x1-9)+' '+(y-8)+'L'+(x2+9)+' '+(y-3)+'" stroke="#111" stroke-width="1.6"/><ellipse cx="'+x2+'" cy="'+y+'" rx="6" ry="5" fill="#111"/>';
+    case "ski":return '<rect x="'+(x1-8)+'" y="'+(y-6)+'" width="'+(x2-x1+16)+'" height="12" rx="6" fill="#2b2f40"/><rect x="'+(x1-6)+'" y="'+(y-4)+'" width="'+(x2-x1+12)+'" height="8" rx="4" fill="#ff9f43"/><path d="M'+(x1-3)+' '+(y-2)+'h6" stroke="#fff" stroke-width="1.4" stroke-linecap="round"/>';
+    case "stern":{const sp=c=>{let p="";for(let k=0;k<10;k++){const r=k%2?3:6.8,a=-Math.PI/2+k*Math.PI/5;p+=(k?"L":"M")+(c+r*Math.cos(a)).toFixed(1)+" "+(y+r*Math.sin(a)).toFixed(1);}return '<path d="'+p+'z" fill="#ffd34d" stroke="#d99a12" stroke-width="1"/>';};return sp(x1)+sp(x2)+'<path d="M'+(x1+4)+' '+y+'H'+(x2-4)+'" stroke="#d99a12" stroke-width="1.6"/>';}
+    case "bart":return '<path d="M'+mid+' '+(y+8)+'q-4-4-9 0q-3 2-5-1q3 7 14 3q11 4 14-3q-2 3-5 1q-5-4-9 0z" fill="#3a2414"/>';
+    case "nerd":return '<g fill="none" stroke="#1b1b1f" stroke-width="2"><circle cx="'+x1+'" cy="'+y+'" r="5.5"/><circle cx="'+x2+'" cy="'+y+'" r="5.5"/><path d="M'+(x1+5.5)+' '+y+'H'+(x2-5.5)+'"/></g>';
+    case "sonne":return '<g fill="#111"><rect x="'+(x1-6)+'" y="'+(y-4)+'" width="12" height="8" rx="3"/><rect x="'+(x2-6)+'" y="'+(y-4)+'" width="12" height="8" rx="3"/><rect x="'+(x1+6)+'" y="'+(y-2)+'" width="'+(x2-x1-12)+'" height="2"/></g><path d="M'+(x1-3)+' '+(y-2)+'l3 0" stroke="#fff" stroke-width="1.2"/>';
+    case "monokel":return '<circle cx="'+x2+'" cy="'+y+'" r="5.5" fill="rgba(200,230,255,.25)" stroke="#d9a520" stroke-width="1.8"/><path d="M'+(x2+4)+' '+(y+4)+'q4 10 0 18" stroke="#d9a520" stroke-width="1" fill="none"/>';
+    case "brille3d":return '<rect x="'+(x1-7)+'" y="'+(y-5)+'" width="'+(x2-x1+14)+'" height="10" rx="2" fill="#fff"/><rect x="'+(x1-5)+'" y="'+(y-3.5)+'" width="10" height="7" fill="#ff4d5e"/><rect x="'+(x2-5)+'" y="'+(y-3.5)+'" width="10" height="7" fill="#3fb5ff"/>';
+    case "laser":return '<rect x="'+(x1-8)+'" y="'+(y-4)+'" width="'+(x2-x1+16)+'" height="8" rx="4" fill="#ff2d55"/><rect x="'+(x1-4)+'" y="'+(y-2)+'" width="'+(x2-x1+8)+'" height="2" rx="1" fill="#ffd0d8"/>';
+  }
+  return '';
+}
+function handSvg(id,x,y){
+  const g=b=>'<g transform="translate('+x+' '+y+')">'+b+'</g>';
+  switch(id){
+    case "brezn":return g('<path d="M0 6q-11-2-9-10q2-7 9 0q7-7 9 0q2 8-9 10zM-5 3l10-9M5 3l-10-9" fill="none" stroke="#b9722d" stroke-width="3" stroke-linecap="round"/>');
+    case "ball":return g('<circle cx="0" cy="-2" r="8" fill="#fff" stroke="#333" stroke-width="1"/><path d="M0-6l4 3l-1.5 4.5h-5L-4-3z" fill="#333"/>');
+    case "pizza":return g('<path d="M-8-10L8-10L0 8z" fill="#ffc93c"/><path d="M-8-10h16" stroke="#b9722d" stroke-width="3" stroke-linecap="round"/><circle cx="-2" cy="-5" r="1.8" fill="#e0323f"/><circle cx="3" cy="-4" r="1.6" fill="#e0323f"/><circle cx="0" cy="1" r="1.4" fill="#e0323f"/>');
+    case "kaffee":return g('<rect x="-6" y="-6" width="12" height="12" rx="2" fill="#fff"/><path d="M6-3q5 0 5 4t-5 4" stroke="#fff" stroke-width="2" fill="none"/><rect x="-5" y="-5" width="10" height="3" fill="#7a4a24"/><path d="M-3-9q2-3 0-6M2-9q2-3 0-6" stroke="#ccd" stroke-width="1.2" fill="none"/>');
+    case "lupe":return g('<circle cx="-2" cy="-6" r="6" fill="rgba(160,200,255,.5)" stroke="#333" stroke-width="2"/><path d="M2-1l6 8" stroke="#7a4a24" stroke-width="3" stroke-linecap="round"/>');
+    case "schirm":return g('<path d="M-11-8a11 9 0 0 1 22 0z" fill="#6cb8ff"/><path d="M0-8v14q0 3-3 3" stroke="#333" stroke-width="1.6" fill="none"/>');
+    case "rose":return g('<path d="M0 10V-4" stroke="#3f8f4f" stroke-width="2"/><path d="M0 3q5-1 6-5q-5 0-6 5z" fill="#3f8f4f"/><circle cx="0" cy="-8" r="5" fill="#e0323f"/><path d="M-2-9q2-3 4 0q-1 3-4 0z" fill="#b3202c"/>');
+    case "handy":return g('<rect x="-5" y="-11" width="10" height="19" rx="2" fill="#1f2230"/><rect x="-3.8" y="-9" width="7.6" height="13" fill="#6cb8ff"/><circle cx="0" cy="6" r="1" fill="#ccd"/>');
+    case "stift":return g('<rect x="-2" y="-16" width="4" height="22" fill="#ffc93c" transform="rotate(20)"/><path d="M-2 6l2 5l2-5z" fill="#333" transform="rotate(20)"/>');
+    case "mass":return g('<rect x="-7" y="-12" width="14" height="18" rx="2" fill="rgba(255,210,90,.85)" stroke="#fff" stroke-width="1.4"/><path d="M7-8q6 0 6 6t-6 6" stroke="#fff" stroke-width="2" fill="none"/><path d="M-8-12q4-5 8-2q4-4 8 1" fill="#fff"/>');
+    case "buch":return g('<rect x="-8" y="-11" width="16" height="20" rx="1.5" fill="#b33a3a"/><rect x="-6" y="-9" width="3" height="16" fill="#7c2323"/><path d="M-1-4h7M-1 0h7" stroke="#ffe066" stroke-width="1.4"/>');
+    case "rechner":return g('<rect x="-7" y="-11" width="14" height="19" rx="2" fill="#3a3f4b"/><rect x="-5" y="-9" width="10" height="4" fill="#a8e6a1"/>'+[0,1,2].map(r=>[0,1,2].map(c=>'<rect x="'+(-5+c*3.6)+'" y="'+(-3+r*3.4)+'" width="2.6" height="2.4" fill="#ccd"/>').join('')).join(''));
+    case "mikro":return g('<rect x="-1.8" y="-4" width="3.6" height="14" rx="1.5" fill="#333"/><circle cx="0" cy="-8" r="5" fill="#9aa3ad"/>');
+    case "zepter":return g('<rect x="-1.5" y="-18" width="3" height="26" fill="#d9a520"/><circle cx="0" cy="-20" r="4.5" fill="#ff5a78" stroke="#ffc93c" stroke-width="1.5"/>');
+    case "pokal":return g('<path d="M-8-12h16q0 12-8 13q-8-1-8-13z" fill="#ffc93c"/><rect x="-1.5" y="1" width="3" height="5" fill="#d99a12"/><rect x="-6" y="6" width="12" height="3" rx="1" fill="#d99a12"/><path d="M-8-9q-5 0-4 5M8-9q5 0 4 5" stroke="#ffc93c" stroke-width="2" fill="none"/>');
+    case "fernglas":return g('<rect x="-8" y="-6" width="7" height="12" rx="3" fill="#2d2f33"/><rect x="1" y="-6" width="7" height="12" rx="3" fill="#2d2f33"/><circle cx="-4.5" cy="-6" r="2.4" fill="#6cb8ff"/><circle cx="4.5" cy="-6" r="2.4" fill="#6cb8ff"/>');
+    case "dart":return g('<path d="M-10 8L8-10" stroke="#555" stroke-width="2"/><path d="M8-10l3-1l-1 3z" fill="#333"/><path d="M-10 8l-4 0l2-4zM-10 8l0 4l-4-2z" fill="#ff5a78"/>');
+    case "kugel":return g('<circle cx="0" cy="-6" r="8" fill="rgba(160,200,255,.8)" stroke="#fff" stroke-width="1"/><circle cx="-3" cy="-9" r="2" fill="#fff"/><rect x="-6" y="2" width="12" height="4" rx="1" fill="#7a4a24"/>');
+    case "chips":return g([0,1,2].map(i=>'<ellipse cx="0" cy="'+(4-i*4)+'" rx="7" ry="2.6" fill="'+["#ff5a78","#3ed6c0","#ffc93c"][i]+'" stroke="#fff" stroke-width="1"/>').join(''));
+    case "laterne":return g('<path d="M0-16v4" stroke="#333" stroke-width="1.5"/><rect x="-6" y="-12" width="12" height="16" rx="5" fill="#e0323f"/><rect x="-6" y="-13" width="12" height="2" fill="#333"/><rect x="-6" y="3" width="12" height="2" fill="#333"/><circle cx="0" cy="-4" r="3" fill="#ffd34d" opacity=".8"/>');
+  }
+  return '';
+}
+function fxSvg(id,front,ax,ay){
+  if(id==="sterne"&&front)return [[14,22],[86,18],[10,58],[90,54],[28,8],[74,6]].map(c=>'<path d="M'+c[0]+' '+c[1]+'l1.6 3.6l3.6 1.6l-3.6 1.6l-1.6 3.6l-1.6-3.6l-3.6-1.6l3.6-1.6z" fill="#ffe066"/>').join('');
+  if(id==="herzen"&&front)return [[14,24],[86,20],[12,60],[88,56],[76,6]].map(c=>'<path d="M'+c[0]+' '+(c[1]+5)+'l-5-5a2.8 2.8 0 0 1 5-3a2.8 2.8 0 0 1 5 3z" fill="#ff5a8a"/>').join('');
+  if(id==="wolke"&&front)return '<g transform="translate('+ax+' '+(ay-26)+')"><path d="M-14 4a6 6 0 0 1 2-11a8 8 0 0 1 15-2a6 6 0 0 1 11 5a5 5 0 0 1-2 8z" fill="#8a93a3"/><path d="M-8 8l-2 6M0 8l-2 6M8 8l-2 6" stroke="#6cb8ff" stroke-width="2" stroke-linecap="round"/></g>';
+  if(id==="flammen"&&!front)return '<path d="M20 92q-10-30 6-44q0 14 10 14q-6-22 14-36q-2 20 10 26q6-10 4-22q18 18 8 38q8-2 10-12q10 26-8 36z" fill="#ff7a2e" opacity=".85"/><path d="M34 92q-4-18 8-26q2 10 8 10q2-10 10-14q4 16-2 30z" fill="#ffd34d"/>';
+  if(id==="konfetti"&&front)return [[14,20,"#ff5a78"],[86,26,"#3ed6c0"],[20,60,"#ffc93c"],[84,56,"#b69cff"],[30,12,"#6cb8ff"],[70,10,"#b8f06a"]].map(c=>'<rect x="'+c[0]+'" y="'+c[1]+'" width="4" height="7" rx="1" fill="'+c[2]+'" transform="rotate('+(c[0]%40)+' '+c[0]+' '+c[1]+')"/>').join('');
+  return '';
+}
+const BGS=[
+ ["Kinderzimmer",'<rect width="100" height="100" fill="#ffe4ef"/><rect y="84" width="100" height="16" fill="#f7c6d9"/><path d="M20 0v14M50 0v10M80 0v16" stroke="#c98aa8"/><circle cx="20" cy="17" r="4" fill="#ffd34d"/><path d="M50 12l3 6l-6 0z" fill="#6cb8ff"/><circle cx="80" cy="19" r="3.5" fill="#b8f06a"/>'],
+ ["Stammtisch",'<rect width="100" height="100" fill="#6b4a2e"/>'+[0,1,2,3,4].map(i=>'<rect y="'+(i*20)+'" width="100" height="1.5" fill="#56391f"/>').join('')+'<rect y="84" width="100" height="16" fill="#8a5e36"/><rect x="6" y="10" width="20" height="12" rx="2" fill="#f3e3c3"/><path d="M9 14h14M9 18h10" stroke="#8a5e36" stroke-width="1.4"/>'],
+ ["Hörsaal",'<rect width="100" height="100" fill="#2f4a3c"/><rect x="6" y="6" width="88" height="40" rx="2" fill="#23392d" stroke="#8a6a44" stroke-width="2"/><text x="14" y="22" font-size="8" fill="#e8efe8" font-family="serif">E = mc²</text><text x="50" y="40" font-size="7" fill="#e8efe8" font-family="serif">a²+b²=c²</text><rect y="84" width="100" height="16" fill="#5a4330"/>'],
+ ["TV-Studio",'<rect width="100" height="100" fill="#2a1d5c"/><path d="M10 0L30 100H-10zM90 0L110 100H70z" fill="rgba(255,231,163,.14)"/>'+[8,20,32,44,56,68,80,92].map(x=>'<circle cx="'+x+'" cy="6" r="2.4" fill="#ffe7a3"/>').join('')+'<rect y="84" width="100" height="16" fill="#3b2f8f"/>'],
+ ["Olymp im Weltall",'<rect width="100" height="100" fill="#0d0b2e"/>'+[[10,12],[30,30],[70,8],[88,34],[52,20],[16,50],[84,60],[40,6]].map(p=>'<circle cx="'+p[0]+'" cy="'+p[1]+'" r="1.1" fill="#fff"/>').join('')+'<circle cx="82" cy="16" r="9" fill="#ff8fd8"/><ellipse cx="82" cy="16" rx="15" ry="3" fill="none" stroke="#ffe7a3" stroke-width="1.5"/><rect y="84" width="100" height="16" fill="#f3ecd8"/><rect x="6" y="60" width="6" height="24" fill="#e6dcc2"/><rect x="88" y="60" width="6" height="24" fill="#e6dcc2"/>']
+];
+function stageOf(lvl){return Math.min(4,Math.floor((Math.max(1,lvl)-1)/4));}
+/* o = {fig, col, lvl, eq:{hat,gl,hand,fx}, mood, badge:'krone'|'esel'|null, bg:bool} */
+function avatarSVG(o){
+  const F=FIGS[o.fig]||FIGS.brezn,lvl=o.lvl||1,s=stageOf(lvl),eq=o.eq||{},mood=o.mood||"";
+  const sc=o.full?1:Math.min(1,0.8+0.2*(lvl-1)/19);
+  let out='<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">';
+  if(o.bg)out+=(eq.bg&&BGX[eq.bg])||BGS[s][1];else out+='<circle cx="50" cy="50" r="50" fill="'+(o.col||"#6cb8ff")+'"/>';
+  out+='<g transform="translate(50 96) scale('+sc+') translate(-50 -96)">';
+  if(o.anim)out+='<g class="fa-'+(FIGS[o.fig]?o.fig:"brezn")+'">';
+  if(s>=4)out+='<circle cx="50" cy="56" r="40" fill="rgba(255,211,77,.35)"/>'+[[14,30],[86,40],[24,84],[80,82]].map(p=>'<path d="M'+p[0]+' '+(p[1]-5)+'l1.5 3.5l3.5 1.5l-3.5 1.5l-1.5 3.5l-1.5-3.5l-3.5-1.5l3.5-1.5z" fill="#ffe066"/>').join('');
+  if(s>=3)out+='<path d="M30 50q-12 30-8 44h56q4-14-8-44z" fill="#c8233a"/>';
+  if(eq.fx)out+=fxSvg(eq.fx,false,F.a[0],F.a[1]);
+  out+=F.d(s,eq);
+  // Gesicht
+  const [x1,x2,ey]=F.e;
+  if(mood==="happy")out+='<path d="M'+(x1-3.5)+' '+(ey+1)+'q3.5-5 7 0M'+(x2-3.5)+' '+(ey+1)+'q3.5-5 7 0" stroke="#1b1b1f" stroke-width="2" fill="none" stroke-linecap="round"/>';
+  else if(mood==="sleep")out+='<path d="M'+(x1-3.5)+' '+ey+'h7M'+(x2-3.5)+' '+ey+'h7" stroke="#1b1b1f" stroke-width="2" stroke-linecap="round"/>';
+  else out+=[x1,x2].map(x=>'<circle cx="'+x+'" cy="'+ey+'" r="'+(mood==="shiver"?5:4)+'" fill="#fff"/><circle cx="'+(x+0.8)+'" cy="'+(ey+0.6)+'" r="'+(mood==="shiver"?1.6:2.2)+'" fill="#1b1b1f"/>').join('');
+  if(F.m){
+    const [mx,my]=F.m;
+    if(s===0)out+='<circle cx="'+mx+'" cy="'+(my+1)+'" r="3.6" fill="#6cb8ff" stroke="#fff" stroke-width="1.2"/><circle cx="'+mx+'" cy="'+(my+1)+'" r="1.2" fill="#fff"/>';
+    else if(mood==="sweat"||mood==="shiver")out+='<path d="M'+(mx-4)+' '+(my+2)+'q4-4 8 0" stroke="#1b1b1f" stroke-width="2" fill="none" stroke-linecap="round"/>';
+    else if(mood==="sleep")out+='<ellipse cx="'+mx+'" cy="'+(my+1)+'" rx="2.2" ry="1.8" fill="#1b1b1f"/>';
+    else out+='<path d="M'+(mx-5)+' '+my+'q5 '+(mood==="happy"?7:4.5)+' 10 0" stroke="#1b1b1f" stroke-width="2" fill="'+(mood==="happy"?"#7a2330":"none")+'" stroke-linecap="round"/>';
+  }
+  if(eq.neck)out+=F.m?neckSvg(eq.neck,F.m[0],F.m[1]+9):neckSvg(eq.neck,(x1+x2)/2,ey+16);
+  if(F.top)out+=F.top(s);
+  if(eq.gl&&ITEMS[eq.gl])out+=glSvg(eq.gl,x1,x2,ey);
+  const hat=o.badge||eq.hat;
+  if(hat)out+=hatSvg(hat,F.a[0],F.a[1]);
+  if(eq.hand&&ITEMS[eq.hand])out+=handSvg(eq.hand,F.p[0],F.p[1]);
+  if(eq.fx)out+=fxSvg(eq.fx,true,F.a[0],F.a[1]);
+  if(mood==="sweat")out+='<path d="M'+(x2+7)+' '+(ey-6)+'q3 5 0 7q-3-2 0-7z" fill="#6cb8ff"/>';
+  if(mood==="sleep")out+='<text x="'+(x2+6)+'" y="'+(ey-8)+'" font-size="11" font-weight="800" fill="#fff" stroke="#1b1b1f" stroke-width=".6" font-family="sans-serif">Zz</text>';
+  out+='</g>';
+  if(o.anim)out+='</g>';
+  if(eq.pet)out+=petSvg(eq.pet);
+  if(eq.frame)out+=frameSvg(eq.frame,!!o.bg);
+  out+='</svg>';
+  return out;
+}
+
+
+</script><script>
+/* ========== NEU (Nov 2026): Weihnachtsfiguren, Geistesblitz, Gegenstände Level 21–30 ========== */
+const AVN=(function(){
+const star=(cx,cy,r1,r2,fill,stroke)=>{let p="";for(let k=0;k<10;k++){const r=k%2?r2:r1,a=-Math.PI/2+k*Math.PI/5;p+=(k?"L":"M")+(cx+r*Math.cos(a)).toFixed(1)+" "+(cy+r*Math.sin(a)).toFixed(1);}return '<path d="'+p+'z" fill="'+fill+'"'+(stroke?' stroke="'+stroke+'" stroke-width="1"':'')+'/>';};
+const ball=(x,y,r,c)=>'<circle cx="'+x+'" cy="'+y+'" r="'+r+'" fill="'+c+'"/><circle cx="'+(x-r*.35)+'" cy="'+(y-r*.35)+'" r="'+(r*.32)+'" fill="#fff" opacity=".7"/>';
+const BALLS=["#e0323f","#ffc93c","#3f7bd6","#ff8fd8","#b8f06a","#fff"];
+const noHat=eq=>!(eq&&eq.hat);
+const F={};
+/* ---------- Weihnachtsmann ---------- */
+const santaBody=(s,fat)=>{
+  let o='';
+  if(s>=3)o+='<path d="M64 60q16-6 18 10q2 12-10 14q-10 0-12-12z" fill="#8a5a2b"/><path d="M66 61q5-8 10-2" stroke="#6b431f" stroke-width="2.5" fill="none"/>';
+  o+='<ellipse cx="50" cy="'+(fat?78:80)+'" rx="'+(fat?25:20)+'" ry="'+(fat?17:14)+'" fill="#d62839"/>';
+  o+='<path d="M'+(fat?27:31)+' '+(fat?84:86)+'q23 '+(fat?10:8)+' '+(fat?46:38)+' 0" stroke="#fff" stroke-width="5" fill="none" stroke-linecap="round"/>';
+  if(s>=1)o+='<rect x="'+(fat?27:31)+'" y="'+(fat?77:79)+'" width="'+(fat?46:38)+'" height="5" fill="#1f2230"/><rect x="45" y="'+(fat?76:78)+'" width="10" height="7" rx="1" fill="none" stroke="'+(s>=4?"#ffe066":"#ffc93c")+'" stroke-width="2"/>';
+  o+='<path d="M74 72q6-2 6 4" stroke="#d62839" stroke-width="6" fill="none" stroke-linecap="round"/><circle cx="79" cy="76" r="3.6" fill="#f4f2ee"/>';
+  if(s>=2)o+='<g transform="translate(36 68)"><ellipse cx="-2" cy="0" rx="3" ry="1.8" fill="#2f8a4c" transform="rotate(-25)"/><ellipse cx="2" cy="0" rx="3" ry="1.8" fill="#2f8a4c" transform="rotate(25)"/><circle cx="0" cy="1.5" r="1.4" fill="#e0323f"/></g>';
+  return o;
+};
+const santaHead=(s,big)=>{
+  const r=big?16:13,cy=big?45:47;
+  let o='<circle cx="50" cy="'+cy+'" r="'+r+'" fill="#f4c7a1"/>';
+  o+='<path d="M'+(50-r)+' '+(cy+1)+'q-3 '+(r*.6)+' 2 '+(r*.9)+'M'+(50+r)+' '+(cy+1)+'q3 '+(r*.6)+'-2 '+(r*.9)+'" stroke="#f4f2ee" stroke-width="5" fill="none" stroke-linecap="round"/>';
+  o+='<path d="M'+(50-r+1)+' '+(cy+3)+'Q'+(50-r)+' '+(cy+r+14)+' 50 '+(cy+r+(big?16:14))+'Q'+(50+r)+' '+(cy+r+14)+' '+(50+r-1)+' '+(cy+3)+'Q'+(50+r*.45)+' '+(cy+10)+' 50 '+(cy+9)+'Q'+(50-r*.45)+' '+(cy+10)+' '+(50-r+1)+' '+(cy+3)+'z" fill="#f4f2ee"/>';
+  o+='<path d="M50 '+(cy+8)+'q-5-3-10 1q4 3 10 0q6 3 10-1q-5-4-10 0z" fill="#e4e1db"/>';
+  o+='<circle cx="50" cy="'+(cy+4.5)+'" r="2.8" fill="#e89a7a"/><circle cx="'+(50-r*.62)+'" cy="'+(cy+4)+'" r="2.4" fill="#f08c8c" opacity=".5"/><circle cx="'+(50+r*.62)+'" cy="'+(cy+4)+'" r="2.4" fill="#f08c8c" opacity=".5"/>';
+  return o;
+};
+F.santa_a={n:"Weihnachtsmann",st:["Nordpol-Praktikant","Weihnachtsmann","Rauschebart","Geschenke-Chef","Weihnachtslegende"],a:[50,34],e:[44,56,44],m:null,p:[80,72],
+  d:(s,eq)=>santaBody(s,true)+santaHead(s,false)+(noHat(eq)?hatSvg("nikolaus",50,36):'')};
+F.santa_b={n:"Weihnachtsmann",st:["Nordpol-Praktikant","Weihnachtsmann","Rauschebart","Geschenke-Chef","Weihnachtslegende"],a:[50,29],e:[44,56,43],m:null,p:[80,74],
+  d:(s,eq)=>santaBody(s,false)+santaHead(s,true)+(noHat(eq)?'<path d="M34 31Q36 12 54 10Q66 9 70 24Q64 18 58 22L66 31z" fill="#d62839"/><rect x="32" y="28" width="36" height="7" rx="3.5" fill="#f4f2ee"/><circle cx="70" cy="25" r="4.5" fill="#f4f2ee"/>':'')};
+/* ---------- Rentier (keine rote Nase!) ---------- */
+const deer=(s,eq,v)=>{
+  const B=s>=4?"#b07a3e":"#9b6a3c",L="#e3c39a",D="#6b4626";
+  let o='';
+  o+=[38,46,54,62].map((x,i)=>'<rect x="'+(x-2.5)+'" y="80" width="5" height="'+(i%3?11:10)+'" rx="2" fill="'+D+'"/>').join('');
+  o+='<ellipse cx="50" cy="76" rx="21" ry="13" fill="'+B+'"/><ellipse cx="50" cy="79" rx="12" ry="7" fill="'+L+'"/>';
+  if(s===0)o+=[[36,72],[44,69],[60,70],[64,77]].map(p=>'<circle cx="'+p[0]+'" cy="'+p[1]+'" r="1.6" fill="#fff" opacity=".8"/>').join('');
+  o+='<path d="M71 74q8-2 9 2" stroke="'+B+'" stroke-width="5" fill="none" stroke-linecap="round"/>';
+  if(noHat(eq)){
+    if(s===0)o+='<path d="M42 35l-2-6M58 35l2-6" stroke="'+D+'" stroke-width="3.4" stroke-linecap="round"/>';
+    else{o+='<path d="M43 36q-5-10-12-14M37 28q-5 0-8-6M35 25q0-6-2-9M57 36q5-10 12-14M63 28q5 0 8-6M65 25q0-6 2-9" stroke="'+D+'" stroke-width="3" fill="none" stroke-linecap="round"/>';
+      if(s>=2)o+=[[29,22],[33,16],[71,22],[67,16]].map(p=>'<circle cx="'+p[0]+'" cy="'+p[1]+'" r="1.8" fill="#fff"/>').join('');}
+  }
+  o+='<path d="M36 41q-11-4-12 2q6 5 13 2zM64 41q11-4 12 2q-6 5-13 2z" fill="'+B+'"/><path d="M34 42q-6-1-7 1q4 2 7 1zM66 42q6-1 7 1q-4 2-7 1z" fill="#e8a7a0"/>';
+  o+='<ellipse cx="50" cy="48" rx="15" ry="14" fill="'+B+'"/><ellipse cx="50" cy="57" rx="10" ry="7" fill="'+L+'"/>';
+  o+='<ellipse cx="50" cy="53" rx="4" ry="2.8" fill="#2a1a10"/><ellipse cx="49" cy="52.3" rx="1.2" ry=".7" fill="#fff" opacity=".6"/>';
+  if(!(eq&&eq.neck)){
+    if(v==="a")o+='<path d="M37 64q13 6 26 0" stroke="#c0222e" stroke-width="4" fill="none" stroke-linecap="round"/>'+[[42,66.5],[50,68],[58,66.5]].map((p,i)=>'<circle cx="'+p[0]+'" cy="'+(p[1]+2)+'" r="'+(i===1?3.4:2.4)+'" fill="#ffc93c" stroke="#c9900e" stroke-width=".8"/><path d="M'+(p[0]-1)+' '+(p[1]+3)+'h2" stroke="#7a5200" stroke-width=".8"/>').join('');
+    else o+='<path d="M36 63q14 7 28 0v4q-14 7-28 0z" fill="#2f8a4c"/><path d="M40 64.5v4M46 66v4M52 66v4M58 64.5v4" stroke="#fff" stroke-width="2"/><rect x="55" y="66" width="6" height="14" rx="1.5" fill="#2f8a4c" transform="rotate(-10 58 66)"/><path d="M55.5 71h6M56 75h6" stroke="#fff" stroke-width="1.6" transform="rotate(-10 58 66)"/><circle cx="44" cy="71" r="2.6" fill="#ffc93c" stroke="#c9900e" stroke-width=".8"/>';
+  }
+  if(s>=3)o+='<path d="M30 74q20 6 40 0" stroke="#c0222e" stroke-width="2.6" fill="none"/>'+[36,44,56,64].map(x=>'<circle cx="'+x+'" cy="'+(x<50?75.6:75.6)+'" r="1.6" fill="#ffc93c"/>').join('');
+  return o;
+};
+F.deer_a={n:"Rentier",st:["Rentierkalb","Rentier","Schlittenzieher","Leitrentier","Polarlicht-Rentier"],a:[50,35],e:[44,56,45],m:[50,60.5],p:[80,76],d:(s,eq)=>deer(s,eq,"a")};
+F.deer_b={n:"Rentier",st:["Rentierkalb","Rentier","Schlittenzieher","Leitrentier","Polarlicht-Rentier"],a:[50,35],e:[44,56,45],m:[50,60.5],p:[80,76],d:(s,eq)=>deer(s,eq,"b")};
+/* ---------- Christbaum ---------- */
+F.tree_a={n:"Christbaum",st:["Setzling","Tannenbaum","Geschmückter Baum","Prachttanne","Christbaum-Majestät"],a:[50,31],e:[44,56,60],m:[50,68],p:[82,74],
+  d:(s,eq)=>{
+    let o='<path d="M30 88h40l-4 9H34z" fill="#c8693a"/><rect x="28" y="85" width="44" height="5" rx="2" fill="#b35a2f"/><rect x="46" y="80" width="8" height="7" fill="#7a4a24"/>';
+    o+='<path d="M50 28L30 54h8L22 72h8L16 84h68L70 72h8L62 54h8z" fill="#2f8a4c"/><path d="M50 28L38 54h-8zM50 46L30 72h-8zM50 62L30 84h-14z" fill="#256f3d"/>';
+    if(s>=2)o+='<path d="M32 52q18 8 36-2M26 70q24 10 48-2" stroke="#ffc93c" stroke-width="1.8" fill="none"/>';
+    const P=[[38,48],[62,46],[28,66],[72,64],[34,80],[66,80],[50,78],[40,72]],n=[0,2,4,6,8][s];
+    P.slice(0,n).forEach((p,i)=>{o+=s>=4?'<circle cx="'+p[0]+'" cy="'+p[1]+'" r="2.2" fill="#ffe066"/><circle cx="'+p[0]+'" cy="'+p[1]+'" r="4.2" fill="#ffe066" opacity=".3"/>':ball(p[0],p[1],2.8,BALLS[i%5]);});
+    if(noHat(eq))o+=s>=1?star(50,27,7,3,"#ffd34d","#d99a12"):'<circle cx="50" cy="28" r="2.5" fill="#ffd34d"/>';
+    return o;}};
+F.tree_b={n:"Christbaum",st:["Setzling","Tannenbaum","Geschmückter Baum","Prachttanne","Christbaum-Majestät"],a:[50,27],e:[44,56,56],m:[50,64],p:[82,70],
+  d:(s,eq)=>{
+    let o='<rect x="46" y="84" width="8" height="8" fill="#7a4a24"/><path d="M38 90h24l-2 6H40z" fill="#e0323f"/>';
+    o+='<path d="M50 24C38 36 30 46 32 52C24 58 22 70 26 74C18 80 22 88 34 88H66C78 88 82 80 74 74C78 70 76 58 68 52C70 46 62 36 50 24Z" fill="#3a9a5a"/>';
+    o+='<path d="M34 52q16 6 32 0M28 72q22 8 44 0" stroke="#2c7d47" stroke-width="2.4" fill="none" stroke-linecap="round"/>';
+    if(s>=1){o+='<path d="M34 44q18 10 34 0M28 62q22 12 46 0M26 80q24 10 48 0" stroke="#5a4a3a" stroke-width=".8" fill="none"/>';
+      const L=[[38,48],[50,50.5],[62,48],[32,66],[44,70],[56,70],[68,66],[30,83],[42,86],[58,86],[70,83]];
+      L.slice(0,[0,5,8,11,11][s]).forEach((p,i)=>{const c=s>=4?"#ffe066":["#ff5a78","#ffc93c","#6cb8ff","#b8f06a"][i%4];o+='<ellipse cx="'+p[0]+'" cy="'+(p[1]+1.5)+'" rx="1.6" ry="2.2" fill="'+c+'"/><circle cx="'+p[0]+'" cy="'+(p[1]+1.5)+'" r="3.6" fill="'+c+'" opacity=".22"/>';});}
+    if(s>=3)o+=ball(38,78,3,"#e0323f")+ball(64,58,3,"#ffc93c");
+    if(noHat(eq))o+=s>=1?star(50,22,7.5,3.2,"#ffd34d","#d99a12"):'';
+    return o;}};
+/* ---------- Geistesblitz (Glühbirne, Level 30) ---------- */
+F.bulb_a={n:"Geistesblitz",st:["Funzel","Glühbirne","Leuchte","Flutlicht","Erleuchtung"],a:[50,22],e:[43,57,42],m:[50,52],p:[78,70],
+  d:(s)=>{
+    const lit=["#fff7cf","#fff1a8","#ffe976","#ffe14d","#ffd21f"][s];
+    let o='';
+    if(s>=1)o+='<circle cx="50" cy="42" r="'+(26+s*3)+'" fill="#ffe976" opacity="'+(0.12+s*0.05)+'"/>';
+    if(s>=2)o+=[-60,-30,0,30,60].map(a=>'<rect x="48.6" y="'+(8-s)+'" width="2.8" height="7" rx="1.4" fill="#ffd34d" transform="rotate('+a+' 50 42)"/>').join('');
+    o+='<path d="M30 70q-6 4-4 10M70 70q6 2 8 0" stroke="#9aa3ad" stroke-width="3" fill="none" stroke-linecap="round"/>';
+    o+='<path d="M38 60q-12-8-12-20a24 24 0 0 1 48 0q0 12-12 20v6H38z" fill="'+lit+'" stroke="#e6c25a" stroke-width="1.6"/>';
+    o+='<path d="M44 66q0-10 6-14q6 4 6 14" stroke="#e8a33a" stroke-width="1.4" fill="none" opacity=".7"/>';
+    o+='<path d="M34 32q4-10 14-12" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" opacity=".8"/>';
+    o+='<rect x="38" y="66" width="24" height="5" rx="2" fill="#b8bec7"/><rect x="39" y="71" width="22" height="4" rx="2" fill="#9aa3ad"/><rect x="40" y="75" width="20" height="4" rx="2" fill="#b8bec7"/><path d="M43 79h14l-3 5h-8z" fill="#5a606b"/>';
+    o+='<path d="M44 84l-3 9M56 84l3 9" stroke="#5a606b" stroke-width="3" stroke-linecap="round"/>';
+    return o;}};
+F.bulb_b={n:"Geistesblitz",st:["Funzel","Glühbirne","Leuchte","Flutlicht","Erleuchtung"],a:[50,20],e:[43,57,40],m:[50,49],p:[80,64],
+  d:(s)=>{
+    let o='';
+    if(s>=1)o+='<circle cx="50" cy="40" r="'+(24+s*3)+'" fill="#fff0a0" opacity="'+(0.1+s*0.06)+'"/>';
+    o+='<path d="M36 62C24 52 24 34 34 26C44 18 56 18 66 26C76 34 76 52 64 62z" fill="'+(s===0?"#dff1ff":"#fff8d6")+'" stroke="#9fc4e0" stroke-width="1.6"/>';
+    o+='<path d="M44 62V54M56 62V54" stroke="#8a8f99" stroke-width="1.4"/><path d="M44 54q2-6 4 0q2-6 4 0q2-6 4 0" stroke="'+(s===0?"#c08a4a":"#ff9f1c")+'" stroke-width="1.8" fill="none"/>';
+    if(s>=1)o+='<circle cx="50" cy="54" r="'+(4+s)+'" fill="#ffd34d" opacity=".45"/>';
+    if(s>=3)o+='<path d="M24 24l-6-4M76 24l6-4M20 44h-7M80 44h7" stroke="#ffd34d" stroke-width="2.6" stroke-linecap="round"/>';
+    o+='<rect x="37" y="62" width="26" height="6" rx="2" fill="#c49a4a"/><path d="M38 70h24M39 74h22" stroke="#a87e34" stroke-width="3.4" stroke-linecap="round"/><path d="M43 77h14l-4 5h-6z" fill="#3a3f4b"/>';
+    o+='<path d="M36 66q-8 0-10 6M64 66q10-2 14-4" stroke="#c49a4a" stroke-width="3" fill="none" stroke-linecap="round"/>';
+    o+='<ellipse cx="44" cy="88" rx="6" ry="3" fill="#3a3f4b"/><ellipse cx="56" cy="88" rx="6" ry="3" fill="#3a3f4b"/><path d="M45 82v5M55 82v5" stroke="#3a3f4b" stroke-width="3"/>';
+    return o;}};
+/* ---------- Hüte ---------- */
+function hat(id,x,y){const g=b=>'<g transform="translate('+x+' '+y+')">'+b+'</g>';
+  switch(id){
+    case "buecher":return g('<rect x="-14" y="-5" width="28" height="7" rx="1.5" fill="#3f7bd6"/><rect x="-12" y="-4" width="2" height="5" fill="#ffe066"/><rect x="-11" y="-12" width="23" height="7" rx="1.5" fill="#e0323f" transform="rotate(-4)"/><rect x="-9" y="-19" width="19" height="7" rx="1.5" fill="#3f8f4f" transform="rotate(3)"/><path d="M-4-17h9M-6-10h10" stroke="#fff" stroke-width="1" opacity=".7"/>');
+    case "kkrone":return g('<path d="M-13 2V-6Q0-24 13-6V2z" fill="#a31a3a"/><path d="M-15 1L-15-13L-9-6L-4-17L0-8L4-17L9-6L15-13L15 1z" fill="#ffc93c" stroke="#d99a12" stroke-width="1"/><rect x="-16" y="-1" width="32" height="5" rx="2" fill="#f4f2ee"/>'+[-10,-4,2,8].map(dx=>'<circle cx="'+dx+'" cy="1.5" r=".9" fill="#1f2230"/>').join('')+'<circle cx="0" cy="-7" r="2.4" fill="#3f7bd6"/><circle cx="-9" cy="-4" r="1.6" fill="#e0323f"/><circle cx="9" cy="-4" r="1.6" fill="#3f8f4f"/><circle cx="0" cy="-20" r="2" fill="#ffc93c"/>');
+  }return '';}
+/* ---------- Brillen ---------- */
+function gl(id,x1,x2,y){
+  switch(id){
+    case "goldrand":return '<g fill="rgba(255,255,255,.15)" stroke="#d9a520" stroke-width="1.2"><circle cx="'+x1+'" cy="'+y+'" r="5.6"/><circle cx="'+x2+'" cy="'+y+'" r="5.6"/></g><path d="M'+(x1+5.6)+' '+y+'q'+((x2-x1-11.2)/2)+' -2.5 '+(x2-x1-11.2)+' 0" stroke="#d9a520" stroke-width="1.2" fill="none"/><path d="M'+(x2+5.6)+' '+y+'q4 12 0 22" stroke="#d9a520" stroke-width=".8" fill="none" stroke-dasharray="1.2 1"/>';
+    case "roentgen":return '<rect x="'+(x1-8)+'" y="'+(y-5)+'" width="'+(x2-x1+16)+'" height="10" rx="5" fill="#1f2230"/><rect x="'+(x1-6)+'" y="'+(y-3)+'" width="'+(x2-x1+12)+'" height="6" rx="3" fill="#3dff9a"/><path d="M'+(x1-4)+' '+y+'h3M'+(x1+3)+' '+y+'h3M'+(x2-4)+' '+y+'h3" stroke="#0b6b3a" stroke-width="1.2"/><path d="M'+(x2+9)+' '+(y-2)+'l5-3M'+(x2+9)+' '+(y+2)+'l5 3" stroke="#3dff9a" stroke-width="1.2" opacity=".8"/>';
+  }return '';}
+/* ---------- Hand ---------- */
+function hand(id,x,y){const g=b=>'<g transform="translate('+x+' '+y+')">'+b+'</g>';
+  switch(id){
+    case "buzzer":return g('<rect x="-9" y="0" width="18" height="7" rx="2" fill="#2b2f40"/><ellipse cx="0" cy="0" rx="8" ry="3" fill="#2b2f40"/><path d="M-6 0q0-8 6-8q6 0 6 8z" fill="#e0323f"/><ellipse cx="-2" cy="-5" rx="2" ry="1.2" fill="#fff" opacity=".6"/>');
+    case "blitz":return g('<path d="M-2-16L-8-2h5l-4 12l11-15h-5l4-11z" fill="#ffe066" stroke="#e8a33a" stroke-width="1" stroke-linejoin="round"/><path d="M6-14l-3 7h3l-2 6" stroke="#ffe066" stroke-width="1.6" fill="none"/>');
+    case "joystick":return g('<rect x="-9" y="0" width="18" height="8" rx="2" fill="#1f2230"/><path d="M0 1l3-11" stroke="#9aa3ad" stroke-width="2.4" stroke-linecap="round"/><circle cx="3.4" cy="-11" r="3.6" fill="#e0323f"/><circle cx="-5" cy="4" r="1.6" fill="#ffc93c"/>');
+    case "xkugel":return g('<path d="M0-16v3" stroke="#d99a12" stroke-width="1.4"/><rect x="-2.6" y="-14" width="5.2" height="3.4" rx="1" fill="#ffc93c"/><circle cx="0" cy="-3" r="8.4" fill="#e0323f"/><path d="M-8-4q8 4 16 0" stroke="#ffc93c" stroke-width="1.6" fill="none"/><circle cx="-3" cy="-7" r="2.2" fill="#fff" opacity=".6"/>');
+  }return '';}
+/* ---------- Hals ---------- */
+function neck(id,x,y){const g=b=>'<g transform="translate('+x+' '+y+')">'+b+'</g>';
+  switch(id){
+    case "orden":return g('<path d="M-4-2h8l-1 7h-6z" fill="#3f7bd6"/><path d="M-1-2h2v7h-2z" fill="#fff"/>'+star(0,10,6,2.6,"#ffc93c","#d99a12")+'<circle cx="0" cy="10" r="1.6" fill="#e0323f"/>');
+    case "schaerpe":return g('<path d="M-12-4l4-2l18 22l-5 2z" fill="#e0323f"/><path d="M-11-4.5l2-1l17 21l-2 1" stroke="#ffc93c" stroke-width="1" fill="none"/>'+[0,1,2].map(i=>'<ellipse cx="'+(-4+i*5)+'" cy="'+(3+i*6)+'" rx="2.2" ry="1.2" fill="#5aa14f" transform="rotate(50 '+(-4+i*5)+' '+(3+i*6)+')"/>').join(''));
+    case "meisterschale":return g('<path d="M-9-2q9 8 18 0" stroke="#cfd6de" stroke-width="1.6" fill="none" stroke-dasharray="2 1.2"/><circle cx="0" cy="8" r="6.6" fill="#dfe4ec" stroke="#8d97a8" stroke-width="1.2"/><circle cx="0" cy="8" r="3.6" fill="none" stroke="#8d97a8" stroke-width=".8"/><circle cx="0" cy="8" r="1.2" fill="#ffc93c"/>');
+    case "lichterkette":return g('<path d="M-12-2q12 9 24 0" stroke="#2f5a3a" stroke-width="1.2" fill="none"/>'+[[-10,0,"#ff5a78"],[-5,3,"#ffc93c"],[0,4.2,"#6cb8ff"],[5,3,"#b8f06a"],[10,0,"#ff8fd8"]].map(p=>'<ellipse cx="'+p[0]+'" cy="'+(p[1]+2.4)+'" rx="1.7" ry="2.4" fill="'+p[2]+'"/><circle cx="'+p[0]+'" cy="'+(p[1]+2.4)+'" r="3.8" fill="'+p[2]+'" opacity=".25"/>').join(''));
+  }return '';}
+/* ---------- Haustiere (gleicher Platz wie die bisherigen) ---------- */
+function pet(id){const g=b=>'<g transform="translate(21 80) scale(.9)">'+b+'</g>',eye=(x,y)=>'<circle cx="'+x+'" cy="'+y+'" r="1" fill="#1b1b1f"/>';
+  switch(id){
+    case "eule":return g('<path d="M-6-9l2 4M6-9l-2 4" stroke="#7a5a3c" stroke-width="2" stroke-linecap="round"/><ellipse cx="0" cy="1" rx="7.5" ry="9" fill="#9b7650"/><ellipse cx="0" cy="4" rx="4.5" ry="5" fill="#e3c9a0"/><circle cx="-3" cy="-3" r="3" fill="#fff"/><circle cx="3" cy="-3" r="3" fill="#fff"/>'+eye(-3,-3)+eye(3,-3)+'<path d="M-1-.5h2l-1 2z" fill="#f0a23c"/><path d="M-3 10l-1 2M3 10l1 2" stroke="#f0a23c" stroke-width="1.2"/>');
+    case "elefant":return g('<ellipse cx="1" cy="3" rx="8" ry="6" fill="#9aa3b5"/><rect x="-5" y="6" width="3" height="4" rx="1" fill="#9aa3b5"/><rect x="3" y="6" width="3" height="4" rx="1" fill="#9aa3b5"/><circle cx="7" cy="-3" r="5.4" fill="#9aa3b5"/><ellipse cx="3" cy="-3" rx="3.4" ry="4.6" fill="#b3bbcb"/><path d="M11-1q3 5 1 9" stroke="#9aa3b5" stroke-width="2.6" fill="none" stroke-linecap="round"/>'+eye(9,-4));
+    case "hamster":return g('<ellipse cx="0" cy="3" rx="8" ry="6.5" fill="#e0a35a"/><ellipse cx="0" cy="5" rx="5" ry="4" fill="#f7e3c4"/><circle cx="-5" cy="-3" r="2.2" fill="#e0a35a"/><circle cx="5" cy="-3" r="2.2" fill="#e0a35a"/><circle cx="-5" cy="-3" r="1" fill="#f0b3c0"/><circle cx="5" cy="-3" r="1" fill="#f0b3c0"/>'+eye(-2.5,0)+eye(2.5,0)+'<circle cx="0" cy="2" r=".9" fill="#c26a7a"/><ellipse cx="-4" cy="3" rx="2" ry="1.4" fill="#f0b3c0" opacity=".5"/><ellipse cx="4" cy="3" rx="2" ry="1.4" fill="#f0b3c0" opacity=".5"/>');
+  }return '';}
+/* ---------- Hintergründe ---------- */
+const BG={
+ bibliothek:'<rect width="100" height="100" fill="#5a3a24"/>'+[0,1,2,3].map(r=>'<rect x="0" y="'+(4+r*20)+'" width="100" height="3" fill="#3e2716"/>'+[...Array(14)].map((_,i)=>{const w=4+((i*7+r*3)%4),x=2+i*7;return '<rect x="'+x+'" y="'+(8+r*20+((i+r)%3))+'" width="'+(w)+'" height="'+(15-((i+r)%3))+'" fill="'+["#b33a3a","#3f7bd6","#3f8f4f","#c98a45","#7a4a9c","#d9a520"][(i+r*2)%6]+'"/>';}).join('')).join('')+'<rect y="84" width="100" height="16" fill="#7a5132"/>',
+ sternwarte:'<rect width="100" height="100" fill="#0e1033"/>'+[[8,10],[22,30],[40,8],[60,22],[76,6],[90,28],[14,52],[86,50],[50,40]].map((p,i)=>'<circle cx="'+p[0]+'" cy="'+p[1]+'" r="'+(i%3?0.9:1.4)+'" fill="#fff"/>').join('')+'<path d="M62 12q6 6 0 12q4-6 0-12z" fill="#ffe7a3"/><path d="M0 84q50-14 100 0v16H0z" fill="#26294f"/><path d="M8 84v-16a14 14 0 0 1 28 0v16z" fill="#c9cfe0"/><path d="M22 54l14-12" stroke="#7d86a3" stroke-width="4" stroke-linecap="round"/><rect y="88" width="100" height="12" fill="#1b1d3d"/>',
+ kegelbahn:'<rect width="100" height="100" fill="#2a2140"/>'+[10,30,50,70,90].map(x=>'<circle cx="'+x+'" cy="8" r="2.4" fill="#ffe7a3" opacity=".8"/>').join('')+'<path d="M0 100L60 40h40v60z" fill="#d9b07a"/><path d="M16 100L68 40M40 100L80 40" stroke="#c49a62" stroke-width="1"/><path d="M0 88L52 40" stroke="#1d1830" stroke-width="5"/>'+[[88,30],[80,33],[94,34],[74,37],[86,38],[96,40]].map(p=>'<ellipse cx="'+p[0]+'" cy="'+p[1]+'" rx="2.2" ry="4.4" fill="#fff"/><path d="M'+(p[0]-2)+' '+(p[1]-1.4)+'h4" stroke="#e0323f" stroke-width="1"/>').join('')+'<circle cx="14" cy="80" r="8" fill="#3f7bd6"/><circle cx="11" cy="77" r="1.2" fill="#1d1830"/><circle cx="15" cy="76" r="1.2" fill="#1d1830"/><circle cx="13" cy="80" r="1.2" fill="#1d1830"/>',
+ xmarkt:'<rect width="100" height="100" fill="#1b2a52"/>'+[[10,10],[30,22],[56,8],[80,18],[92,6]].map(p=>'<circle cx="'+p[0]+'" cy="'+p[1]+'" r="1" fill="#fff"/>').join('')+
+   '<path d="M-2 40q26 10 52 0q26 10 52 0" stroke="#3a3f4b" stroke-width=".8" fill="none"/>'+[6,16,26,36,46,56,66,76,86,96].map((x,i)=>'<circle cx="'+x+'" cy="'+(41+Math.sin(i)*2.5+2)+'" r="1.6" fill="'+["#ffd34d","#ff5a78","#b8f06a","#6cb8ff"][i%4]+'"/>').join('')+
+   '<path d="M2 62L16 50L30 62z" fill="#f4f2ee"/><rect x="4" y="62" width="24" height="22" fill="#a8452e"/><rect x="8" y="66" width="16" height="9" fill="#ffd27a"/><path d="M70 62L84 50L98 62z" fill="#f4f2ee"/><rect x="72" y="62" width="24" height="22" fill="#2f6b4a"/><rect x="76" y="66" width="16" height="9" fill="#ffd27a"/>'+
+   '<path d="M50 30L40 48h5L36 62h28L55 48h5z" fill="#2f8a4c"/><rect x="48" y="62" width="4" height="6" fill="#7a4a24"/>'+star(50,29,4,1.8,"#ffd34d")+
+   '<path d="M0 84q50-6 100 0v16H0z" fill="#eef4ff"/>'+[[14,30],[40,20],[66,34],[88,40],[22,48],[60,54]].map(p=>'<circle cx="'+p[0]+'" cy="'+p[1]+'" r="1.4" fill="#fff" opacity=".9"/>').join('')
+};
+/* ---------- Effekte ---------- */
+function fx(id,front,ax,ay){
+  if(id==="gluehbirnen"&&front)return [[14,24],[86,20],[12,60],[88,58],[30,8],[72,6]].map((c,i)=>'<g transform="translate('+c[0]+' '+c[1]+') rotate('+((i%2?1:-1)*15)+')"><circle cx="0" cy="0" r="6" fill="#ffe976" opacity=".25"/><path d="M-3 2a4 4 0 1 1 6 0v2h-6z" fill="#fff1a8" stroke="#e6c25a" stroke-width=".8"/><rect x="-2.4" y="4" width="4.8" height="2.4" rx="1" fill="#9aa3ad"/></g>').join('');
+  if(id==="fragezeichen"&&front)return '<g class="avn-spin">'+[[13,30],[87,26],[13,66],[87,64],[50,14]].map((c,i)=>'<text x="'+c[0]+'" y="'+c[1]+'" font-size="'+(i===4?17:15)+'" font-weight="900" font-family="sans-serif" text-anchor="middle" fill="'+["#ffe066","#ff8fd8","#3ed6c0","#b69cff","#fff"][i]+'" stroke="#1b1b1f" stroke-width=".8" paint-order="stroke">?</text>').join('')+'</g>';
+  if(id==="pixel"&&front)return [[12,22,"#ff5a78"],[86,18,"#3ed6c0"],[18,58,"#ffc93c"],[84,56,"#b69cff"],[28,10,"#6cb8ff"],[72,8,"#b8f06a"],[8,40,"#ff8fd8"],[92,38,"#ffe066"]].map(c=>'<rect x="'+c[0]+'" y="'+c[1]+'" width="4" height="4" fill="'+c[2]+'"/><rect x="'+(c[0]+4)+'" y="'+(c[1]+4)+'" width="2" height="2" fill="'+c[2]+'" opacity=".6"/>').join('');
+  if(id==="schneefall"&&front){const fl=(dy)=>[[10,8],[26,20],[42,4],[58,16],[74,6],[90,22],[16,40],[36,34],[64,38],[84,44],[8,70],[30,62],[70,66],[92,74],[50,56]].map((p,i)=>'<circle cx="'+p[0]+'" cy="'+(p[1]+dy)+'" r="'+(i%3?1.2:1.8)+'" fill="#fff" opacity="'+(i%2?.85:.65)+'"/>').join('');return '<g class="avn-snow">'+fl(0)+fl(-100)+'</g>';}
+  return '';}
+/* ---------- Rahmen ---------- */
+function frame(id,sq){
+  const ring=(st,w)=>sq?'<rect x="2.5" y="2.5" width="95" height="95" fill="none" stroke="'+st+'" stroke-width="'+(w||5)+'"/>':'<circle cx="50" cy="50" r="47.5" fill="none" stroke="'+st+'" stroke-width="'+(w||5)+'"/>';
+  const dash=(st,w,d)=>sq?'<rect x="2.5" y="2.5" width="95" height="95" fill="none" stroke="'+st+'" stroke-width="'+w+'" stroke-dasharray="'+d+'"/>':'<circle cx="50" cy="50" r="47.5" fill="none" stroke="'+st+'" stroke-width="'+w+'" stroke-dasharray="'+d+'"/>';
+  if(id==="fr_kreide")return ring("#8a6a44",6)+dash("#2f4a3c",3.4,"")+dash("#e8efe8",1.2,"6 4");
+  if(id==="fr_marmor")return '<defs><linearGradient id="frg-m" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f4f2ee"/><stop offset=".3" stop-color="#d7d2c8"/><stop offset=".5" stop-color="#fbfaf7"/><stop offset=".7" stop-color="#c9c3b8"/><stop offset="1" stop-color="#f4f2ee"/></linearGradient></defs>'+ring("url(#frg-m)",6)+dash("#b8ae9c",.8,"1 9");
+  if(id==="fr_allround"){const C=["#ff5a78","#ff9f1c","#ffc93c","#b8f06a","#3ed6c0","#6cb8ff","#3f7bd6","#b69cff","#ff8fd8","#e0323f","#4caf6a","#f4f2ee"];
+    if(sq)return C.map((c,i)=>'<rect x="2.5" y="2.5" width="95" height="95" fill="none" stroke="'+c+'" stroke-width="5" pathLength="12" stroke-dasharray="1 11" stroke-dashoffset="'+(-i)+'"/>').join('');
+    return C.map((c,i)=>'<circle cx="50" cy="50" r="47.5" fill="none" stroke="'+c+'" stroke-width="5" pathLength="12" stroke-dasharray="1 11" stroke-dashoffset="'+(-i)+'"/>').join('');}
+  return '';}
+const ITEMS_NEW={
+ buecher:{s:"hat",n:"Bücherturm"},kkrone:{s:"hat",n:"Königskrone"},
+ goldrand:{s:"gl",n:"Goldrand-Brille"},roentgen:{s:"gl",n:"Röntgenblick"},
+ buzzer:{s:"hand",n:"Quiz-Buzzer"},blitz:{s:"hand",n:"Blitzbündel"},joystick:{s:"hand",n:"Joystick"},xkugel:{s:"hand",n:"Christbaumkugel",xm:1},
+ orden:{s:"neck",n:"Orden am Band"},schaerpe:{s:"neck",n:"Schärpe mit Lorbeer"},meisterschale:{s:"neck",n:"Meisterschale an der Kette"},lichterkette:{s:"neck",n:"Lichterkette",xm:1},
+ eule:{s:"pet",n:"Eule"},elefant:{s:"pet",n:"Mini-Elefant"},hamster:{s:"pet",n:"Hamster"},
+ bibliothek:{s:"bg",n:"Bibliothek"},sternwarte:{s:"bg",n:"Sternwarte"},kegelbahn:{s:"bg",n:"Kegelbahn"},xmarkt:{s:"bg",n:"Weihnachtsmarkt",xm:1},
+ gluehbirnen:{s:"fx",n:"Glühbirnen-Schwarm"},fragezeichen:{s:"fx",n:"Kreisende Fragezeichen"},pixel:{s:"fx",n:"Pixel-Funken"},schneefall:{s:"fx",n:"Schneefall",xm:1},
+ fr_kreide:{s:"frame",n:"Kreidetafel"},fr_marmor:{s:"frame",n:"Marmorsäulen"},fr_allround:{s:"frame",n:"Allrounder"},
+ t_legende:{s:"title",n:"Stammtisch-Legende"},t_gott2:{s:"title",n:"Quizgott²"},t_inventar:{s:"title",n:"Inventar"},t_abraeumer:{s:"title",n:"Abräumer"},t_phoenix:{s:"title",n:"Phönixbändiger"},
+ goldregen:{s:"cheer",n:"Goldregen"},schneegestoeber:{s:"cheer",n:"Schneegestöber",xm:1},schneeball:{s:"cheer",n:"Schneeballschlacht",xm:1}
+};
+return {F:F,hat:hat,gl:gl,hand:hand,neck:neck,pet:pet,BG:BG,fx:fx,frame:frame,ITEMS:ITEMS_NEW};
+})();
+
+</script><script>
+
+const _hat=hatSvg,_gl=glSvg,_hand=handSvg,_neck=neckSvg,_pet=petSvg,_fx=fxSvg,_frame=frameSvg;
+hatSvg=(i,x,y)=>AVN.hat(i,x,y)||_hat(i,x,y);glSvg=(i,a,b,y)=>AVN.gl(i,a,b,y)||_gl(i,a,b,y);handSvg=(i,x,y)=>AVN.hand(i,x,y)||_hand(i,x,y);
+neckSvg=(i,x,y)=>AVN.neck(i,x,y)||_neck(i,x,y);petSvg=i=>AVN.pet(i)||_pet(i);fxSvg=(i,f,x,y)=>AVN.fx(i,f,x,y)||_fx(i,f,x,y);frameSvg=(i,q)=>AVN.frame(i,q)||_frame(i,q);
+Object.assign(BGX,AVN.BG);Object.assign(ITEMS,AVN.ITEMS);Object.assign(FIGS,AVN.F);
+const $=id=>document.getElementById(id);
+const av=(o,cap,sub)=>'<figure class="av">'+avatarSVG(o)+'<figcaption>'+cap+(sub?'<small>'+sub+'</small>':'')+'</figcaption></figure>';
+const LV=[1,5,9,13,17],COL=["#6cb8ff","#3ed6c0","#ffc93c","#ff8fd8","#b69cff"];
+const NEWF=[["santa","Weihnachtsmann"],["deer","Rentier"],["tree","Christbaum"],["bulb","Geistesblitz (Level 30)"]];
+const DRAFT={santa:["A: rund, Mütze klein","B: großer Kopf, große Mütze"],deer:["A: Glöckchen-Halsband","B: Schal mit Glöckchen"],tree:["A: klassische Tanne mit Kugeln","B: runde Tanne mit Lichterkette"],bulb:["A: leuchtende Birne","B: Glasbirne mit Glühfaden"]};
+// 1) Figuren in 5 Stufen, je 2 Entwürfe
+let o='';
+NEWF.forEach(([k,n])=>{o+='<h3>'+n+'</h3>';['a','b'].forEach((v,j)=>{const f=k+'_'+v;o+='<div class="draft"><div class="dl">Entwurf '+DRAFT[k][j]+'</div><div class="row">'+LV.map((l,i)=>av({fig:f,col:COL[i],lvl:l,eq:{}},FIGS[f].st[i],'ab Level '+l)).join('')+'</div></div>';});});
+$("figs").innerHTML=o;
+// 2) Raster: alle Hüte, Brillen, Hand-Teile auf den neuen Figuren
+const slot=s=>Object.keys(ITEMS).filter(i=>ITEMS[i].s===s);
+const HATS=slot("hat").concat(["krone","esel"]),GLS=slot("gl"),HANDS=slot("hand");
+let sel=$("rfig");sel.innerHTML=NEWF.map(([k,n])=>['a','b'].map(v=>'<option value="'+k+'_'+v+'">'+n+' – Entwurf '+v.toUpperCase()+'</option>').join('')).join('');
+function raster(){const f=sel.value,lv=+$("rlv").value;
+  const g=(arr,sl,lab)=>'<h3>'+lab+' ('+arr.length+')</h3><div class="grid">'+arr.map(i=>av({fig:f,col:"#3b3577",lvl:lv,eq:{[sl]:i}},(ITEMS[i]?ITEMS[i].n:(i==="krone"?"Krone (Spitzenreiter)":"Eselsohren")))).join('')+'</div>';
+  $("raster").innerHTML=g(HATS,"hat","Hüte")+g(GLS,"gl","Brillen")+g(HANDS,"hand","In der Hand")+g(slot("neck"),"neck","Um den Hals");}
+sel.onchange=raster;$("rlv").onchange=raster;raster();
+// 3) Neue Gegenstände
+const NI=Object.keys(AVN.ITEMS);
+const on=(i,f)=>{const it=ITEMS[i];if(it.s==="title")return '<figure class="av title"><div class="tt">„'+it.n+'“</div><figcaption>Titel</figcaption></figure>';if(it.s==="cheer")return '<figure class="av"><button class="cheer" data-c="'+i+'">'+it.n+'<br>▶ abspielen</button><figcaption>Jubel</figcaption></figure>';
+  const bg=it.s==="bg";return av({fig:f,col:"#3b3577",lvl:9,bg:bg,eq:{[it.s]:i}},it.n+(it.xm?' 🎄':''),{hat:"Hut",gl:"Brille",hand:"Hand",fx:"Effekt",neck:"Hals",bg:"Hintergrund",pet:"Haustier",frame:"Rahmen"}[it.s]);};
+$("items").innerHTML='<div class="grid big">'+NI.map(i=>on(i,"pinguin")).join('')+'</div>';
+$("items2").innerHTML='<div class="grid big">'+NI.filter(i=>!/^(t_|goldregen|schnee[gb])/.test(i)).map(i=>on(i,"santa_a")).join('')+'</div>';
+// 4) Volles Outfit
+$("outfit").innerHTML='<div class="row">'+[
+ {fig:"santa_a",lvl:17,bg:true,eq:{bg:"xmarkt",fx:"schneefall",neck:"lichterkette",hand:"xkugel",frame:"fr_gold"}},
+ {fig:"deer_a",lvl:13,bg:true,eq:{bg:"schnee",fx:"schneefall",hand:"xkugel"}},
+ {fig:"tree_a",lvl:17,bg:true,eq:{bg:"xmarkt",fx:"schneefall"}},
+ {fig:"bulb_a",lvl:30,bg:true,eq:{bg:"sternwarte",hat:"kkrone",gl:"goldrand",hand:"blitz",neck:"orden",pet:"eule",frame:"fr_marmor",fx:"fragezeichen"}},
+ {fig:"brezn",lvl:30,bg:true,eq:{bg:"bibliothek",hat:"buecher",gl:"roentgen",hand:"buzzer",neck:"schaerpe",pet:"elefant",frame:"fr_kreide",fx:"gluehbirnen"}},
+].map((x,i)=>av(x,["Weihnachtsmann komplett","Rentier im Winterwald","Christbaum","Level 30","Brezn mit Level-Sachen"][i],x.lvl===30?'Level 30 (Größe begrenzt)':'')).join('')+'</div>';
+// Jubel-Vorschau (leicht: wenige Teilchen, nur CSS-Bewegung)
+function cheer(c){const L=$("fxlayer");const red=document.body.classList.contains("rm")||matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const add=(html,cls,x,y,d,dl)=>{const e=document.createElement("span");e.className="p "+cls;e.innerHTML=html;e.style.left=x+"%";e.style.top=y+"%";e.style.setProperty("--d",d+"s");e.style.animationDelay=dl+"s";L.appendChild(e);setTimeout(()=>e.remove(),(d+dl)*1000+200);};
+  if(red){add(c==="goldregen"?"🪙":c==="schneeball"?"☃️":"❄️","still",44,40,1.2,0);return;}
+  if(c==="goldregen")for(let i=0;i<18;i++)add(i%3?"🪙":"✨","fall",Math.random()*92,-10,1.6+Math.random(),Math.random()*.6);
+  if(c==="schneegestoeber")for(let i=0;i<22;i++)add(i%4?"❄️":"🌨️","swirl",Math.random()*92,-10,2+Math.random()*1.2,Math.random()*.8);
+  if(c==="schneeball")for(let i=0;i<7;i++){const l=i%2===0,y=15+Math.random()*60,dl=i*.18;add('<i class="sb"></i>',"throw "+(l?"fromL":"fromR"),l?-8:100,y,.55,dl);setTimeout(()=>add('<i class="splat"></i>',"splat",l?20+Math.random()*30:50+Math.random()*30,y-4,.7,0),(dl+.55)*1000);}
+}
+document.addEventListener("click",e=>{const b=e.target.closest(".cheer");if(b)cheer(b.dataset.c);});
+$("rm").onchange=e=>document.body.classList.toggle("rm",e.target.checked);
+
+</script></body></html>
