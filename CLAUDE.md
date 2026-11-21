@@ -121,7 +121,10 @@ Vor jedem Lauf die Test-Datenbank leeren (sonst fragt die PIN-Abfrage nach bekan
 - Schätzfragen, Prozent-Regler, Umfragen, Mehrheits-Paare, Zuordnen, Bluff, Außenseiter-Listen, Lacher-Sätze: im Quelltext gelöscht.
   Kritzel-Begriffe Maßkrug/Bierzelt → Gamsbart/Hirschgeweih (Gruppe bleibt bei 25). Viktualienmarkt-Hinweis ohne Bier.
 - Bleiben bewusst: Alkohol nur als falsche Antwort oder Nebensatz, Film „Die Feuerzangenbowle“, Oktoberfest-Anstich,
-  Avatar-Sachen (Maßkrug, Bierdusche, Biergarten-Hintergrund). Neue Fragen ohne Alkohol-Thema.
+  Neue Fragen ohne Alkohol-Thema.
+- Avatar & Titel (21.11.2026, Basti: „auch hier alles rund um Alkohol raus“): Schlüssel bleiben gleich (gespeicherte Ausrüstung bleibt gültig),
+  nur Name/Bild neu: `mass` = Kakaotasse, `bier` = Limo-Dusche (🥤🧃), `biergarten` = Kastaniengarten, `stammtisch` = Spieletisch (Würfel statt Krüge),
+  Hintergrund „Holzstube“, Titel Spieleabend-Rookie/-Ältester/-Legende, Quizabend-Held, Raumname „🎡 Riesenrad-Duell“, Wurst-Spruch 🌭🥨.
 
 ## Offene Punkte
 - **Sicherheit:** Stufe A (strengere Datenbank-Regeln, 17.11.2026) im Nachbau getestet, seit 17.11.2026 in Firebase aktiv.
