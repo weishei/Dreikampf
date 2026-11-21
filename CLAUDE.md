@@ -104,6 +104,17 @@ eine Kopie von `index.html` lädt Firebase aus `node_modules/firebase` statt gst
 `fs.settings({host:"127.0.0.1:8085",ssl:false})` auf. Dann mehrere Playwright-Fenster als getrennte Spieler.
 Vor jedem Lauf die Test-Datenbank leeren (sonst fragt die PIN-Abfrage nach bekannten Namen).
 
+## Gejagte und Phönixflug-Zeit (21.11.2026, Basti: „Bau alles“)
+- Gejagte: 60-s-Grenze gilt nicht im Finale (`expired`, `hcClamp`) und nicht mehr nach der eigenen Antwort (Uhr zeigt dann Rundenzeit).
+  An der Uhr „🎯 60 s“ (`.hc60`). Bei Schätzen, Größenwahn, Prozent-Regler Hinweis `hcNote()` „Abstand zählt doppelt“.
+  Ehrenpreis beim Schätzen rechnet mit derselben (verdoppelten) Wertung wie die Punkte.
+- Phönixflug: Start meldet `ans.s{idx}=1` im eigenen Spieler-Eintrag (`phxMark`, Fehler werden geschluckt). Die Leitung löst nach
+  Rundenende erst auf, wenn alle Gestarteten fertig sind, höchstens `PHX_WAIT` (35 s) länger. `skDeadline` bricht laufendes
+  Phönixflug nicht ab, Start nur bei ≥ 3 s Restzeit. Uhr zeigt „⏳“, solange noch jemand spielt.
+  Ungeprüft: ob die Stufe-A-Regeln das Feld `ans.s…` erlauben (Joker nutzt `ans.jk`, daher wahrscheinlich). Wenn nicht, bricht nichts,
+  es gilt dann das alte Verhalten. Getestet nur mit eingeschleustem Hook (Firebase-Nachbau aus der Sandbox nicht ladbar).
+- Christstollen-Frage im Prozent-Regler umformuliert.
+
 ## Offene Punkte
 - **Sicherheit:** Stufe A (strengere Datenbank-Regeln, 17.11.2026) im Nachbau getestet, seit 17.11.2026 in Firebase aktiv.
   Neue Bereiche in der Datenbank brauchen ab dann eine eigene Regel, sonst wird das Schreiben abgelehnt.
