@@ -115,6 +115,14 @@ Vor jedem Lauf die Test-Datenbank leeren (sonst fragt die PIN-Abfrage nach bekan
   es gilt dann das alte Verhalten. Getestet nur mit eingeschleustem Hook (Firebase-Nachbau aus der Sandbox nicht ladbar).
 - Christstollen-Frage im Prozent-Regler umformuliert.
 
+## Keine Alkohol-Fragen (21.11.2026, Basti: „Alles mit Alkohol raus“)
+- Auswahl- und Finalfragen: Laufzeit-Filter direkt nach dem Weihnachts-Block (`/* Keine Fragen rund um Alkohol … */`, Menge `X`),
+  entfernt aus `MC`/`FIN` und zieht `THEME_MC`/`THEME_FIN` mit. **Nicht** im Quelltext löschen, sonst verrutscht die Themen-Zuordnung.
+- Schätzfragen, Prozent-Regler, Umfragen, Mehrheits-Paare, Zuordnen, Bluff, Außenseiter-Listen, Lacher-Sätze: im Quelltext gelöscht.
+  Kritzel-Begriffe Maßkrug/Bierzelt → Gamsbart/Hirschgeweih (Gruppe bleibt bei 25). Viktualienmarkt-Hinweis ohne Bier.
+- Bleiben bewusst: Alkohol nur als falsche Antwort oder Nebensatz, Film „Die Feuerzangenbowle“, Oktoberfest-Anstich,
+  Avatar-Sachen (Maßkrug, Bierdusche, Biergarten-Hintergrund). Neue Fragen ohne Alkohol-Thema.
+
 ## Offene Punkte
 - **Sicherheit:** Stufe A (strengere Datenbank-Regeln, 17.11.2026) im Nachbau getestet, seit 17.11.2026 in Firebase aktiv.
   Neue Bereiche in der Datenbank brauchen ab dann eine eigene Regel, sonst wird das Schreiben abgelehnt.
