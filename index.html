@@ -4643,10 +4643,11 @@ function moodOf(u){
   if(Date.now()-qStartLocal[key]>60000)return "sleep";
   return "";
 }
+function badgeNote(u){const l=progOf(u).last;return l==="esel"?'<div class="muted small">🫏 Eselsohren bis zum nächsten Spiel (letzter Platz)</div>':l==="krone"?'<div class="muted small">👑 Krone bis zum nächsten Spiel (Sieg)</div>':'';}
 function vMyCard(withName){
   if(!ME)return withName?'<div class="card">'+nameField()+'</div>':'';
   const pr=progOf(ME),r=nextReward(ME);
-  return '<div class="card mycard"><div class="mc-row"><button class="mc-av" data-act="avatar" aria-label="Avatar bearbeiten">'+avHtml(ME,76,{bg:true})+'<span class="mc-ed">✏️</span></button><div class="mc-t">'+(withName?'<input id="myname" class="mc-name" maxlength="14" autocomplete="off" placeholder="Dein Name" value="'+h(L.name)+'">':'')+'<div class="eyebrow">Level '+pr.lvl+' · '+h(titleOf(ME))+'</div>'+xpBar(pr.xp)+'</div></div>'+(r?'<button class="mc-nx" data-act="avatar">🎁 <b>'+h(r.n)+'</b> <span class="muted">'+h(r.t)+'</span><span class="chev">›</span></button>':'')+'</div>';
+  return '<div class="card mycard"><div class="mc-row"><button class="mc-av" data-act="avatar" aria-label="Avatar bearbeiten">'+avHtml(ME,76,{bg:true})+'<span class="mc-ed">✏️</span></button><div class="mc-t">'+(withName?'<input id="myname" class="mc-name" maxlength="14" autocomplete="off" placeholder="Dein Name" value="'+h(L.name)+'">':'')+'<div class="eyebrow">Level '+pr.lvl+' · '+h(titleOf(ME))+'</div>'+xpBar(pr.xp)+badgeNote(ME)+'</div></div>'+(r?'<button class="mc-nx" data-act="avatar">🎁 <b>'+h(r.n)+'</b> <span class="muted">'+h(r.t)+'</span><span class="chev">›</span></button>':'')+'</div>';
 }
 function vHome(){
   if(!ME)return '';
@@ -4707,7 +4708,7 @@ function edPrevHtml(){
   const locked=!!(L.ed.tryC&&L.ed.tryV!=="none");
   const ttl=eq.title&&ITEMS[eq.title]?ITEMS[eq.title].n:levelTitle(pr.lvl);
   return '<div class="edrow"><span class="av edbig">'+avatarSVG({fig:L.ed.fig,col:L.ed.col,lvl:pr.lvl,eq:eq,bg:true,anim:true})+'</span>'+
-    '<div class="edinfo"><div class="rec-n"'+(F.n.length>11?' style="font-size:16px;overflow-wrap:normal"':'')+'>'+h(F.n)+'</div><div class="muted small">'+h(F.st[stg])+' · Lvl '+pr.lvl+'</div><div class="muted small">„'+h(ttl)+'“</div>'+
+    '<div class="edinfo"><div class="rec-n"'+(F.n.length>11?' style="font-size:16px;overflow-wrap:normal"':'')+'>'+h(F.n)+'</div><div class="muted small">'+h(F.st[stg])+' · Lvl '+pr.lvl+'</div><div class="muted small">„'+h(ttl)+'“</div>'+(progOf(ME).last==="esel"?'<div class="muted small">🫏 Bis zum nächsten Spiel trägst du Eselsohren statt Hut.</div>':progOf(ME).last==="krone"?'<div class="muted small">👑 Bis zum nächsten Spiel trägst du die Krone statt Hut.</div>':'')+
     '<div class="edlock">'+(locked?'🔒 '+h(unlockHint(L.ed.tryV)):(nextReward(ME)?'🎁 '+h(nextReward(ME).n)+': '+h(nextReward(ME).t):''))+'</div>'+
     '<button class="btn" id="edsavebtn" data-act="edsave"'+(locked?' disabled':'')+'>'+(locked?'Gesperrt':'Speichern')+'</button><button class="btn alt" data-act="edcancel">Abbrechen</button></div></div>';
 }
@@ -5761,7 +5762,7 @@ function founderWatch(){
 }
 if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js",{scope:"./"}).catch(()=>{});
 function DK_SWITCH(id,n){try{localStorage.setItem("dk_id",id);if(n)localStorage.setItem("dk_name",n);}catch(e){}location.reload();}
-const BUILD_ID="1795270355";
+const BUILD_ID="1795270629";
 function verCheck(){fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(r=>r.json()).then(j=>{if(j&&j.v&&j.v!==BUILD_ID&&!document.getElementById("upd")){const b=document.createElement("button");b.id="upd";b.textContent="✨ Neue Version da. Tippen zum Laden";b.onclick=()=>location.reload();document.body.appendChild(b);}}).catch(()=>{});}
 setInterval(verCheck,60000);document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")verCheck();});setTimeout(verCheck,5000);
 (async function boot(){
