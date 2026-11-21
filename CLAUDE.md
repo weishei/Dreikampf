@@ -263,4 +263,6 @@ Die Regeln (Stufe A) erlauben `kzs` nur zum Anlegen, max. 20.000 Zeichen pro Pak
 - **Geprüft (20.11.2026):** echte Daten (Export 14.11.) alt gegen neu: niemand verliert etwas, XP/Level unverändert; Testprofile 0/10.000/25.000/
   40.000/66.000 XP; Level-Grenzen; Weihnachtsspiele im/außerhalb des Zeitraums, ohne Datum, Solo halb; alle 34 Gegenstände gezeichnet und mit
   Bedingung; Lobby, Rangliste, Profil, Garderobe auf 375×667 ohne seitliches Scrollen, keine Fehler.
+- **Weihnachts-Haustiere (21.11.2026, Basti: „Bau weihnachtliche Haustiere ein“):** in `AVN.pet` und `ITEMS_NEW` (xm:1), Bedingungen in `UNLOCKS`:
+  `pinguin` (Pinguin mit Mütze, 1 Weihnachtsspiel), `lebkuchen` (Lebkuchenmann, 3 Spiele), `schneemann` (Mini-Schneemann, 1 Sieg), `eisbaer` (Eisbär-Baby, 3 Siege).
 - **Offen:** Schneefall auf alten Handys ungeprüft. Rentier ohne rote Nase lassen (geschützte Figur).
